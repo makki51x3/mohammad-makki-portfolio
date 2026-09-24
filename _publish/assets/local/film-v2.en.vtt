@@ -1,0 +1,193 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.176
+The AI industry is flooded with spectacular pitches and flawless tech demos.
+
+2
+00:00:05.226 --> 00:00:10.196
+But when these models meet real business operations, most simply shatter.
+
+3
+00:00:10.246 --> 00:00:19.480
+This graph shows the survival rate of new AI projects: a massive drop-off between a working prototype and a live production deployment.
+
+4
+00:00:19.530 --> 00:00:23.950
+Failures happen in this gap — unexpected edge cases, clunky APIs,
+
+5
+00:00:24.000 --> 00:00:25.881
+and unpredictable customers.
+
+6
+00:00:25.931 --> 00:00:30.916
+Businesses do not need expensive novelties. They need AI that earns rent.
+
+7
+00:00:30.966 --> 00:00:38.157
+They require systems built specifically to generate a measurable return on investment, month after month.
+
+8
+00:00:38.207 --> 00:00:47.950
+Getting an AI tool to survive in the wild means focusing on the unglamorous 20% of software development: optimising Core Web Vitals for speed,
+
+9
+00:00:48.000 --> 00:00:54.312
+configuring strict right-to-left Arabic text formatting, and programming strict halal business rules.
+
+10
+00:00:54.362 --> 00:00:56.895
+We have enough visionaries selling ideas.
+
+11
+00:00:56.945 --> 00:01:03.887
+The market is starved for engineers who can ensure these complex systems actually survive contact with reality.
+
+12
+00:01:03.937 --> 00:01:11.950
+Mohammad Makki is a full-stack developer and AI solutions architect who operates in direct opposition to the current hype cycle.
+
+13
+00:01:12.000 --> 00:01:16.181
+His philosophy is straightforward: he ships rather than pitches.
+
+14
+00:01:16.231 --> 00:01:21.405
+He has deployed over 100 projects to real, active storefronts and live servers.
+
+15
+00:01:21.455 --> 00:01:30.000
+As tech lead and co-founder of CommandNet Solutions, Makki oversees the conversion of raw machine learning into deployed commerce.
+
+16
+00:01:30.050 --> 00:01:35.950
+Inside his research and development layer — the lab — Makki engineers raw machine learning
+
+17
+00:01:36.000 --> 00:01:37.748
+into reliable business logic.
+
+18
+00:01:37.798 --> 00:01:41.841
+He uses a technique called Retrieval-Augmented Generation, or RAG.
+
+19
+00:01:41.891 --> 00:01:49.283
+It forces the AI to check a company's private, verified data and strict business rules before it generates any response.
+
+20
+00:01:49.333 --> 00:01:55.051
+This flow chart shows how he builds these systems using frameworks like LangChain and Claude.
+
+21
+00:01:55.101 --> 00:01:59.950
+A central agent receives a user query, autonomously reaches into a database for
+
+22
+00:02:00.000 --> 00:02:04.421
+accurate context, and routes a decision to a specific software tool.
+
+23
+00:02:04.471 --> 00:02:12.377
+These agents function as background engines, executing multi-step sequences to process data and trigger business actions.
+
+24
+00:02:12.427 --> 00:02:20.399
+Engineering these rigorous back-end workflows separates a fragile AI gimmick from a reliable, autonomous digital employee.
+
+25
+00:02:20.449 --> 00:02:23.950
+But business logic still needs a secure place to live.
+
+26
+00:02:24.000 --> 00:02:28.773
+Hosting and scaling AI operations safely requires heavy, specialised infrastructure.
+
+27
+00:02:28.823 --> 00:02:37.960
+Makki deploys a full-stack architecture for enterprise clients: Python for backend logic, Postgres databases for massive data sets, and React for the interface.
+
+28
+00:02:38.010 --> 00:02:42.840
+You can see it in action on the dashboard he built for the forex trading platform 4T.
+
+29
+00:02:42.890 --> 00:02:47.950
+The system manages high-stakes, real-time financial data with zero tolerance for latency.
+
+30
+00:02:48.000 --> 00:02:54.937
+He also designs and ships complete corporate platforms, like the end-to-end build for industrial supplier Chemigaz,
+
+31
+00:02:54.987 --> 00:03:00.041
+or the generative AI ad campaigns running for the study-abroad platform CrossAbroad.
+
+32
+00:03:00.091 --> 00:03:09.459
+The most intelligent language model available is useless unless it is routed through an enterprise infrastructure built to handle its computational weight.
+
+33
+00:03:09.509 --> 00:03:11.950
+Once the secure backend infrastructure is
+
+34
+00:03:12.000 --> 00:03:17.774
+fully in place, the AI finally interacts directly with the consumer on the live storefront.
+
+35
+00:03:17.824 --> 00:03:25.198
+Makki deploys recommendation engines and generative AI integrations directly into complex Shopify Plus environments.
+
+36
+00:03:25.248 --> 00:03:35.950
+For the cosmetics brand Narins Beauty, he built and actively manages their AI support chatbot, with custom escalation flows that route difficult issues to human agents.
+
+37
+00:03:36.000 --> 00:03:42.477
+He also handles complex storefront operations for brands like Al Rugaib Furniture and Ferronato,
+
+38
+00:03:42.527 --> 00:03:49.684
+navigating strict bilingual Arabic and English constraints and integrating advanced room visualiser tools.
+
+39
+00:03:49.734 --> 00:03:53.695
+The ultimate test of this architecture is its invisibility.
+
+40
+00:03:53.745 --> 00:03:59.950
+The technology drives engagement and generates revenue without the end user ever feeling the
+
+41
+00:04:00.000 --> 00:04:01.787
+massive underlying complexity.
+
+42
+00:04:01.837 --> 00:04:06.379
+This level of execution requires commanding an incredibly broad tech stack.
+
+43
+00:04:06.429 --> 00:04:15.562
+Makki controls everything from raw machine learning models and DevOps infrastructure at the bottom, all the way up to Tailwind CSS on a mobile screen.
+
+44
+00:04:15.612 --> 00:04:23.950
+Owning the entire stack eliminates the operational friction and departmental miscommunication that traditionally kills software projects.
+
+45
+00:04:24.000 --> 00:04:32.531
+His process always begins with a rigorous business diagnosis, ensuring every line of code serves a strategic commercial purpose.
+
+46
+00:04:32.581 --> 00:04:42.788
+As the technology matures, the companies that prioritise robust, scalable integrations will pull ahead of those left holding flashy, unusable prototypes.
+
+47
+00:04:42.838 --> 00:04:47.950
+For enterprises looking to actually build and scale intelligent applications,
+
+48
+00:04:48.000 --> 00:04:55.950
+Mohammad Makki is the architect who makes sure the technology earns its keep.

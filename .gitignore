@@ -1,0 +1,17 @@
+# Allow-list: ignore everything, then opt in only what belongs in the public repo.
+# Keeps drafts, private PDFs, local tooling and SUPER_IMPORTANT/ (secrets) out for good.
+/*
+!/.gitignore
+!/README.md
+!/ANALYTICS.md
+!/netlify.toml
+!/package.json
+!/package-lock.json
+!/_publish/
+!/netlify/
+!/test/
+
+node_modules/
+.netlify/
+*.env
+.env*

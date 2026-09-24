@@ -1,0 +1,26 @@
+# Static site: _publish/ is served as-is (no build step).
+# Functions add the visitor analytics endpoints: /api/collect and /admin.
+[build]
+  publish = "_publish"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Geo gate. Runs before the static HTML so a blocked visitor never receives the
+# page at all. /admin is excluded on purpose — it is the only way to turn the
+# gate back off, so it must stay reachable from anywhere. Static assets and the
+# crawler files are excluded to keep the edge off the hot path.
+[[edge_functions]]
+  function = "gate"
+  path = "/*"
+  excludedPath = [
+    "/admin",
+    "/api/*",
+    "/assets/*",
+    "/analytics.js",
+    "/robots.txt",
+    "/sitemap.xml",
+    "/llms.txt",
+    "/favicon.ico"
+  ]

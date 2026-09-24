@@ -1,0 +1,52 @@
+# Mohammad Makki
+
+> AI Solutions Architect and Full-Stack Developer based in Tripoli, Lebanon. Co-founder and Web-Dev Team Lead at CommandNet Solutions. Ships AI products (LLM agents, RAG pipelines, computer vision), Shopify and headless commerce at scale, and automation platforms — 100+ delivered projects since 2019, many under NDA.
+
+This is a single-page portfolio: every section below is an anchor on one document, not a separate page. Contact: makki.51x3@gmail.com · WhatsApp +961 76 556 037. The site is bilingual (English and Arabic with full RTL); the Arabic build is the same URL with the language toggled client-side.
+
+## Profile
+
+- [Portfolio home](https://mohammad-makki-portfolio.netlify.app/): the whole site — 14 chapters, English and Arabic
+- [About](https://mohammad-makki-portfolio.netlify.app/#about): background, organizations, languages
+- [What I do](https://mohammad-makki-portfolio.netlify.app/#doing): four practice areas — AI & LLM, Ecommerce, Automation, Web & Framer
+- [CommandNet Solutions](https://mohammad-makki-portfolio.netlify.app/#founder): the venture I co-founded in 2022 — AI marketing, SEO, web/app development, five teams
+- [Journey](https://mohammad-makki-portfolio.netlify.app/#journey): timeline from 2019 freelance work to AI agents in production
+- [Toolbox](https://mohammad-makki-portfolio.netlify.app/#stack): the full stack, grouped by discipline
+- [Contact](https://mohammad-makki-portfolio.netlify.app/#contact): email and WhatsApp
+
+## Selected work
+
+- [Selected work deck](https://mohammad-makki-portfolio.netlify.app/#work): flagship builds, each opening a full case file
+- [AI Trading Platform](https://mohammad-makki-portfolio.netlify.app/#work): NDA flagship — MetaTrader-5 ecosystem, FastAPI backend, multi-terminal trade sync, Telegram assistant, admin dashboard, PostgreSQL/Redis/Docker on a hardened VPS
+- [Naqua · AI recipe chatbot](https://naquastore.com/): per-product LLM context generating recipes on seafood product pages, Arabic RTL, OpenRouter gateway, Next.js + Laravel
+- [Chemigaz](https://chemigaz.com): corporate site for a Lebanese industrial and medical gas supplier, designed and shipped end to end
+- [OMIC-AI skincare quiz](https://omicskincare.com/pages/quiz): quiz- and image-based recommendation engine across US and MENA storefronts, English and Arabic
+- [Smart Stories](https://smartstories.io): shoppable-stories platform — 20+ story templates plus Shopify GraphQL widgets with KPI tracking
+- [Mobily presentation site](https://enthusiastic-wealth-676179.framer.app): animated Framer build with custom code components and a bespoke video playback system
+- [Lab & experiments](https://mohammad-makki-portfolio.netlify.app/#lab): 100+ n8n workflow automation platform, AutoScope AI vehicle inspection, an ElizaOS racing agent, an Arabic WhatsApp dietitian, a Solana launch pipeline, a financial-document reader
+- [More public builds](https://mohammad-makki-portfolio.netlify.app/#more): shorter engagements, internal tools and early work back to 2019
+
+## Storefronts and brands
+
+- [Storefronts & brands](https://mohammad-makki-portfolio.netlify.app/#brands): live commerce sites I build for and support
+- [Narins Beauty](https://narinsbeauty.com): vegan lip care — AI support chatbot, order-lookup tooling and escalation flows
+- [Matcha Rituals](https://matcharituals.com): Lebanese ceremonial-grade matcha
+- [Nafas Fresh](https://nafasfresh.store): Lebanese cedar fragrance and goods
+- [Protein House UAE](https://proteinhouse.ae): athlete-focused F&B storefront
+- [CrossAbroad](https://www.crossabroad.com/): study-abroad platform
+- [4T](https://4t.com/en): forex and commodities platform with a real-time Next.js dashboard
+- [Frères et Soeur](https://freresetsoeur.com/): boutique Lebanese Shopify storefront
+
+## Generative studio
+
+- [Generative studio](https://mohammad-makki-portfolio.netlify.app/#genai): AI-generated ad campaigns delivered to real clients — real-estate AI staging, skincare brand spots, mascot ad campaigns and product films
+
+## Research and writing
+
+- [R&D and writing](https://mohammad-makki-portfolio.netlify.app/#rnd): IEEE paper on AI thalassemia diagnosis, Medium articles, competition work, engineering-roots CAD projects and credentials
+
+## Optional
+
+- [Beyond code](https://mohammad-makki-portfolio.netlify.app/#beyond): ACES tutoring agency co-founder, scouting, AIE Club at Beirut Arab University, hobbies and travel
+- [Manifesto](https://mohammad-makki-portfolio.netlify.app/#manifesto): how I approach building
+- [Sitemap](https://mohammad-makki-portfolio.netlify.app/sitemap.xml)

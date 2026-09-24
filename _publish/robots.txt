@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Private analytics dashboard and collection endpoint
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://mohammad-makki-portfolio.netlify.app/sitemap.xml
+
+# Structured summary for AI crawlers and agents (llmstxt.org)
+# https://mohammad-makki-portfolio.netlify.app/llms.txt

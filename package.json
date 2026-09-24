@@ -1,0 +1,13 @@
+{
+  "name": "mohammad-makki-portfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static portfolio (_publish) plus Netlify Functions for the visitor analytics dashboard.",
+  "scripts": {
+    "test:analytics": "node test/analytics.test.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
