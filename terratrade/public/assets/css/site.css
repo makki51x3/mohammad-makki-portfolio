@@ -257,40 +257,8 @@
   .fitem dd { margin: 4px 0 0; font-weight: 600; }
   @media (max-width: 860px) { .about-grid { grid-template-columns: 1fr; } }
 
-  /* Mission / Vision banners + values (slot S8 default; see fx.css when the pen is adapted) */
-  .mv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin-top: 70px; }
-  .banner { --h: 64px; position: relative; display: flex; gap: 20px; align-items: flex-start; padding-block: 26px 28px; padding-inline: calc(var(--h) + 44px) 26px; border-radius: var(--r-lg); color: #fff;
-    background: linear-gradient(120deg, var(--c0), var(--c1)); box-shadow: 0 24px 50px -30px var(--c0); overflow: hidden; isolation: isolate; }
-  .banner::before { content: ''; position: absolute; inset-block: 0; inset-inline-start: 0; width: calc(var(--h) + 26px); background: rgba(0, 0, 0, .14); clip-path: polygon(0 0, 100% 0, 70% 50%, 100% 100%, 0 100%); z-index: -1; }
-  [dir="rtl"] .banner::before { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 30% 50%); }
-  .banner::after { content: ''; position: absolute; inset-inline-end: -40px; bottom: -60px; width: 180px; height: 180px; border-radius: 50%; border: 26px solid rgba(255, 255, 255, .08); z-index: -1; }
-  .banner-ico { position: absolute; inset-inline-start: 18px; top: 24px; width: var(--h); height: var(--h); border-radius: 16px; background: rgba(255, 255, 255, .16); display: grid; place-items: center; }
-  .banner-ico svg { width: 60%; height: 60%; fill: #fff; }
-  .banner h3 { font-size: clamp(22px, 2.4vw, 30px); }
-  .banner p { margin-top: 8px; color: rgba(255, 255, 255, .92); font-size: 15.5px; }
-  .values-h { margin: 56px 0 18px; font-size: 14px; font-family: var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
-  .values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; list-style: none; padding: 0; margin: 0; counter-reset: v; }
-  .value { position: relative; padding: 22px 34px 24px 26px; color: #fff; background: linear-gradient(120deg, var(--c0), var(--c1)); min-height: 180px;
-    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%, 22px 50%); margin-inline-end: -10px; }
-  .value:first-child { clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%); border-radius: var(--r) 0 0 var(--r); }
-  .value:last-child { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 22px 50%); border-radius: 0 var(--r) var(--r) 0; margin-inline-end: 0; }
-  .value:not(:first-child) { padding-inline-start: 44px; }
-  [dir="rtl"] .value { clip-path: polygon(22px 0, 100% 0, calc(100% - 22px) 50%, 100% 100%, 22px 100%, 0 50%); }
-  [dir="rtl"] .value:first-child { clip-path: polygon(22px 0, 100% 0, 100% 100%, 22px 100%, 0 50%); border-radius: 0 var(--r) var(--r) 0; }
-  [dir="rtl"] .value:last-child { clip-path: polygon(0 0, 100% 0, calc(100% - 22px) 50%, 100% 100%, 0 100%); border-radius: var(--r) 0 0 var(--r); }
-  .vnum { font-family: var(--mono); font-size: 12px; font-weight: 700; opacity: .8; }
-  .value h4 { font-size: 19px; margin-top: 8px; }
-  .value-amber { color: #1B1200; }
-  .value-amber p { color: rgba(27, 18, 0, .9) !important; }
-  .value p { margin-top: 8px; font-size: 14px; color: rgba(255, 255, 255, .92); }
-  @media (max-width: 860px) {
-    .mv { grid-template-columns: 1fr; }
-    .values { grid-template-columns: 1fr; gap: 0; }
-    .value, .value:first-child, .value:last-child, [dir="rtl"] .value, [dir="rtl"] .value:first-child, [dir="rtl"] .value:last-child {
-      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), 50% 100%, 0 calc(100% - 16px)); border-radius: 0; margin: 0 0 -8px; padding: 22px 24px 34px; min-height: 0; }
-    .value:first-child { border-radius: var(--r) var(--r) 0 0; }
-    .value:last-child { clip-path: none; border-radius: 0 0 var(--r) var(--r); padding-bottom: 24px; }
-  }
+  /* About: heading above the mission / vision / values banners (the banners themselves: fx.css [data-fx="banners"]) */
+  .values-h { margin: 70px 0 8px; font-size: 14px; font-family: var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--accent); text-align: center; }
 
   /* ---- MANIFESTO (portfolio) ---- */
   .manifesto { padding: 90px 0 40px; }

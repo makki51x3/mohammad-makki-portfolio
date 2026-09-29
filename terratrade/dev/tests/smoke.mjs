@@ -38,6 +38,16 @@ async function scrollThrough(page) {
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight)); await page.waitForTimeout(800);
 }
 
+// ---------------- CodePen effects (one block per adapted pen) ----------------
+async function fxChecks(page, c, name) {
+  // NLWdwz — about banners: five banners with counter discs; zig-zag on wide screens only, mirrored in Arabic
+  const ib = await page.evaluate(() => [...document.querySelectorAll('[data-fx="banners"] .ib')].map(li => ({
+    disc: getComputedStyle(li.querySelector('.ib-card'), '::before').content, tx: parseFloat(getComputedStyle(li).translate) || 0 })));
+  ok(ib.length === 5 && ib.every(b => /counter\(ib/.test(b.disc)), `${name}: banners + counter discs ${JSON.stringify(ib)}`);
+  if (!c.mobile) ok(ib[0].tx * (c.lang === 'ar' ? -1 : 1) < 0 && ib[1].tx * (c.lang === 'ar' ? -1 : 1) > 0, `${name}: banner zig-zag direction ${ib.map(b => b.tx)}`);
+  else ok(ib.every(b => b.tx === 0), `${name}: banners stack without zig-zag on phones ${ib.map(b => b.tx)}`);
+}
+
 // ---------------- matrix ----------------
 const combos = [];
 for (const lang of ['en', 'ar']) for (const theme of ['light', 'dark']) for (const mobile of [false, true]) for (const reduced of [false, true]) combos.push({ lang, theme, mobile, reduced });
@@ -59,6 +69,7 @@ for (const c of (QUICK ? combos.filter(c => !c.reduced && c.theme === 'light') :
   if (c.reduced) { await page.waitForTimeout(1500); const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.length, `${name}: loops running under reduced motion: ${loops}`); }
   else { const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.some(l => ['globe', 'cube', 'morph', 'ambient'].includes(l)), `${name}: off-screen loops still running at the footer: ${loops}`); }
   const csp = await page.evaluate(() => window.__csp); ok(!csp.length, `${name}: CSP violations: ${csp.join(' | ')}`);
+  await fxChecks(page, c, name);
   // accessibility (axe) at top and bottom of the page
   await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(400);
   await page.evaluate(AXE); // via DevTools, so the site's CSP (which blocks inline scripts) doesn't stop axe

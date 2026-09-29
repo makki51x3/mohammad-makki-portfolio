@@ -1,0 +1,32 @@
+- var data = [
+- 	{
+- 		slist: ['#d8272d', '#e92526'], 
+- 		icon: '🖱️', 
+- 		title: 'gingerbread', 
+- 		ptext: 'Cake cookie lemon drops muffin sugar plum. Liquorice pudding sugar plum topping macaroon pie chocolate.'
+- 	}, 
+- 	{
+- 		slist: ['#efb400', '#f9d100'], 
+- 		icon: '✔️', 
+- 		title: 'ice cream', 
+- 		ptext: 'Cake muffin donut chocolate cake jelly sesame snaps wafer tart pie sweet roll muffin chupa chups.'
+- 	}, 
+- 	{
+- 		slist: ['#26aeac', '#7fcfcc'], 
+- 		icon: '➕', 
+- 		title: 'lava cake', 
+- 		ptext: 'Cake cookie lemon drops muffin sugar plum. Liquorice pudding sugar plum topping macaroon pie chocolate.'
+- 	}, 
+- 	{
+- 		slist: ['#9b8675', '#b8ad9b'], 
+- 		icon: '⭐', 
+- 		title: 'macaroon', 
+- 		ptext: 'Cake muffin donut chocolate cake jelly sesame snaps wafer tart pie sweet roll muffin chupa chups.'
+- 	}
+- ];
+- var n = data.length;
+
+- for(var i = 0; i < n; i++)
+	article(style=`--c0: ${data[i].slist[0]}; --c1: ${data[i].slist[1]}`)
+		h3(data-icon=`${data[i].icon}`) #{data[i].title}
+		p #{data[i].ptext}

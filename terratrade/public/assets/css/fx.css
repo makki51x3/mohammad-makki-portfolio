@@ -1,4 +1,110 @@
-/* TerraTrade — CodePen effect adaptations (layer "fx"). Each block is scoped under [data-fx="…"]
-   and credited to its original author. Populated in the CodePen integration phase. */
+/* TerraTrade — CodePen effect adaptations (layer "fx"). Each block is scoped under [data-fx="…"],
+   credited to its original author (see also /credits.txt), and its raw source is kept in dev/pens/<id>/. */
 @layer fx {
+  /* ==========================================================================================
+     S8 · About — mission, vision & core values as zig-zag infographic banners
+     Adapted from "Responsive infographic banners with CSS variables" by Ana Tudor (thebabydino)
+     https://codepen.io/thebabydino/pen/NLWdwz — MIT. Source: dev/pens/NLWdwz/.
+     Kept from the pen: the 10em-tall banner (widened to 36em), the 6.5×-scaled neumorphic counter disc
+     (1.25×h/6.5 across, sunk .38em above the banner and hanging half out of its end), the
+     2fr/3fr title/text rows with `grid-auto-flow: column dense`, the ±16% zig-zag driven by
+     --i/--s, and the skewed, blurred ground shadow.
+     Changed: brand gradients with per-banner ink chosen for contrast, the icon comes from the
+     TerraTrade sprite instead of an emoji, logical properties + a --dir flip for Arabic, the shadow
+     is a z-index:-1 layer rather than a 3D translateZ (so the reveal fade can't flatten it on top),
+     and explicit breakpoints replace the pen's var(--narr, …) invalid-value trick.
+     ========================================================================================== */
+  [data-fx="banners"] {
+    --wide: 1; --dir: 1;
+    display: flex; flex-direction: column; align-items: center;
+    margin: 0; padding: 2.5em 0 0; list-style: none; counter-reset: ib;
+    font-size: clamp(15px, 1.3vw, 18px);
+  }
+  [dir="rtl"] [data-fx="banners"] { --dir: -1; }
+  [data-fx="banners"] .ib {
+    --i: 0; --j: calc(1 - var(--i)); --s: calc(2 * var(--i) - 1);
+    position: relative; width: 36em; max-width: 100%;
+    margin-bottom: calc(1em + (1 - var(--wide)) * 2.5em);
+    translate: calc(var(--dir) * var(--s) * var(--wide) * 16%) 0;
+    counter-increment: ib;
+  }
+  [data-fx="banners"] .ib:nth-child(2n) { --i: 1; }
+  [data-fx="banners"] .ib-card {
+    position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 2fr 3fr; grid-auto-flow: column dense;
+    min-height: 10em; border-radius: 1em;
+    background: linear-gradient(90deg, var(--c0), var(--c1), var(--c0));
+    color: var(--ink);
+  }
+  [data-fx="banners"] .ib:nth-child(2n) .ib-card { grid-template-columns: auto minmax(0, 1fr); }
+  /* the counter disc */
+  [data-fx="banners"] .ib-card::before {
+    content: counter(ib, decimal-leading-zero);
+    display: flex; align-items: center; justify-content: center;
+    grid-column: calc(2 - var(--i)); grid-row: 1 / 3;
+    width: 1.923em; height: 1.923em; box-sizing: border-box;
+    margin-block-start: -.385em;
+    margin-inline-end: calc(var(--wide) * var(--j) * -.808em);
+    margin-inline-start: calc(var(--wide) * var(--i) * -.808em);
+    border: solid 2px transparent; border-radius: 50%;
+    box-shadow: calc(var(--dir) * var(--s) * 2rem) 1rem 2rem -1rem rgba(1, 30, 18, .18);
+    background: linear-gradient(var(--disc-0), var(--disc-1)) content-box, linear-gradient(var(--disc-b0), var(--disc-b1)) border-box;
+    color: var(--num);
+    font: 400 6.5em/1 "Lexend", var(--disp); letter-spacing: -.04em;
+  }
+  /* soft ground shadow (the pen's scaled / rotated / skewed blur) */
+  [data-fx="banners"] .ib-card::after {
+    --t: calc(var(--dir) * var(--s));
+    content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+    transform-origin: 50% 100%;
+    transform: scale(.75) translate(calc(var(--t) * 12.5%), 0) rotate(calc(var(--t) * 7.5deg)) skewX(calc(var(--t) * 20deg));
+    opacity: .45; background: rgba(1, 26, 16, .875); filter: blur(29px);
+  }
+  [data-fx="banners"] :is(h4, p) { margin: 0 2rem .5rem; }
+  [data-fx="banners"] h4 {
+    align-self: end; display: flex; align-items: center; gap: .45em; padding-top: .25em;
+    font: 600 1.6em/1.45 var(--disp); color: inherit;
+  }
+  [data-fx="banners"] .ib-ico { flex: none; width: 1.15em; height: 1.15em; fill: currentColor; opacity: .92; }
+  [data-fx="banners"] p { padding-bottom: .6em; font-size: .95em; line-height: 1.5; color: var(--ink-2); }
+  [dir="rtl"] [data-fx="banners"] p { line-height: 1.8; }
+
+  /* palette: forest → leaf → sprout → amber → logo green; ink picked per banner for ≥4.5:1 */
+  [data-fx="banners"] {
+    --disc-0: #F8FCF6; --disc-1: #DCE7D7; --disc-b0: #CEDCC9; --disc-b1: #F5FAF3;
+  }
+  html.dark [data-fx="banners"] {
+    --disc-0: #173024; --disc-1: #0B1A12; --disc-b0: #0A170F; --disc-b1: #24402F;
+  }
+  [data-fx="banners"] .ib-mission   { --c0: #013D27; --c1: #0A7A33; --ink: #fff; --ink-2: rgba(255, 255, 255, .92); --num: #013D27; }
+  [data-fx="banners"] .ib-vision    { --c0: #075F28; --c1: #178036; --ink: #fff; --ink-2: rgba(255, 255, 255, .92); --num: #075F28; }
+  [data-fx="banners"] .ib-quality   { --c0: #54BA47; --c1: #8DD47C; --ink: #062B1A; --ink-2: rgba(6, 43, 26, .9); --num: #2F7F28; }
+  [data-fx="banners"] .ib-integrity { --c0: #F29A0E; --c1: #FFC35E; --ink: #2A1A00; --ink-2: rgba(42, 26, 0, .9); --num: #9A5B00; }
+  [data-fx="banners"] .ib-growth    { --c0: #21401C; --c1: #3D6B31; --ink: #fff; --ink-2: rgba(255, 255, 255, .92); --num: #21401C; }
+  html.dark [data-fx="banners"] .ib-mission   { --num: #6FDB5E; }
+  html.dark [data-fx="banners"] .ib-vision    { --num: #9BE88C; }
+  html.dark [data-fx="banners"] .ib-quality   { --num: #B5EBA6; }
+  html.dark [data-fx="banners"] .ib-integrity { --num: #FFB938; }
+  html.dark [data-fx="banners"] .ib-growth    { --num: #A9D99B; }
+
+  /* narrower screens: the pen's --wide:0 — banners stack centred, the disc stays inside the banner */
+  @media (max-width: 900px) {
+    [data-fx="banners"] { --wide: 0; }
+  }
+  /* phones: the pen's --narr — a plain card with a smaller disc riding its top corner */
+  @media (max-width: 560px) {
+    [data-fx="banners"] { padding-top: 1.4em; font-size: 15px; }
+    [data-fx="banners"] .ib { width: 100%; margin-bottom: 1.6em; }
+    [data-fx="banners"] .ib-card, [data-fx="banners"] .ib:nth-child(2n) .ib-card { display: block; min-height: 0; padding: 1.1em 0 .7em; }
+    [data-fx="banners"] .ib-card::before {
+      position: absolute; inset-block-start: -.5em; inset-inline-end: .35em; margin: 0;
+      width: 1.55em; height: 1.55em; font-size: 2.6em; box-shadow: 0 .4rem .9rem -.4rem rgba(1, 30, 18, .35);
+    }
+    [data-fx="banners"] :is(h4, p) { margin-inline: 1.25rem; }
+    [data-fx="banners"] h4 { padding-inline-end: 3.4em; font-size: 1.4em; margin-bottom: .35rem; }
+    [data-fx="banners"] .ib-card::after { transform: scale(.85) translateY(4%); opacity: .3; filter: blur(18px); }
+  }
+  @media (forced-colors: active) {
+    [data-fx="banners"] .ib-card { border: 1px solid CanvasText; }
+    [data-fx="banners"] .ib-card::before { border-color: CanvasText; }
+  }
 }

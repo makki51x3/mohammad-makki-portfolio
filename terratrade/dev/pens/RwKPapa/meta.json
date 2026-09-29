@@ -1,0 +1,12 @@
+{
+  "id": "RwKPapa",
+  "title": "3D Perspective cards with depth [CSS]",
+  "author": "Fernando Cohen",
+  "url": "https://codepen.io/designfenix/pen/RwKPapa",
+  "license": "MIT (CodePen public pen default)",
+  "files": [
+    "index.html",
+    "style.scss"
+  ],
+  "note": "Source pasted by the site owner in chat (codepen.io is unreachable from the build container). Removed before saving: author promo popups, portfolio/credit links. Everything else is verbatim."
+}

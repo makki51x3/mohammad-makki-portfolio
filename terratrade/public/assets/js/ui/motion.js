@@ -29,7 +29,7 @@ export function reveal() {
   });
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { settle(e.target); e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12, rootMargin: '0px 0px -40px 0px' });
   els.forEach(e => {
-    const group = e.closest('.pgrid, .scards, .plogos, .values');
+    const group = e.closest('.pgrid, .scards, .plogos, .ibanners');
     if (group) e.style.transitionDelay = ([...e.parentElement.children].indexOf(e) % 4) * 70 + 'ms';
     io.observe(e);
   });

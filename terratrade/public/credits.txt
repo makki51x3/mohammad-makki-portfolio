@@ -12,4 +12,4 @@ Fonts (self-hosted, SIL Open Font License 1.1, via Fontsource): Lexend, Sora, Sp
 Map & globe geometry: Natural Earth via world-atlas (public domain).
 
 CodePen adaptations (MIT unless stated in the pen) — see /assets/css/fx.css and /assets/js/fx/:
-- (added as each pen is integrated)
+- About · mission, vision & values banners — "Responsive infographic banners with CSS variables" by Ana Tudor (thebabydino), https://codepen.io/thebabydino/pen/NLWdwz

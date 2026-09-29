@@ -274,22 +274,41 @@
       </dl>
     </div>
 
-    <!-- Mission / Vision / Values — infographic banners (slot S8: thebabydino "Responsive infographic banners with CSS variables") -->
-    <div class="mv" data-fx="banners">
-      <article class="banner reveal" style="--c0:var(--forest);--c1:#0A7A33;--k:0">
-        <div class="banner-ico"><svg viewBox="0 0 256 256" aria-hidden="true"><use href="/assets/img/icons.svg#i-rocket"/></svg></div>
-        <div class="banner-body"><h3 data-i18n="about.missionT">Mission</h3><p data-i18n="about.mission">To set the standard in agricultural trade by delivering Nigeria's finest agricultural outputs to global buyers with trust, quality and consistency.</p></div>
-      </article>
-      <article class="banner reveal" style="--c0:#075F28;--c1:#1A7F3A;--k:1">
-        <div class="banner-ico"><svg viewBox="0 0 256 256" aria-hidden="true"><use href="/assets/img/icons.svg#i-eye"/></svg></div>
-        <div class="banner-body"><h3 data-i18n="about.visionT">Vision</h3><p data-i18n="about.vision">To redefine the future of agricultural trade in Nigeria by connecting local excellence with global demand.</p></div>
-      </article>
-    </div>
-    <h3 class="values-h reveal" data-i18n="about.valuesT">Core values</h3>
-    <ol class="values" role="list" data-fx="banners">
-      <li class="value reveal" style="--c0:var(--forest);--c1:#0A7A33;--k:0"><span class="vnum"><bdi>01</bdi></span><h4 data-i18n="about.v1T">Quality assurance</h4><p data-i18n="about.v1">Unwavering commitment to international standards, from sourcing point to market.</p></li>
-      <li class="value reveal" style="--c0:#075F28;--c1:#1A7F3A;--k:1"><span class="vnum"><bdi>02</bdi></span><h4 data-i18n="about.v2T">Supply-chain integrity</h4><p data-i18n="about.v2b">Building trust through transparent, efficient and direct partnerships with both farmers and millers.</p></li>
-      <li class="value value-amber reveal" style="--c0:#E08A00;--c1:#FFA612;--k:2"><span class="vnum"><bdi>03</bdi></span><h4 data-i18n="about.v3T">Sustainable growth</h4><p data-i18n="about.v3b">Fostering economic empowerment for our partner farmers and a long-term future for the sector.</p></li>
+    <!-- Mission, vision & core values — infographic banners.
+         Adapted from "Responsive infographic banners with CSS variables" by Ana Tudor (thebabydino),
+         https://codepen.io/thebabydino/pen/NLWdwz (MIT) — styles in assets/css/fx.css [data-fx="banners"]. -->
+    <h3 class="values-h reveal" id="valuesTitle" data-i18n="about.valuesT">Mission, vision &amp; core values</h3>
+    <ol class="ibanners" role="list" data-fx="banners" aria-labelledby="valuesTitle">
+      <li class="ib ib-mission reveal">
+        <div class="ib-card">
+          <h4><svg class="ib-ico" viewBox="0 0 128 128" aria-hidden="true" focusable="false"><use href="/assets/img/icons.svg#i-rocket"/></svg><span data-i18n="about.missionT">Mission</span></h4>
+          <p data-i18n="about.mission">To set the standard in agricultural trade by delivering Nigeria's finest agricultural outputs to global buyers with trust, quality and consistency.</p>
+        </div>
+      </li>
+      <li class="ib ib-vision reveal">
+        <div class="ib-card">
+          <h4><svg class="ib-ico" viewBox="0 0 128 128" aria-hidden="true" focusable="false"><use href="/assets/img/icons.svg#i-eye"/></svg><span data-i18n="about.visionT">Vision</span></h4>
+          <p data-i18n="about.vision">To redefine the future of agricultural trade in Nigeria by connecting local excellence with global demand.</p>
+        </div>
+      </li>
+      <li class="ib ib-quality reveal">
+        <div class="ib-card">
+          <h4><svg class="ib-ico" viewBox="0 0 128 128" aria-hidden="true" focusable="false"><use href="/assets/img/icons.svg#i-farmer"/></svg><span data-i18n="about.v1T">Quality assurance</span></h4>
+          <p data-i18n="about.v1">Unwavering commitment to international standards, from sourcing point to market.</p>
+        </div>
+      </li>
+      <li class="ib ib-integrity reveal">
+        <div class="ib-card">
+          <h4><svg class="ib-ico" viewBox="0 0 128 128" aria-hidden="true" focusable="false"><use href="/assets/img/icons.svg#i-partnership"/></svg><span data-i18n="about.v2T">Supply-chain integrity</span></h4>
+          <p data-i18n="about.v2b">Building trust through transparent, efficient and direct partnerships with both farmers and millers.</p>
+        </div>
+      </li>
+      <li class="ib ib-growth reveal">
+        <div class="ib-card">
+          <h4><svg class="ib-ico" viewBox="0 0 128 128" aria-hidden="true" focusable="false"><use href="/assets/img/icons.svg#i-wheat"/></svg><span data-i18n="about.v3T">Sustainable growth</span></h4>
+          <p data-i18n="about.v3b">Fostering economic empowerment for our partner farmers and a long-term future for the sector.</p>
+        </div>
+      </li>
     </ol>
   </div>
 </section>
