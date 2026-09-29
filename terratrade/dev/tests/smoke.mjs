@@ -63,6 +63,19 @@ async function fxChecks(page, c, name) {
   ok(ib.length === 5 && ib.every(b => /counter\(ib/.test(b.disc)), `${name}: banners + counter discs ${JSON.stringify(ib)}`);
   if (!c.mobile) ok(ib[0].tx * (c.lang === 'ar' ? -1 : 1) < 0 && ib[1].tx * (c.lang === 'ar' ? -1 : 1) > 0, `${name}: banner zig-zag direction ${ib.map(b => b.tx)}`);
   else ok(ib.every(b => b.tx === 0), `${name}: banners stack without zig-zag on phones ${ib.map(b => b.tx)}`);
+  // YPZQxeN — harbour water: WebGL (three.js loaded on demand) on wide screens with motion, a still panel under
+  // reduced motion, nothing on phones; its loop only runs while the panel is on screen (checked from the footer)
+  const wq = await page.evaluate(() => ({ three: performance.getEntriesByType('resource').some(r => /three-water/.test(r.name)),
+    shown: getComputedStyle(document.querySelector('[data-fx="water"]')).display !== 'none', gl: !!document.querySelector('.sea-gl'), loops: window.__tt.loops() }));
+  if (c.mobile) ok(!wq.three && !wq.shown && !wq.gl, `${name}: no water panel / three.js on phones ${JSON.stringify(wq)}`);
+  else if (c.reduced) ok(!wq.three && wq.shown && !wq.gl, `${name}: still water panel under reduced motion ${JSON.stringify(wq)}`);
+  else {
+    ok(!wq.loops.includes('water'), `${name}: water loop idle off-screen ${wq.loops}`);
+    await page.evaluate(() => document.querySelector('[data-fx="water"]').scrollIntoView({ block: 'center' }));
+    await page.waitForFunction(() => document.querySelector('.sea-gl') && window.__tt.loops().includes('water'), null, { polling: 500, timeout: 30000 }).catch(() => {});
+    const w = await page.evaluate(() => ({ gl: document.querySelector('[data-fx="water"]').classList.contains('is-gl'), loops: window.__tt.loops() }));
+    ok(w.gl && w.loops.includes('water'), `${name}: WebGL water runs in view ${JSON.stringify(w)}`);
+  }
   // raMZQNe — chunky squircle buttons: SVG layer behind the live label, the face sinks while pressed;
   // the floating WhatsApp squircle hides over the hero / contact / footer and shows in between
   const ch = await page.evaluate(() => { const q = document.querySelector('.hero [data-chunky]');
@@ -116,7 +129,7 @@ for (const c of (QUICK ? combos.filter(c => !c.reduced && c.theme === 'light') :
   const badImgs = await page.evaluate(() => [...document.images].filter(i => (i.getAttribute('src') || i.srcset) && i.getClientRects().length && (!i.complete || !i.naturalWidth)).map(i => i.currentSrc || i.src));
   ok(!badImgs.length, `${name}: images not loaded: ${badImgs.join(', ')}`);
   if (c.reduced) { await page.waitForTimeout(1500); const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.length, `${name}: loops running under reduced motion: ${loops}`); }
-  else { const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.some(l => ['globe', 'cube', 'morph', 'ambient'].includes(l)), `${name}: off-screen loops still running at the footer: ${loops}`); }
+  else { const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.some(l => ['globe', 'cube', 'morph', 'ambient', 'bubbles', 'water'].includes(l)), `${name}: off-screen loops still running at the footer: ${loops}`); }
   const csp = await page.evaluate(() => window.__csp); ok(!csp.length, `${name}: CSP violations: ${csp.join(' | ')}`);
   await fxChecks(page, c, name);
   // accessibility (axe) at top and bottom of the page
