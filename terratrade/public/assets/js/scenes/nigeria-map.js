@@ -42,7 +42,8 @@ export default async function nigeriaMap() {
     return () => { stage.classList.remove('pinning'); st.kill(); };
   });
   mm.add('(max-width: 900px)', () => {
-    const st = ScrollTrigger.create({ trigger: '.ops-steps', start: 'top 75%', end: 'bottom 55%', scrub: .6, animation: tl });
+    // the map is sticky on phones: start drawing as soon as it enters, finish as the last step passes
+    const st = ScrollTrigger.create({ trigger: map, start: 'top 90%', endTrigger: '.ops-steps', end: 'bottom 60%', scrub: .6, animation: tl });
     return () => st.kill();
   });
   ScrollTrigger.refresh();
