@@ -2,7 +2,7 @@
 // dark theme = warm amber "fireflies" with a soft glow, light theme = faint green & amber specks.
 // Runs only while the hero is on screen (the fixed canvas fades out below it).
 import { $, TOUCH } from '../core/env.js';
-import { addLoop } from '../core/loop.js';
+import { addLoop, redraw } from '../core/loop.js';
 import { isDark } from '../core/theme.js';
 
 export default function ambient() {
@@ -16,10 +16,10 @@ export default function ambient() {
     const n = TOUCH ? 34 : Math.min(90, Math.round(innerWidth / 16));
     while (motes.length < n) motes.push(make()); motes.length = n;
   }
-  size(); addEventListener('resize', size);
+  size(); addEventListener('resize', () => { size(); redraw('ambient'); });
   if (!TOUCH) addEventListener('pointermove', e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; }, { passive: true });
   let dark = isDark();
-  addEventListener('tt:theme', e => { dark = e.detail.dark; });
+  addEventListener('tt:theme', e => { dark = e.detail.dark; redraw('ambient'); });
   const io = new IntersectionObserver(([e]) => cv.style.opacity = e.isIntersecting ? '1' : '0', { rootMargin: '0px 0px -30% 0px' });
   io.observe(hero); cv.style.transition = 'opacity .8s';
   addLoop('ambient', (now, dt) => {

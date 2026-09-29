@@ -2,12 +2,12 @@
 // Every canvas / rAF effect subscribes here instead of running its own requestAnimationFrame forever:
 // a loop only runs while its element is near the viewport and the tab is visible; under reduced motion
 // it renders a single static frame and never runs. window.__tt.loops() lists what is running (tests use it).
-import { REDUCED } from './env.js';
+import { REDUCED, isPaused } from './env.js';
 
 const loops = new Map();
 let rafId = 0, last = 0;
 
-function running(L) { return L.visible && !document.hidden && !REDUCED; }
+function running(L) { return L.visible && !document.hidden && !REDUCED && !isPaused(); }
 function frame(now) {
   rafId = 0;
   const dt = Math.min(64, now - (last || now)); last = now;
@@ -34,4 +34,5 @@ export function removeLoop(name) { loops.delete(name); }
 /** Nudge a loop to draw once more (e.g. after a theme change while static). */
 export function redraw(name) { const L = loops.get(name); if (L) try { L.fn(performance.now(), 16); } catch (e) { console.error(e); } }
 document.addEventListener('visibilitychange', wake);
+addEventListener('tt:motion', wake);
 window.__tt = Object.assign(window.__tt || {}, { loops: () => [...loops.values()].filter(running).map(l => l.name) });

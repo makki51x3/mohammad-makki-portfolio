@@ -1,6 +1,7 @@
 // Product spec data for the spec-sheet dialog. Values are INDICATIVE (typical export ranges), clearly labelled
 // as such on the page — final specifications are agreed per contract. TO CONFIRM WITH TERRATRADE before launch.
-// Language-neutral: numbers stay as-is (rendered inside <bdi dir=ltr>); words are i18n keys ({k: 'key'}).
+// Language-neutral: numbers stay as-is (rendered inside <bdi dir=ltr>); words are i18n keys ({k: 'key'});
+// numbers with units are {n, u} so the unit gets translated.
 const ALL = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 export const PRODUCTS = {
@@ -11,7 +12,7 @@ export const PRODUCTS = {
   },
   cashew: {
     months: [2, 3, 4, 5],
-    specs: [['spec.kor', '46 – 50 lbs / 80 kg'], ['spec.nutcount', '180 – 210 / kg'], ['spec.moisture', '≤ 10%'], ['spec.defective', '≤ 10%'], ['spec.foreign', '≤ 1%']],
+    specs: [['spec.kor', { n: '46 – 50', u: 'spec.u.lbs80' }], ['spec.nutcount', { n: '180 – 210', u: 'spec.u.perKg' }], ['spec.moisture', '≤ 10%'], ['spec.defective', '≤ 10%'], ['spec.foreign', '≤ 1%']],
     pack: 'pack.jute',
   },
   hibiscus: {

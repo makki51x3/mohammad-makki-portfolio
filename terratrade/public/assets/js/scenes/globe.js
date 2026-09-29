@@ -133,10 +133,12 @@ export default function globe() {
     const qo = P(O);
     if (qo[2] >= 0) {
       const [x, y] = scr(qo), pulse = REDUCED ? .5 : .5 + .5 * Math.sin(now * .004);
+      originMark.vis = true; originMark.sx = x / D; originMark.sy = y / D;
       ctx.beginPath(); ctx.arc(x, y, 6 * D, 0, 6.2832); ctx.fillStyle = C.ng; ctx.fill();
       ctx.beginPath(); ctx.arc(x, y, (8 + pulse * 10) * D, 0, 6.2832); ctx.strokeStyle = C.ng; ctx.globalAlpha = .7 - pulse * .55; ctx.lineWidth = 1.5 * D; ctx.stroke(); ctx.globalAlpha = 1;
     }
     // rim
+    if (qo[2] < 0) originMark.vis = false;
     ctx.beginPath(); ctx.arc(CX, CX, R + 1.5 * D, 0, 6.2832); ctx.strokeStyle = C.rim; ctx.lineWidth = D; ctx.stroke();
     if (tip && !tip.hidden && tip._m) placeTip(tip._m);
   }
@@ -148,13 +150,24 @@ export default function globe() {
   }
   function showTip(m) {
     if (!m) { tip.hidden = true; tip._m = null; return; }
-    tip.textContent = `${m.name} · ${t(m.status === 'active' ? 'markets.tipActive' : 'markets.tipOpening')}`;
+    tip.textContent = m.origin ? t('markets.tipOrigin') : `${m.name} · ${t(m.status === 'active' ? 'markets.tipActive' : 'markets.tipOpening')}`;
     tip._m = m; tip.hidden = false; placeTip(m);
   }
+  // the origin behaves like a marker for hover/tap tooltips
+  const originMark = { origin: true, vis: false, sx: 0, sy: 0 };
+  const hittable = () => markets.concat(originMark).filter(m => m.vis);
 
   // ---- interaction ----
   let drag = null;
-  cv.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY, rot, tilt, moved: false }; target = null; idleUntil = performance.now() + 6000; });
+  cv.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    if (e.pointerType === 'mouse') cv.setPointerCapture?.(e.pointerId); // touch keeps native vertical scrolling (touch-action: pan-y)
+    drag = { x: e.clientX, y: e.clientY, rot, tilt, moved: false }; target = null; idleUntil = performance.now() + 6000;
+  });
+  const endDrag = () => { drag = null; };
+  cv.addEventListener('pointercancel', endDrag);
+  cv.addEventListener('lostpointercapture', endDrag);
+  addEventListener('pointercancel', endDrag);
   addEventListener('pointermove', e => {
     if (drag) {
       const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
@@ -166,14 +179,14 @@ export default function globe() {
     }
     if (e.target !== cv || e.pointerType !== 'mouse') return;
     const r = cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
-    const near = markets.filter(m => m.vis).map(m => [m, Math.hypot(m.sx - mx, m.sy - my)]).sort((a, b) => a[1] - b[1])[0];
+    const near = hittable().map(m => [m, Math.hypot(m.sx - mx, m.sy - my)]).sort((a, b) => a[1] - b[1])[0];
     const m = near && near[1] < 18 ? near[0] : null;
-    if (m !== hover) { hover = m; showTip(m); markets.forEach(x => x.li.classList.toggle('on', x === m || x === focus)); if (REDUCED) redraw('globe'); }
+    if (m !== hover) { hover = m && !m.origin ? m : null; showTip(m); markets.forEach(x => x.li.classList.toggle('on', x === hover || x === focus)); if (REDUCED) redraw('globe'); }
   }, { passive: true });
   addEventListener('pointerup', e => {
     if (drag && !drag.moved && e.target === cv) { // tap → nearest marker
       const r = cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
-      const near = markets.filter(m => m.vis).map(m => [m, Math.hypot(m.sx - mx, m.sy - my)]).sort((a, b) => a[1] - b[1])[0];
+      const near = hittable().map(m => [m, Math.hypot(m.sx - mx, m.sy - my)]).sort((a, b) => a[1] - b[1])[0];
       showTip(near && near[1] < 28 ? near[0] : null);
     }
     drag = null;
@@ -184,14 +197,15 @@ export default function globe() {
   $$('[data-region]').forEach(b => { if (b.tagName !== 'BUTTON') return; b.addEventListener('click', () => {
     region = b.dataset.region; focus = null;
     $$('button[data-region]').forEach(x => { const on = x === b; x.classList.toggle('active', on); x.setAttribute('aria-pressed', String(on)); });
-    markets.forEach(m => { m.li.classList.toggle('dim', region !== 'all' && m.region !== region); m.li.classList.remove('on'); });
+    markets.forEach(m => { m.li.classList.toggle('dim', region !== 'all' && m.region !== region); m.li.classList.remove('on'); m.li.querySelector('button')?.setAttribute('aria-pressed', 'false'); });
     showTip(null); idleUntil = 0; autoFlip = performance.now() + 7000; flip = false;
     goto(region === 'all' ? views.me : views[region]);
   }); });
   // market list: click/hover highlights a route
   markets.forEach(m => {
     const btn = m.li.querySelector('button') || m.li;
-    const pick = () => { focus = m; idleUntil = performance.now() + 8000; markets.forEach(x => x.li.classList.toggle('on', x === m)); goto(toLatLon(norm([O[0] + m.p[0] * 1.4, O[1] + m.p[1] * 1.4, O[2] + m.p[2] * 1.4]))); setTimeout(() => showTip(m), REDUCED ? 0 : 700); };
+    btn.setAttribute('aria-pressed', 'false');
+    const pick = () => { focus = m; idleUntil = performance.now() + 8000; markets.forEach(x => { x.li.classList.toggle('on', x === m); x.li.querySelector('button')?.setAttribute('aria-pressed', String(x === m)); }); goto(toLatLon(norm([O[0] + m.p[0] * 1.4, O[1] + m.p[1] * 1.4, O[2] + m.p[2] * 1.4]))); setTimeout(() => showTip(m), REDUCED ? 0 : 700); };
     btn.addEventListener('click', pick);
     m.li.addEventListener('pointerenter', () => { hover = m; if (REDUCED) redraw('globe'); });
     m.li.addEventListener('pointerleave', () => { hover = null; if (REDUCED) redraw('globe'); });

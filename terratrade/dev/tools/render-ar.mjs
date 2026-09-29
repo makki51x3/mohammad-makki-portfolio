@@ -14,7 +14,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const PUB = join(here, '..', '..', 'public');
 const SITE = 'https://terratrade.global';
 const AR = (await import(pathToFileURL(join(PUB, 'assets', 'js', 'i18n', 'ar.js')).href + '?t=' + Date.now())).default;
-const PAGES = [['index.html', 'ar/index.html', '/', '/ar/'], ['thanks/index.html', 'ar/thanks/index.html', '/thanks/', '/ar/thanks/'], ['privacy/index.html', 'ar/privacy/index.html', '/privacy/', '/ar/privacy/']];
+const PAGES = [['index.html', 'ar/index.html', '/', '/ar/'], ['thanks/index.html', 'ar/thanks/index.html', '/thanks/', '/ar/thanks/'],
+  ['privacy/index.html', 'ar/privacy/index.html', '/privacy/', '/ar/privacy/'], ['404.html', 'ar/404.html', '/404.html', '/ar/404.html']];
 
 const missing = new Set();
 const get = k => { if (!(k in AR)) { missing.add(k); return null; } return AR[k]; };
@@ -46,6 +47,9 @@ for (const [src, dst, enPath, arPath] of PAGES) {
   const pre = [...document.querySelectorAll('link[rel="preload"][as="font"]')];
   if (pre[0]) pre[0].setAttribute('href', '/assets/fonts/noto-kufi-arabic-arabic-700-normal.woff2');
   if (pre[1]) pre[1].setAttribute('href', '/assets/fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2');
+  // the Arabic dictionary is imported by main.js before anything runs: fetch it in parallel with the module graph
+  const mp = document.querySelector('link[rel="modulepreload"]');
+  if (mp) { const l = document.createElement('link'); l.setAttribute('rel', 'modulepreload'); l.setAttribute('href', '/assets/js/i18n/ar.js'); mp.after(l); }
   let out = document.toString()
     // linkedom lowercases SVG filter element names; restore their canonical camelCase
     .replace(/<(\/?)fe(turbulence|displacementmap|colormatrix|gaussianblur)\b/g, (_, sl, n) => `<${sl}fe${{ turbulence: 'Turbulence', displacementmap: 'DisplacementMap', colormatrix: 'ColorMatrix', gaussianblur: 'GaussianBlur' }[n]}`);

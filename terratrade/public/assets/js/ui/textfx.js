@@ -2,6 +2,7 @@
 // gooey morph word, character-roll heading, scroll-lit paragraph, counters, marquee.
 // Every effect reads its text from the DOM (so the generated Arabic page just works) and has an
 // Arabic-safe mode: words, never letters (splitting Arabic letters breaks their joining).
+// Screen readers always get the final text: animated copies are aria-hidden.
 import { $, $$, REDUCED, isAR, hasGSAP } from '../core/env.js';
 import { addLoop } from '../core/loop.js';
 
@@ -14,20 +15,23 @@ export function typed() {
   const io = new IntersectionObserver(es => es.forEach(en => {
     if (!en.isIntersecting) return; io.unobserve(en.target);
     const el = en.target, txt = el.textContent.trim();
-    el.setAttribute('aria-label', txt);
+    el.style.minHeight = el.offsetHeight + 'px'; // no layout shift while it types
+    el.innerHTML = `<span class="sr-only">${esc(txt)}</span><span class="tt" aria-hidden="true"></span>`;
+    const tt = el.querySelector('.tt');
     const caret = document.createElement('span'); caret.className = 'tcaret'; caret.textContent = '▍'; caret.setAttribute('aria-hidden', 'true');
+    const done = () => setTimeout(() => { caret.remove(); el.style.minHeight = ''; }, 1100);
     if (isAR()) { // word-by-word reveal
-      const words = txt.split(/\s+/); let i = 0; el.textContent = '';
-      (function step() { el.textContent = words.slice(0, ++i).join(' '); el.appendChild(caret); if (i < words.length) setTimeout(step, 90); else setTimeout(() => caret.remove(), 1000); })();
+      const words = txt.split(/\s+/); let i = 0;
+      (function step() { tt.textContent = words.slice(0, ++i).join(' '); tt.appendChild(caret); if (i < words.length) setTimeout(step, 90); else done(); })();
       return;
     }
-    const out = []; let idx = 0; el.textContent = '';
+    const out = []; let idx = 0;
     (function step() {
-      if (idx >= txt.length) { setTimeout(() => caret.remove(), 1200); return; }
+      if (idx >= txt.length) { done(); return; }
       let cycles = Math.random() < .35 ? 2 : 0;
       (function glitch() {
-        if (cycles-- > 0) { out[idx] = SYM[Math.floor(Math.random() * SYM.length)]; el.textContent = out.join(''); el.appendChild(caret); setTimeout(glitch, 30); }
-        else { out[idx] = txt[idx]; el.textContent = out.join(''); el.appendChild(caret); idx++; setTimeout(step, 22); }
+        if (cycles-- > 0) { out[idx] = SYM[Math.floor(Math.random() * SYM.length)]; tt.textContent = out.join(''); tt.appendChild(caret); setTimeout(glitch, 30); }
+        else { out[idx] = txt[idx]; tt.textContent = out.join(''); tt.appendChild(caret); idx++; setTimeout(step, 22); }
       })();
     })();
   }), { threshold: .6 });
@@ -55,6 +59,7 @@ export function morph() {
   box.setAttribute('aria-hidden', 'true');
   box.innerHTML = words.map(w => `<span class="mword">${esc(w)}</span>`).join('');
   const spans = [...box.children]; let i = 0, frac = 0;
+  spans[0].style.opacity = 1;
   // size the box to the longest word so the line doesn't jump
   box.style.minWidth = Math.max(...spans.map(s => s.getBoundingClientRect().width)) + 'px';
   addLoop('morph', (_, dt) => {
@@ -66,19 +71,21 @@ export function morph() {
   }, { el: box });
 }
 
-/* character roll (portfolio tabs) — used by the product filter heading */
+/* character roll (portfolio tabs) — used by the product filter heading. Letters are grouped per word
+   (nowrap) so lines only ever break between words. */
 export function chars(txt) {
-  const parts = isAR() ? txt.split(' ') : [...txt];
-  return parts.map(ch => `<span class="ch">${ch === ' ' ? '&nbsp;' : esc(ch)}</span>`).join(isAR() ? ' ' : '');
+  if (isAR()) return txt.split(' ').map(w => `<span class="ch">${esc(w)}</span>`).join(' ');
+  return txt.split(' ').map(w => `<span class="nowrap">${[...w].map(c => `<span class="ch">${esc(c)}</span>`).join('')}</span>`).join(' ');
 }
 export function roll(el, txt) {
   if (!hasGSAP() || REDUCED) { el.textContent = txt; return Promise.resolve(); }
   return new Promise(res => {
     const old = el.querySelectorAll('.ch').length ? [...el.querySelectorAll('.ch')] : (el.innerHTML = chars(el.textContent), [...el.querySelectorAll('.ch')]);
-    const tl = gsap.timeline({ onComplete: res });
+    const tl = gsap.timeline();
     tl.to(old, { yPercent: -110, stagger: .012, duration: .4, ease: 'expo.in' });
     tl.add(() => { el.innerHTML = chars(txt); gsap.set(el.querySelectorAll('.ch'), { yPercent: 110 }); });
-    tl.add(() => gsap.to(el.querySelectorAll('.ch'), { yPercent: 0, stagger: .012, duration: .55, ease: 'expo.out' }));
+    tl.add(() => gsap.to(el.querySelectorAll('.ch'), { yPercent: 0, stagger: .012, duration: .55, ease: 'expo.out',
+      onComplete: () => { el.textContent = txt; res(); } })); // settle back to plain text (clean wrapping)
   });
 }
 
@@ -95,15 +102,15 @@ export function aboutLit() {
   addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(up); } }, { passive: true }); up();
 }
 
-/* counters (portfolio nums) */
+/* counters (portfolio nums): the real number stays in the DOM for assistive tech; an aria-hidden copy counts up */
 export function counters() {
   const els = $$('[data-count]'); if (!els.length || REDUCED) return;
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting) return; io.unobserve(e.target);
-    const el = e.target, n = parseInt(el.dataset.count, 10), t0 = performance.now(), dur = 1200;
-    (function tick(now) { const pr = Math.min(1, (now - t0) / dur); el.textContent = Math.round(n * (1 - Math.pow(1 - pr, 3))); if (pr < 1) requestAnimationFrame(tick); })(t0);
+    const el = e.target, n = parseInt(el.dataset.count, 10), vis = el.querySelector('[aria-hidden]'), t0 = performance.now(), dur = 1200;
+    (function tick(now) { const pr = Math.min(1, (now - t0) / dur); vis.textContent = Math.round(n * (1 - Math.pow(1 - pr, 3))); if (pr < 1) requestAnimationFrame(tick); })(t0);
   }), { threshold: .6 });
-  els.forEach(el => { el.textContent = '0'; io.observe(el); });
+  els.forEach(el => { const n = el.dataset.count; el.innerHTML = `<span class="sr-only">${esc(n)}</span><span aria-hidden="true">0</span>`; io.observe(el); });
 }
 
 /* marquee rows built from the data-words list (doubled for a seamless loop) */

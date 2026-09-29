@@ -4,6 +4,7 @@ import { roll } from './textfx.js';
 
 export function products() {
   const bar = $('.filter'), head = $('#panelH'); if (!bar) return;
+  const live = $('#panelHsr', head), vis = $('.roll', head) || head;
   const cards = $$('.pcard');
   let busy = false;
   bar.addEventListener('click', async e => {
@@ -15,7 +16,8 @@ export function products() {
     const hide = cards.filter(c => !show.includes(c));
     const text = head.dataset['h' + f[0].toUpperCase() + f.slice(1)] || head.textContent;
     const anim = hasGSAP() && !REDUCED;
-    const headDone = roll(head, text);
+    if (live) live.textContent = text; // announced once, as a whole sentence
+    const headDone = roll(vis, text);
     if (anim) await new Promise(res => gsap.to(cards.filter(c => !c.hidden), { opacity: 0, y: 14, scale: .97, duration: .22, stagger: .02, ease: 'power2.in', onComplete: res }));
     hide.forEach(c => { c.hidden = true; });
     show.forEach(c => { c.hidden = false; c.classList.add('in'); });

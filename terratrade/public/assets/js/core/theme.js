@@ -1,14 +1,15 @@
 // Light (default) / dark "night harvest" theme with the portfolio's circular view-transition reveal.
 // Persisted in localStorage('tt-theme'); the inline head script applies it before first paint.
-import { html, REDUCED, $ } from './env.js';
+// Also wires the "Pause animations" switch (WCAG 2.2.2).
+import { html, REDUCED, $, isPaused, setPaused } from './env.js';
 import { t } from './i18n.js';
 
 const meta = () => document.querySelector('meta[name="theme-color"]');
 export const isDark = () => html.classList.contains('dark');
 
 function sync() {
-  const btn = $('#themeToggle');
-  if (btn) { btn.setAttribute('aria-pressed', String(isDark())); btn.setAttribute('aria-label', t(isDark() ? 'nav.themeLight' : 'nav.themeDark')); }
+  // action-style label ("Switch to dark theme"), so no aria-pressed on top of it
+  $('#themeToggle')?.setAttribute('aria-label', t(isDark() ? 'nav.themeLight' : 'nav.themeDark'));
   meta()?.setAttribute('content', isDark() ? '#04150E' : '#013D27');
 }
 
@@ -30,4 +31,11 @@ export function theme() {
       vt.ready?.catch(() => {}); vt.finished?.catch(() => {});
     } else go();
   });
+}
+
+export function motionToggle() {
+  const btn = $('#motionToggle'); if (!btn) return;
+  const sync = () => { btn.setAttribute('aria-pressed', String(isPaused())); };
+  sync();
+  btn.addEventListener('click', () => { setPaused(!isPaused()); sync(); });
 }

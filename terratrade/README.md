@@ -46,7 +46,7 @@ cd terratrade/dev
 npm install                       # dev tools only (Playwright, axe, linkedom, world-atlas, fontsource, gsap, lenis…)
 npm run serve                     # http://127.0.0.1:8787, applies _headers/_redirects and accepts form posts
 npm run ar && npm run csp         # after editing index.html, ar.js, or any page's inline <head> script
-npm test                          # 16-run matrix: EN/AR × light/dark × desktop/phone × motion/reduced
+npm test                          # i18n coverage + 16-run matrix: EN/AR × light/dark × desktop/phone × motion/reduced
 node tests/shots.mjs --lang ar --theme dark --w 390   # per-section screenshots → dev/out/shots/
 ```
 
@@ -67,7 +67,7 @@ Each tool regenerates one kind of asset:
 ## Deploy on Netlify
 
 1. **Create the site.** Add a new site from this repository. Set **Base directory** to `terratrade` and leave the build command empty; `terratrade/netlify.toml` sets `publish = "public"`. It is a separate site from the portfolio; the portfolio's edge "gate" and analytics functions don't apply here.
-2. **Turn on forms.** Go to **Forms** and enable form detection, then redeploy. The `rfq` form is detected from the static HTML.
+2. **Turn on forms.** Go to **Forms** and enable form detection, then trigger **Deploys → Trigger deploy → Deploy site**. The `rfq` form is detected from the static HTML. The `ignore` rule in `netlify.toml` never skips a same-commit redeploy.
 3. **Set up notifications.** Go to Forms → Notifications and add email notifications to **info@terratrade.global**.
 4. **Connect the domain.** Add `terratrade.global` under Domain management. If the domain already has email, only add the web records (A/ALIAS for the apex, CNAME for `www`) and leave the MX/SPF/DKIM records untouched.
 
@@ -78,6 +78,7 @@ Each tool regenerates one kind of asset:
 - [ ] **Partner wording and logos.** The deck says "Our partnerships"; confirm each company agrees to be listed, and supply official SVG logos.
 - [ ] **Photos.**
   - The deck's "raw cashew" photo shows **shelled kernels**, not in-shell raw cashew nuts; please supply a correct photo.
+  - **Ginger:** confirm the export form (e.g. dried split) and supply a matching photo. The deck photo shows fresh root, so the copy currently says just "Nigerian ginger".
   - Confirm the stock-photo licences cover web use.
 - [ ] **Registration details.** CAC / NEPC registration numbers and the full Kano address.
 - [ ] **Messaging apps.** Is +234 803 444 5888 on WhatsApp? Any WeChat, LINE or KakaoTalk account? WhatsApp is blocked in China.

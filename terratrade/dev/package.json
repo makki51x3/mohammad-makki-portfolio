@@ -12,7 +12,7 @@
     "build:gen": "npm run ar && npm run csp",
     "serve": "node tests/server.mjs",
     "test:i18n": "node tests/i18n-coverage.mjs",
-    "test": "node tests/smoke.mjs"
+    "test": "node tests/i18n-coverage.mjs && node tests/smoke.mjs"
   },
   "devDependencies": {
     "@fontsource/ibm-plex-sans-arabic": "^5.2.0",

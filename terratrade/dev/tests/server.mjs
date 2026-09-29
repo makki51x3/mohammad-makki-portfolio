@@ -30,10 +30,17 @@ function parseHeaders() {
 function parseRedirects() {
   const f = join(ROOT, '_redirects'); if (!existsSync(f)) return [];
   return readFileSync(f, 'utf8').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#')).map(l => {
-    const parts = l.split(/\s+/); const from = parts.shift(); const status = /^\d{3}!?$/.test(parts.at(-1)) ? parseInt(parts.pop()) : 301;
+    const parts = l.split(/\s+/); const from = parts.shift();
+    const st = /^\d{3}!?$/.test(parts.at(-1)) ? parts.pop() : '301';
     const to = parts.pop(); const query = Object.fromEntries(parts.map(p => p.split('=')));
-    return { from, to, status, query };
+    return { from, to, status: parseInt(st, 10), force: st.endsWith('!'), query };
   });
+}
+// Netlify semantics: a non-forced rule only applies when no static file exists at the path.
+function staticExists(path) {
+  const f = normalize(join(ROOT, decodeURIComponent(path)));
+  if (!f.startsWith(ROOT) || !existsSync(f)) return false;
+  return statSync(f).isDirectory() ? existsSync(join(f, 'index.html')) : true;
 }
 const globToRe = g => new RegExp('^' + g.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$');
 
@@ -42,11 +49,15 @@ export function start(port = 0) {
     const server = createServer((req, res) => {
       const url = new URL(req.url, 'http://x');
       let path = decodeURIComponent(url.pathname);
+      let rewrite404 = null;
       for (const r of parseRedirects()) {
-        if (r.from !== path) continue;
-        if (Object.entries(r.query).every(([k, v]) => url.searchParams.get(k) === v || (v.startsWith(':') && url.searchParams.has(k)))) {
-          res.writeHead(r.status, { Location: r.to }); return res.end();
-        }
+        const wild = r.from.endsWith('/*');
+        const hit = wild ? path.startsWith(r.from.slice(0, -1)) : r.from === path;
+        if (!hit) continue;
+        if (!r.force && staticExists(path)) continue;
+        if (!Object.entries(r.query).every(([k, v]) => url.searchParams.get(k) === v || (v.startsWith(':') && url.searchParams.has(k)))) continue;
+        if (r.status === 404) { rewrite404 = r.to; break; }       // custom not-found page for this subtree
+        res.writeHead(r.status, { Location: r.to }); return res.end();
       }
       if (req.method === 'POST') {
         let body = ''; req.on('data', c => (body += c)); req.on('end', () => {
@@ -70,7 +81,7 @@ export function start(port = 0) {
         file = join(file, 'index.html');
       }
       let status = 200;
-      if (!existsSync(file)) { status = 404; file = join(ROOT, '404.html'); if (!existsSync(file)) { res.writeHead(404); return res.end('not found'); } }
+      if (!existsSync(file)) { status = 404; file = join(ROOT, (rewrite404 || '/404.html').slice(1)); if (!existsSync(file)) { res.writeHead(404); return res.end('not found'); } }
       const headers = { 'Content-Type': TYPES[extname(file)] || 'application/octet-stream' };
       for (const rule of parseHeaders()) if (globToRe(rule.path).test(path)) for (const [k, v] of rule.headers) headers[k] = v;
       res.writeHead(status, headers); res.end(readFileSync(file));

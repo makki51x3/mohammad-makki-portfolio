@@ -6,13 +6,14 @@ import { addLoop } from '../core/loop.js';
 
 const ICON = ['i-wheat', 'i-insight', 'i-farmer', null, 'i-partnership', 'i-ship'];
 const FUNNEL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 4h18l-7 8.5V19l-4 2v-8.5L3 4Z"/></svg>';
-const GRAD = [['#013D27', '#0A7A33'], ['#0A7A33', '#1E9A3A'], ['#01502F', '#2E9E3A'], ['#0A7A33', '#54BA47'], ['#1E7A2E', '#6DBA3F'], ['#B86E00', '#FFA612']];
+// all face gradients keep white text ≥ 4.5:1
+const GRAD = [['#013D27', '#0A7A33'], ['#075F28', '#0E7F36'], ['#01502F', '#127A36'], ['#0A5E2A', '#1A7F3A'], ['#0E5A26', '#1E7A2E'], ['#7A4A00', '#9A5C00']];
 
 export default function processCube() {
   const section = $('#process'), wrap = $('#cubeWrap'), cube = $('#cube'), dotsEl = $('#cubeDots');
   if (!wrap || !cube) return;
   const steps = $$('.step', section);
-  if (REDUCED || matchMedia('(max-width: 900px)').matches) { section.classList.add('cube-static'); return; }
+  if (REDUCED || matchMedia('(max-width: 900px)').matches) { section.classList.add('cube-static'); return; } // layout already static via CSS media query
   // Face transforms and stops are the portfolio's (continuous motion: tumble down, spin four sides, tumble).
   const TR = ['rotateX(-90deg)', 'none', 'rotateY(90deg)', 'rotateY(180deg)', 'rotateY(-90deg)', 'rotateX(90deg)'];
   const dir = isAR() ? -1 : 1; // spin the other way in Arabic (reading direction)
@@ -31,7 +32,8 @@ export default function processCube() {
   const render = idx => { steps.forEach((s, k) => s.classList.toggle('on', k === idx)); [...dotsEl.children].forEach((d, k) => d.classList.toggle('on', k === idx)); };
   addLoop('cube', () => {
     sm += (tgt - sm) * .09;
-    const tt = Math.max(0, Math.min(1, sm)) * (N - 1), i = Math.min(Math.floor(tt), N - 2), f = ease(tt - i), a = stops[i], b = stops[i + 1];
+    // each face holds for the outer 30% of its segment and only turns in the middle 40% (no parking at 45°)
+    const tt = Math.max(0, Math.min(1, sm)) * (N - 1), i = Math.min(Math.floor(tt), N - 2), f = ease(Math.min(1, Math.max(0, (tt - i - .3) / .4))), a = stops[i], b = stops[i + 1];
     cube.style.transform = `rotateX(${a.rx + (b.rx - a.rx) * f}deg) rotateY(${a.ry + (b.ry - a.ry) * f}deg)`;
     const idx = Math.min(N - 1, Math.round(sm * (N - 1))); if (idx !== last) { last = idx; render(idx); }
   }, { el: wrap });

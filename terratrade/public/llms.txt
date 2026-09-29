@@ -3,7 +3,7 @@
 > TerraTrade is an agricultural trading company based in Kano, Nigeria (established 2023). It sources, processes and packages Nigerian agri-commodities to international quality standards and exports them to buyers in the Middle East (Saudi Arabia, UAE, Qatar, Lebanon, Syria), and is opening routes to East Asia (Japan, South Korea, China).
 
 ## Products
-- Food-grade crops: sesame seeds, raw cashew nuts (in shell), dried hibiscus flower, ginger (dried split), soybean
+- Food-grade crops: sesame seeds, raw cashew nuts (in shell), dried hibiscus flower, ginger, soybean
 - Animal feed: soybean meal, wheat bran, cotton seed
 
 ## Operations

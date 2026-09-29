@@ -3,10 +3,19 @@
 import { $, $$, html } from '../core/env.js';
 import { t } from '../core/i18n.js';
 
-export function scrollToEl(el) {
+const OFFSET = 70;
+/** Scroll to an element; if the page height changed during the scroll (lazy scenes, pin spacers),
+ *  re-target once it settles so the section really lands under the nav. */
+export function scrollToEl(el, { duration = 1.1 } = {}) {
   if (!el) return;
-  if (window.__lenis) window.__lenis.scrollTo(el, { offset: -70, duration: 1.1, easing: x => 1 - Math.pow(1 - x, 4) });
-  else el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  const off = () => Math.abs(el.getBoundingClientRect().top - OFFSET) > 4;
+  if (window.__lenis) {
+    window.__lenis.scrollTo(el, { offset: -OFFSET, duration, easing: x => 1 - Math.pow(1 - x, 4),
+      onComplete: () => { if (off()) window.__lenis.scrollTo(el, { offset: -OFFSET, duration: .5 }); } });
+  } else {
+    el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    setTimeout(() => { if (off()) el.scrollIntoView({ block: 'start' }); }, 900);
+  }
 }
 
 export function nav() {
@@ -19,13 +28,19 @@ export function nav() {
   const setOpen = open => {
     burger.setAttribute('aria-expanded', String(open));
     burger.setAttribute('aria-label', t(open ? 'nav.menuClose' : 'nav.menu'));
-    if (open) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add('open')); menu._y = scrollY; }
-    else { menu.classList.remove('open'); setTimeout(() => { if (!menu.classList.contains('open')) menu.hidden = true; }, 300); }
+    if (open) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add('is-open')); menu._y = scrollY; }
+    else { menu.classList.remove('is-open'); setTimeout(() => { if (!menu.classList.contains('is-open')) menu.hidden = true; }, 300); }
   };
   burger.addEventListener('click', () => setOpen(burger.getAttribute('aria-expanded') !== 'true'));
   menu.addEventListener('click', e => { if (e.target.closest('a')) setOpen(false); });
   addEventListener('keydown', e => { if (e.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') { setOpen(false); burger.focus(); } });
-  addEventListener('scroll', () => { if (menu.classList.contains('open') && Math.abs(scrollY - (menu._y || 0)) > 140) setOpen(false); }, { passive: true });
+  addEventListener('scroll', () => { if (menu.classList.contains('is-open') && Math.abs(scrollY - (menu._y || 0)) > 140) setOpen(false); }, { passive: true });
+
+  // deep link on load (#contact etc.): correct the landing once lazy scenes have settled
+  if (location.hash.length > 1) {
+    const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (target) addEventListener('load', () => setTimeout(() => scrollToEl(target, { duration: .6 }), 300), { once: true });
+  }
 
   // in-page anchors → smooth scroll (Lenis), then move focus for keyboard/screen-reader users
   document.addEventListener('click', e => {
@@ -59,7 +74,7 @@ export function sections() {
   const links = new Map($$('.links a, #hud a').map(a => [a, a.getAttribute('href').slice(1)]));
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting) return;
-    for (const [a, id] of links) a.classList.toggle('on', id === e.target.id);
+    for (const [a, id] of links) { const on = id === e.target.id; a.classList.toggle('on', on); on ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current'); }
   }), { rootMargin: '-45% 0px -50% 0px' });
   secs.forEach(s => io.observe(s));
 }

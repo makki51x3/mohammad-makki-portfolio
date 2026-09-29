@@ -7,7 +7,8 @@ export function smooth() {
   if (!hasGSAP()) return;
   gsap.registerPlugin(ScrollTrigger);
   if (REDUCED || !window.Lenis) return;
-  const lenis = new Lenis({ autoRaf: false, lerp: .11, wheelMultiplier: 1, touchMultiplier: 1.6 });
+  // prevent: let native scrolling happen inside dialogs (Lenis would otherwise swallow wheel/touch there)
+  const lenis = new Lenis({ autoRaf: false, lerp: .11, wheelMultiplier: 1, touchMultiplier: 1.6, prevent: n => n.nodeName === 'DIALOG' || n.hasAttribute?.('data-lenis-prevent') });
   window.__lenis = lenis;
   // stop smooth scrolling while a modal is open (portfolio 'dlgopen' observer)
   new MutationObserver(() => html.classList.contains('dlgopen') ? lenis.stop() : lenis.start())
@@ -18,10 +19,20 @@ export function smooth() {
 }
 
 export function reveal() {
+  html.classList.add('booted'); // cancels the CSS failsafe that would reveal everything if JS never ran
   const els = $$('.reveal'); if (!els.length) return;
   if (REDUCED || !('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12, rootMargin: '0px 0px -40px 0px' });
-  els.forEach((e, i) => { e.style.transitionDelay = (e.closest('.pgrid, .scards, .plogos, .values') ? (i % 4) * 70 : 0) + 'ms'; io.observe(e); });
+  // once revealed, drop the reveal classes so the long reveal transition stops overriding hover/tilt transitions
+  const settle = el => el.addEventListener('transitionend', function f(ev) {
+    if (ev.target !== el || ev.propertyName !== 'opacity') return;
+    el.removeEventListener('transitionend', f); el.classList.remove('reveal', 'in'); el.style.transitionDelay = '';
+  });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { settle(e.target); e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(e => {
+    const group = e.closest('.pgrid, .scards, .plogos, .values');
+    if (group) e.style.transitionDelay = ([...e.parentElement.children].indexOf(e) % 4) * 70 + 'ms';
+    io.observe(e);
+  });
 }
 
 export function depth() {

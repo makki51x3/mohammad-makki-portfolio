@@ -11,7 +11,7 @@
   .page-card [lang="ar"] { font-family: "IBM Plex Sans Arabic", var(--body); }
   .page-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
   .big404 { font-family: var(--disp); font-weight: 700; font-size: clamp(90px, 20vw, 180px); line-height: .9; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent !important; }
-  .prose { max-width: 760px; }
+  .prose > * { max-width: 760px; }
   .prose h1 { font-size: clamp(32px, 5vw, 52px); margin-top: 10px; }
   .prose h2 { font-size: 21px; margin-top: 34px; }
   .prose p { color: var(--muted); margin-top: 10px; }

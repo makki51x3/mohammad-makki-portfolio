@@ -20,7 +20,7 @@ export default async function nigeriaMap() {
 
   const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' } });
   tl.from('.ng-outline', { drawSVG: '0%', duration: 1.4 })
-    .from('.ng-land', { opacity: 0, duration: .8 }, '<.4')
+    .fromTo('.ng-land', { opacity: .14 }, { opacity: 1, duration: .8 }, '<.4')
     .from('.ng-zone', { scale: 0, transformOrigin: '50% 50%', opacity: 0, duration: .6, ease: 'back.out(1.6)' })
     .from([hub('kano'), '.zone-note'], { scale: 0, opacity: 0, duration: .5, ease: 'back.out(2)', onStart: () => setStep(0), onReverseComplete: () => setStep(-1) }, '<.1')
     .from([hub('lagos'), hub('ph')], { scale: 0, opacity: 0, duration: .5, stagger: .15, ease: 'back.out(2)', onStart: () => setStep(1), onReverseComplete: () => setStep(0) }, '+=.3')
@@ -29,7 +29,7 @@ export default async function nigeriaMap() {
     .fromTo(truckB, { opacity: 0 }, { opacity: 1, duration: .1 }, '<')
     .to(truckA, { motionPath: { path: '#ngRouteLagos', align: '#ngRouteLagos', alignOrigin: [.5, .5] }, duration: 1.2 }, '<')
     .to(truckB, { motionPath: { path: '#ngRoutePH', align: '#ngRoutePH', alignOrigin: [.5, .5] }, duration: 1.2 }, '<')
-    .from(['#ngSeaLagos', '#ngSeaPH'], { drawSVG: '0%', duration: .9, onStart: () => setStep(2), onReverseComplete: () => setStep(1) })
+    .fromTo('.ng-sea-route', { opacity: 0 }, { opacity: 1, duration: .9, onStart: () => setStep(2), onReverseComplete: () => setStep(1) })
     .fromTo([ship, ship2], { opacity: 0 }, { opacity: 1, duration: .1 }, '<')
     .to(ship, { motionPath: { path: '#ngSeaLagos', align: '#ngSeaLagos', alignOrigin: [.5, .5] }, duration: .9 }, '<')
     .to(ship2, { motionPath: { path: '#ngSeaPH', align: '#ngSeaPH', alignOrigin: [.5, .5] }, duration: .9 }, '<')

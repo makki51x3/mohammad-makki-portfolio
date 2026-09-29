@@ -79,7 +79,8 @@ const H = Object.fromEntries(Object.entries(HUBS).map(([k, v]) => [k, P(v).map(f
 // Inland routes: gentle arcs from Kano to each port, bent sideways (not road-shaped on purpose).
 const arc = (a, b, bend) => { const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1];
   return `M${a[0]} ${a[1]}Q${f1(mx - dy * bend)} ${f1(my + dx * bend)} ${b[0]} ${b[1]}`; };
-const seaL = P([2.2, 3.4]).map(f1), seaP = P([6.2, 2.9]).map(f1);
+// sea legs end above the 'to export markets' label
+const seaL = P([2.5, 4.1]).map(f1), seaP = P([6.4, 3.7]).map(f1);
 const kanoR = f1(1.8 * SC * 0.5 * (1 + K) / 2 * 2) / 2; // ~0.9° radius sourcing zone
 const svg = `<svg class="ngmap-svg" viewBox="0 0 ${VW} ${VH}" aria-hidden="true" focusable="false">
 <rect class="ng-sea" width="${VW}" height="${VH}"/>

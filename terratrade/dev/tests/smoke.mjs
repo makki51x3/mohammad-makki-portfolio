@@ -109,13 +109,16 @@ log('• structure');
   // form: invalid submit → status + aria-invalid
   await page.click('#rfq .submit'); await page.waitForTimeout(200);
   ok(await page.evaluate(() => document.querySelectorAll('#rfq [aria-invalid=true]').length >= 3 && document.getElementById('formStatus').textContent.length > 5), 'empty submit flags required fields');
+  ok(await page.evaluate(() => [...document.querySelectorAll('#rfq [aria-invalid=true]')].every(f => { const e = document.getElementById(f.getAttribute('aria-describedby')); return e && !e.hidden && e.textContent.length > 3; })), 'each invalid field has a visible, associated error message');
   // form: server error keeps input and shows the error
   await page.fill('#f-name', 'Test Buyer'); await page.fill('#f-email', 'buyer@example.com'); await page.selectOption('#f-country', 'Saudi Arabia'); await page.check('#rfq [name=consent]');
   srv.failNext = true; await page.click('#rfq .submit'); await page.waitForTimeout(500); srv.failNext = false;
   ok(await page.evaluate(() => document.getElementById('formStatus').classList.contains('err') && document.getElementById('f-name').value === 'Test Buyer' && !document.getElementById('rfq').hidden), 'server error shows message and keeps input');
   // form: success
   await page.click('#rfq .submit'); await page.waitForTimeout(600);
-  ok(await page.evaluate(() => !document.getElementById('rfqDone').hidden && document.activeElement?.id === 'rfqDone'), 'successful submit shows the thank-you state with focus');
+  ok(await page.evaluate(() => !document.getElementById('rfqDone').hidden && document.activeElement?.closest('#rfqDone') && getComputedStyle(document.getElementById('rfq')).display === 'none'), 'successful submit hides the form and focuses the thank-you state');
+  await page.click('#rfqAgain'); await page.waitForTimeout(200);
+  ok(await page.evaluate(() => !document.activeElement?.closest('.hp') && document.activeElement?.id === 'f-name'), '"Send another request" focuses the name field (never the honeypot)');
   ok(srv.lastForm?.['form-name'] === 'rfq' && srv.lastForm?.email === 'buyer@example.com' && srv.lastForm?.product === 'sesame' && srv.lastForm?.lang === 'en', 'posted fields reach the server: ' + JSON.stringify(srv.lastForm));
   ok(!errs.filter(e => !/500/.test(e)).length, 'structure run errors: ' + errs.join(' | '));
   await ctx.close();
@@ -137,6 +140,16 @@ log('• structure');
   ok(await page.evaluate(() => !document.getElementById('mnav').hidden && document.getElementById('burger').getAttribute('aria-expanded') === 'true'), 'burger opens the mobile menu');
   await page.keyboard.press('Escape'); await page.waitForTimeout(400);
   ok(await page.evaluate(() => document.getElementById('mnav').hidden && document.activeElement?.id === 'burger'), 'Escape closes the mobile menu and refocuses the burger');
+  // spec sheet scrolls by touch on a short phone (Lenis must not swallow the gesture)
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.locator('[data-spec="cashew"]').scrollIntoViewIfNeeded(); await page.click('[data-spec="cashew"]'); await page.waitForTimeout(500);
+  const cdp = await ctx.newCDPSession(page);
+  const swipe = async () => { const pts = y => [{ x: 200, y }]; await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: pts(560) });
+    for (let y = 540; y >= 240; y -= 30) await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: pts(y) });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); };
+  await swipe(); await page.waitForTimeout(500);
+  ok(await page.evaluate(() => document.querySelector('.spec-wrap').scrollTop > 0), 'spec sheet scrolls with a touch swipe on a short phone');
+  await page.keyboard.press('Escape');
   await page.goto(BASE + '/?lang=ar', { waitUntil: 'domcontentloaded' });
   ok(page.url().endsWith('/ar/'), '?lang=ar redirects to /ar/ (got ' + page.url() + ')');
   await ctx.close();
@@ -144,6 +157,8 @@ log('• structure');
     const r = await newPage({ lang, js: false });
     const vis = await r.page.evaluate(() => ({ reveal: [...document.querySelectorAll('.reveal')].every(e => getComputedStyle(e).opacity === '1'), form: !!document.querySelector('form[name=rfq]'), cls: document.documentElement.className }));
     ok(vis.reveal && vis.form && vis.cls.includes('no-js'), `no-JS ${lang}: content visible ${JSON.stringify(vis)}`);
+    const before = r.page.url(); await r.page.click('#rfq .submit'); await r.page.waitForTimeout(400);
+    ok(r.page.url() === before, `no-JS ${lang}: native validation stops an empty form from posting`);
     await r.ctx.close();
   }
   const b = await newPage();
@@ -155,11 +170,12 @@ log('• structure');
   ok(bytes.js < 120 * 1024, `site JS budget exceeded: ${(bytes.js / 1024).toFixed(0)} KB`);
   await b.ctx.close();
 }
-for (const path of ['/thanks/', '/ar/thanks/', '/privacy/', '/ar/privacy/', '/nope']) {
+for (const path of ['/thanks/', '/ar/thanks/', '/privacy/', '/ar/privacy/', '/nope', '/ar/nope']) {
   const ctx = await browser.newContext(); const page = await ctx.newPage(); const errs = [];
-  page.on('pageerror', e => errs.push(e.message)); page.on('console', m => m.type() === 'error' && !(path === '/nope' && /404/.test(m.text())) && errs.push(m.text()));
+  page.on('pageerror', e => errs.push(e.message)); page.on('console', m => m.type() === 'error' && !(path.endsWith('/nope') && /404/.test(m.text())) && errs.push(m.text()));
   const res = await page.goto(BASE + path, { waitUntil: 'networkidle' });
-  ok(path === '/nope' ? res.status() === 404 : res.status() === 200, `${path}: status ${res.status()}`);
+  ok(path.endsWith('/nope') ? res.status() === 404 : res.status() === 200, `${path}: status ${res.status()}`);
+  if (path === '/ar/nope') ok(await page.evaluate(() => document.documentElement.lang === 'ar' && document.documentElement.dir === 'rtl'), '/ar/ 404 is the Arabic not-found page');
   ok(!errs.length, `${path}: errors ${errs.join(' | ')}`);
   await ctx.close();
 }

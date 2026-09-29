@@ -16,7 +16,7 @@ PRODUCTS = {  # id -> source file (PDF page/xref)
     'sesame': 'p5_x54.png', 'cashew': 'p5_x53.png', 'ginger': 'p5_x52.png',
     'soybean': 'p5_x55.png', 'hibiscus': 'p5_x51.png',
 }
-PHOTOS = {'hero': 'p1_x8.png', 'field': 'p2_x24.png', 'seedling': 'p9_x113.png', 'farmer': 'p11_x142.png'}
+PHOTOS = {'hero': 'p1_x8.png', 'seedling': 'p9_x113.png', 'farmer': 'p11_x142.png'}
 PARTNERS = {'nepc': 'p10_x128.png', 'dufil': 'p10_x129.png', 'fmn': 'p10_x126.png', 'olam-agri': 'p10_x127.png', 'bua-foods': 'p10_x125.png'}
 
 
@@ -58,7 +58,7 @@ def main():
 
     for name, f in PHOTOS.items():
         im = opaque_crop(Image.open(SRC / f))
-        widths = {'hero': [640, 1024, 1600, 2360], 'field': [480, 690], 'seedling': [480, 816], 'farmer': [480, 960, 1400]}[name]
+        widths = {'hero': [640, 1024, 1600, 2360], 'seedling': [480, 816], 'farmer': [480, 960, 1400]}[name]
         save_set(im, name, widths, 'photos')
         if name == 'hero':
             # phone crop: square around the farmer's hands (right-centre of the panorama)
