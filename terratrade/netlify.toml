@@ -1,0 +1,8 @@
+# TerraTrade — its own Netlify site (base directory: terratrade). Static, no build step.
+# The dev/ folder holds tooling + tests only; its package.json sits there (not here) on purpose so
+# Netlify does not npm-install dev tools on every deploy.
+[build]
+  publish = "public"
+  command = ""
+  # Only rebuild when something under terratrade/ changed (the repo also holds the portfolio).
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- ."

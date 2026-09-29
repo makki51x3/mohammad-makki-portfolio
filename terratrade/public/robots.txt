@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /thanks/
+Disallow: /ar/thanks/
+
+Sitemap: https://terratrade.global/sitemap.xml
+# LLM-friendly summary: https://terratrade.global/llms.txt

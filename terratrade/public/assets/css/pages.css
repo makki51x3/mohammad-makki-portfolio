@@ -1,0 +1,19 @@
+/* Small standalone pages: /thanks/, /privacy/, 404 (and their Arabic versions). */
+@layer sections {
+  body.page { min-height: 100dvh; background: radial-gradient(900px 500px at 80% -10%, color-mix(in srgb, var(--sprout) 22%, transparent), transparent 70%), var(--bg); }
+  .page-top { display: flex; align-items: center; justify-content: space-between; height: 84px; }
+  .page-main { padding-block: 40px 90px; }
+  .page-card { max-width: 640px; margin: 6vh auto 0; text-align: center; display: grid; justify-items: center; gap: 16px; padding: 48px 32px; border-radius: 28px; border: 1px solid var(--card-bd); background: var(--card); backdrop-filter: blur(12px); box-shadow: var(--shadow); }
+  .page-card h1 { font-size: clamp(26px, 4vw, 40px); }
+  .page-card p { color: var(--muted); max-width: 460px; }
+  .page-card hr { width: 60%; border: 0; border-top: 1px solid var(--card-bd); margin: 10px 0; }
+  .page-card h2 { font-size: 22px; font-family: "Noto Kufi Arabic", var(--disp); }
+  .page-card [lang="ar"] { font-family: "IBM Plex Sans Arabic", var(--body); }
+  .page-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
+  .big404 { font-family: var(--disp); font-weight: 700; font-size: clamp(90px, 20vw, 180px); line-height: .9; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent !important; }
+  .prose { max-width: 760px; }
+  .prose h1 { font-size: clamp(32px, 5vw, 52px); margin-top: 10px; }
+  .prose h2 { font-size: 21px; margin-top: 34px; }
+  .prose p { color: var(--muted); margin-top: 10px; }
+  .prose .btn { margin-top: 30px; }
+}

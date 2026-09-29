@@ -1,0 +1,15 @@
+TerraTrade website — credits & licences
+
+Design language: remixed from the Mohammad Makki portfolio (https://mohammad-makki-portfolio.netlify.app/).
+Content, logo and photography: TerraTrade company profile (supplied by TerraTrade).
+Partner logos: trademarks of their respective owners, shown as TerraTrade partners.
+
+Libraries (self-hosted in /assets/js/vendor/):
+- GSAP 3.15 incl. ScrollTrigger, DrawSVGPlugin, MotionPathPlugin — GreenSock "Standard no-charge" licence, https://gsap.com/standard-license
+- Lenis 1.3 — MIT, https://github.com/darkroomengineering/lenis
+
+Fonts (self-hosted, SIL Open Font License 1.1, via Fontsource): Lexend, Sora, Space Mono, Noto Kufi Arabic, IBM Plex Sans Arabic.
+Map & globe geometry: Natural Earth via world-atlas (public domain).
+
+CodePen adaptations (MIT unless stated in the pen) — see /assets/css/fx.css and /assets/js/fx/:
+- (added as each pen is integrated)

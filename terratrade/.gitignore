@@ -1,0 +1,4 @@
+# dev-only outputs and the client's source files (extracted from the company-profile PDF)
+dev/out/
+dev/src-assets/
+dev/node_modules/
