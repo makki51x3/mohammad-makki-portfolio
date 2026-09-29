@@ -31,6 +31,7 @@ afterLoad(() => scene('#operations', () => import('./scenes/nigeria-map.js')));
 lazy('#process', () => import('./scenes/process-cube.js'));
 lazy('#markets', () => import('./scenes/globe.js'));
 lazy('#top', () => import('./scenes/ambient.js'), '0px');
+lazy('.site-foot', () => import('./scenes/flora.js'), '400px 0px');
 // CodePen adaptations (slot registry) — see assets/js/fx/
 import('./fx/registry.js').then(m => m.default()).catch(e => console.error('[fx]', e));
 

@@ -680,3 +680,14 @@
   [dir="rtl"] .marquee.m1 li { padding-block: .3em .45em; margin-block: -.3em -.45em; }
   .rfq-done { align-self: center; }
 }
+
+/* ---- footer crop row (portfolio low-poly flora, remixed) ---- */
+@layer sections {
+  .site-foot { padding-bottom: 0; }
+  .croprow { position: relative; height: 120px; margin-top: -120px; pointer-events: none; overflow: hidden; z-index: 1;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .stalk { position: absolute; bottom: -2px; transform-origin: 50% 100%; animation: stalksway 6.5s ease-in-out infinite; animation-delay: var(--d); }
+  @keyframes stalksway { 0%, 100% { transform: rotate(calc(var(--sw) * -1)); } 50% { transform: rotate(var(--sw)); } }
+  html.dark .stalk { filter: brightness(.72) saturate(.9); }
+  .foot-word { position: relative; z-index: 0; }
+}
