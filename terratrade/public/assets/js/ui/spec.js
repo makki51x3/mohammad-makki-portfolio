@@ -1,4 +1,4 @@
-// Spec-sheet dialog — the portfolio's case-file viewer rebuilt on native <dialog> (focus trap, Escape and
+// Spec-sheet dialog - the portfolio's case-file viewer rebuilt on native <dialog> (focus trap, Escape and
 // focus return for free), with its giant outlined ghost text. Product name/blurb/image are read from the card.
 import { $, $$, html } from '../core/env.js';
 import { t } from '../core/i18n.js';
@@ -44,7 +44,7 @@ export function spec() {
   };
   const close = () => { if (dlg.open) dlg.close(); };
   dlg.addEventListener('close', () => { html.classList.remove('dlgopen'); opener?.focus?.(); });
-  // backdrop click closes — but not when a text-selection drag merely ends on the backdrop
+  // backdrop click closes - but not when a text-selection drag merely ends on the backdrop
   let downOnBackdrop = false;
   dlg.addEventListener('pointerdown', e => { downOnBackdrop = e.target === dlg; });
   dlg.addEventListener('click', e => { if (downOnBackdrop && e.target === dlg) close(); downOnBackdrop = false; });

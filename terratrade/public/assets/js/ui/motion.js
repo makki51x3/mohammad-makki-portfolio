@@ -37,7 +37,7 @@ export function reveal() {
 
 export function depth() {
   if (!hasGSAP() || REDUCED) return;
-  // hero melts away as you scroll past it (portfolio "giana" melt) — keyed to the hero's bottom edge, so on phones,
+  // hero melts away as you scroll past it (portfolio "giana" melt) - keyed to the hero's bottom edge, so on phones,
   // where the bubble scene sits under the copy, it only starts once that scene is on its way out too
   gsap.to('#heroInner', { opacity: 0, filter: 'blur(8px)', y: -60, ease: 'none', scrollTrigger: { trigger: '#top', start: 'bottom 55%', end: 'bottom 5%', scrub: true } });
   // scroll-velocity skew on the product grid

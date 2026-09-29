@@ -1,5 +1,5 @@
 // Product spec data for the spec-sheet dialog. Values are INDICATIVE (typical export ranges), clearly labelled
-// as such on the page — final specifications are agreed per contract. TO CONFIRM WITH TERRATRADE before launch.
+// as such on the page - final specifications are agreed per contract. TO CONFIRM WITH TERRATRADE before launch.
 // Language-neutral: numbers stay as-is (rendered inside <bdi dir=ltr>); words are i18n keys ({k: 'key'});
 // numbers with units are {n, u} so the unit gets translated.
 const ALL = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];

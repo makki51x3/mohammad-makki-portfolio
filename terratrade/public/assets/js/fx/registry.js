@@ -12,15 +12,15 @@ const near = (sel, margin = '600px 0px') => new Promise(res => {
 });
 
 const SLOTS = [
-  // S3 hero liquid-glass bubbles — Fernando Cohen, "[SVG] [CSS] Marquee Glass Bubble"
+  // S3 hero liquid-glass bubbles - Fernando Cohen, "[SVG] [CSS] Marquee Glass Bubble"
   ['bubbles', () => document.querySelector('[data-fx="bubbles"]') && import('./bubbles-QwdoddG.js')],
-  // S1 cursor lens — Andrew Fisher, "Pure CSS cursor tracking" (fine pointers only)
+  // S1 cursor lens - Andrew Fisher, "Pure CSS cursor tracking" (fine pointers only)
   ['cursor', () => FINE && import('./cursor-GgraMzd.js')],
-  // Contact glass card — Abdughafur Khujzoda, liquid-glass profile card (the photo it sits on shows ≥ 961px)
+  // Contact glass card - Abdughafur Khujzoda, liquid-glass profile card (the photo it sits on shows ≥ 961px)
   ['glass', () => document.querySelector('[data-fx="glass"]') && matchMedia('(min-width: 961px)').matches && import('./glass-jEyVvqK.js')],
-  // S12 chunky squircle buttons + floating WhatsApp — Andrew Fisher, "Chunky 3D Buttons"
+  // S12 chunky squircle buttons + floating WhatsApp - Andrew Fisher, "Chunky 3D Buttons"
   ['chunky', () => document.querySelector('[data-chunky]') && import('./chunky-raMZQNe.js')],
-  // How we trade — Temple, "Realistic Interactive Pool Water" (three.js; wide screens with motion allowed, loaded when near)
+  // How we trade - Temple, "Realistic Interactive Pool Water" (three.js; wide screens with motion allowed, loaded when near)
   ['water', () => !REDUCED && matchMedia('(min-width: 961px)').matches &&
     near('[data-fx="water"]').then(el => import('./water-YPZQxeN.js').then(m => ({ default: () => m.default(el) })))],
 ];

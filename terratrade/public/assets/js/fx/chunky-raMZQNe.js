@@ -1,10 +1,10 @@
 // S12 · Chunky squircle buttons.
 // Adapted from "Chunky 3D Buttons" (a squircle button system) by Andrew Fisher (Andrew-Fisher-the-decoder)
-// https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe — MIT. Source: dev/pens/raMZQNe/.
+// https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe - MIT. Source: dev/pens/raMZQNe/.
 //
 // Kept from the pen: the superellipse path S() (four 31-point quarter arcs, |cos|^.6 · |sin|^.6, r = 18 in a
 // 40-unit-tall face), the stack of a drop-shadowed footprint, a darker base at y = 12, one gradient slice per
-// unit of extrusion and the face on top at y = 4 — which sinks to y = 9 while pressed — plus the floating
+// unit of extrusion and the face on top at y = 4 - which sinks to y = 9 while pressed - plus the floating
 // variant's deeper, softer shadow and lit base rim. Changed: the SVG is an aria-hidden layer behind a real
 // <a>/<button> (the label stays live text for screen readers, translation and form states), colours come from
 // CSS custom properties (brand amber / green, in fx.css) instead of hex pairs, it re-renders on resize (label
@@ -41,17 +41,18 @@ function chunky(el) {
   const render = () => {
     const h = el.offsetHeight || 40, scale = h / 40;
     w = Math.max(40, el.offsetWidth / scale);
-    const faceY = 4 + p * 5, baseY = 12, z = Math.min(.5, 20 / w);
+    // the floating squircle is small, so it gets a shallower body (5 units instead of 8) and a tighter shadow
+    const sink = floating ? 4 : 5, faceY = 4 + p * sink, baseY = floating ? 9 : 12, z = Math.min(.5, 20 / w);
     svg.setAttribute('viewBox', `0 0 ${(w + 10).toFixed(2)} 60`);
     stops[1].setAttribute('offset', z); stops[2].setAttribute('offset', 1 - z);
-    drop.setAttribute('dy', floating ? 24 - p * 12 : 4 - p * 2);
-    drop.setAttribute('stdDeviation', floating ? 12 - p * 6 : 3 - p * 1.5);
+    drop.setAttribute('dy', floating ? 9 - p * 4 : 4 - p * 2);
+    drop.setAttribute('stdDeviation', floating ? 7 - p * 3 : 3 - p * 1.5);
     const foot = S(w, 40, 18, 5, baseY);
     shadow.setAttribute('d', foot); base.setAttribute('d', foot);
     slices.innerHTML = Array.from({ length: Math.max(0, baseY - faceY) }, (_, k) => `<path d="${S(w, 40, 18, 5, faceY + 1 + k)}"/>`).join('');
     face.setAttribute('d', S(w, 40, 18, 5, faceY));
     svg.style.cssText = `left:${-5 * scale}px;top:${-4 * scale}px;width:${el.offsetWidth + 10 * scale}px;height:${60 * scale}px`;
-    el.style.setProperty('--sq-dy', `${(p * 5 * scale).toFixed(2)}px`); // the label rides the face down
+    el.style.setProperty('--sq-dy', `${(p * sink * scale).toFixed(2)}px`); // the label rides the face down
   };
   const press = v => { if (p !== v) { p = v; render(); } };
   el.addEventListener('pointerdown', () => press(1));

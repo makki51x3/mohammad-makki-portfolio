@@ -16,7 +16,7 @@ The design remixes the [portfolio](../_publish/index.html) design language (glas
 | **Why TerraTrade** | Three strengths, plus Farmer First "growing stem" |
 | **Markets** | The portfolio's dot globe, extended with animated great-circle trade routes. Active markets (KSA, UAE, Qatar, Lebanon, Syria) are solid amber; opening markets (Japan, South Korea, China) are dashed green |
 | **Partners** | Partner logo grid |
-| **Site-wide** | Cursor lens ✦ (fine pointers), floating WhatsApp squircle ✦, pause-animations switch, light/dark themes |
+| **Site-wide** | Petal cursor ✦ (fine pointers), floating WhatsApp squircle ✦, pause-animations switch, light/dark themes |
 | **How we trade** | Terms, packaging, documents, samples, plus an interactive WebGL harbour-water panel ✦ with the mark on the seabed |
 | **Contact** | Quote form (Netlify Forms, AJAX with no-JS fallback) with a chunky squircle submit ✦, WhatsApp, copy-email, and a draggable liquid-glass business card on the photo ✦ |
 
@@ -98,12 +98,12 @@ Each pen is kept as supplied in `dev/pens/<id>/`, adapted to the brand, fonts, i
 
 | Pen | Where | Notes |
 |---|---|---|
-| [designfenix/QwdoddG](https://codepen.io/designfenix/pen/QwdoddG) — Marquee Glass Bubble | Hero visual | The pen's SVG scene (generated from its markup) with TerraTrade photos. The orbit text is translatable (EN/AR). SMIL is frozen off-screen, when paused and under reduced motion. Pointer parallax on fine pointers. |
+| [designfenix/QwdoddG](https://codepen.io/designfenix/pen/QwdoddG) — Marquee Glass Bubble | Hero visual | The pen's SVG scene (generated from its markup) with TerraTrade photos. The ripple/displacement filters are removed so faces stay sharp. The orbit text is translatable (EN/AR). SMIL is frozen off-screen, when paused and under reduced motion. Pointer parallax on fine pointers. |
 | [designfenix/RwKPapa](https://codepen.io/designfenix/pen/RwKPapa) — 3D perspective cards | Product cards | Flips on hover or keyboard focus, mirrored in Arabic. Touch gets front and back stacked. The quote link prefills the form (`source=card:<id>`). |
 | [thebabydino/NLWdwz](https://codepen.io/thebabydino/pen/NLWdwz) — infographic banners | About: mission, vision, values | Brand gradients with contrast-checked ink. Zig-zag on wide screens, stacked on phones. |
 | [Andrew-Fisher/raMZQNe](https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe) — Chunky 3D Buttons | Hero quote, form submit, floating WhatsApp | The SVG squircle is an aria-hidden layer behind the real button, so the label stays live text. The floating button hides over the hero, contact and footer. |
 | [Abdughafur-Khujzoda/jEyVvqK](https://codepen.io/Abdughafur-Khujzoda/pen/jEyVvqK) — liquid-glass card | Contact photo | Draggable (kept inside the photo). Only on screens ≥ 961px, where the photo shows. |
-| [Andrew-Fisher/GgraMzd](https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd) — pure-CSS cursor tracking | Site cursor | The pen's speed bands drive a JS servo (a CSS hover grid would block clicks). Fine pointers only; the text under the pointer stays sharp. |
+| [Andrew-Fisher/GgraMzd](https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd) — pure-CSS cursor tracking | Site cursor | The pen's speed bands drive a JS servo (a CSS hover grid would block clicks). The visual is a small seed made of the logo's petals that opens into a ring over clickable things (the blurred lens was too heavy). Fine pointers only. |
 | [tmpl/YPZQxeN](https://codepen.io/tmpl/pen/YPZQxeN) — Interactive Pool Water | How we trade | three.js subset (~125 KB gzipped), loaded only on screens ≥ 961px with motion allowed. Sand seabed with the mark, quay walls. Anything else shows a still CSS panel. |
 
 ## Credits

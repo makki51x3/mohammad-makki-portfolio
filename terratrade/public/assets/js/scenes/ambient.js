@@ -1,4 +1,4 @@
-// Ambient background — the portfolio starfield remixed into drifting pollen / seed motes:
+// Ambient background - the portfolio starfield remixed into drifting pollen / seed motes:
 // dark theme = warm amber "fireflies" with a soft glow, light theme = faint green & amber specks.
 // Runs only while the hero is on screen (the fixed canvas fades out below it).
 import { $, TOUCH } from '../core/env.js';

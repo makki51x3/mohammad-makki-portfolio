@@ -1,4 +1,4 @@
-// Low-poly crop row along the footer — the portfolio's lowPolyFlora() (geometric trees that sway)
+// Low-poly crop row along the footer - the portfolio's lowPolyFlora() (geometric trees that sway)
 // remixed into a field of wheat and maize stalks in the brand greens with harvest-amber heads.
 // Decorative only (aria-hidden). Sway is a CSS animation, so "Pause animations" and reduced motion stop it.
 import { $ } from '../core/env.js';

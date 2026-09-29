@@ -41,22 +41,22 @@ async function scrollThrough(page) {
 // ---------------- CodePen effects (one block per adapted pen) ----------------
 async function fxChecks(page, c, name) {
   // QwdoddG — hero bubbles: the SMIL scene is frozen off-screen (we are at the footer) and under reduced motion,
-  // runs at the top otherwise; the orbiting text fits one lap of its path; all four photos decode
+  // runs at the top otherwise; the orbiting text fits one lap of its path; all three photos decode (sharp: no ripple filter)
   const hb = await page.evaluate(async () => { const svg = document.getElementById('hbScene'), t = svg.querySelector('.hb-orbit-t');
     const imgs = await Promise.all([...svg.querySelectorAll('image')].map(i => new Promise(r => { const im = new Image(); im.onload = () => r(im.naturalWidth > 0); im.onerror = () => r(false); im.src = i.href.baseVal; })));
     return { pausedOff: svg.animationsPaused(), fit: +(t.getComputedTextLength() / svg.querySelector('#hbMainPath').getTotalLength()).toFixed(3), imgs }; });
-  ok(hb.pausedOff && hb.fit > .75 && hb.fit <= 1 && hb.imgs.length === 4 && hb.imgs.every(Boolean), `${name}: hero bubbles paused off-screen, orbit text fits, photos load ${JSON.stringify(hb)}`);
+  ok(hb.pausedOff && hb.fit > .75 && hb.fit <= 1 && hb.imgs.length === 3 && hb.imgs.every(Boolean), `${name}: hero bubbles paused off-screen, orbit text fits, photos load ${JSON.stringify(hb)}`);
   await page.evaluate(() => document.querySelector('[data-fx="bubbles"]').scrollIntoView({ block: 'center' })); await page.waitForTimeout(600);
   const hbRun = await page.evaluate(() => !document.getElementById('hbScene').animationsPaused());
   ok(c.reduced ? !hbRun : hbRun, `${name}: hero bubbles animate only when motion is allowed (running=${hbRun})`);
-  // GgraMzd — cursor lens: fine pointers only; follows, then rests (its loop unregisters); never under reduced motion
+  // GgraMzd — cursor seed (the pen's servo motion): fine pointers only; follows, then rests (its loop unregisters); never under reduced motion
   if (!c.mobile) {
     await page.mouse.move(400, 400); await page.mouse.move(700, 450, { steps: 3 }); await page.waitForTimeout(800);
-    const l = await page.evaluate(() => { const e = document.querySelector('.tt-lens'); if (!e) return null; const [x, y] = e.style.translate.split(' ').map(parseFloat);
+    const l = await page.evaluate(() => { const e = document.querySelector('.tt-cursor'); if (!e) return null; const [x, y] = e.style.translate.split(' ').map(parseFloat);
       return { on: e.classList.contains('on'), x, y, shown: getComputedStyle(e).display !== 'none', loops: window.__tt.loops() }; });
-    if (c.reduced) ok(l && (!l.on || !l.shown) && !l.loops.includes('cursor'), `${name}: no cursor lens under reduced motion ${JSON.stringify(l)}`);
-    else ok(l && l.on && Math.abs(l.x - 700) < 3 && Math.abs(l.y - 450) < 3 && !l.loops.includes('cursor'), `${name}: cursor lens follows then rests ${JSON.stringify(l)}`);
-  } else ok(await page.evaluate(() => !document.querySelector('.tt-lens')), `${name}: no cursor lens on touch`);
+    if (c.reduced) ok(l && (!l.on || !l.shown) && !l.loops.includes('cursor'), `${name}: no cursor seed under reduced motion ${JSON.stringify(l)}`);
+    else ok(l && l.on && Math.abs(l.x - 700) < 3 && Math.abs(l.y - 450) < 3 && !l.loops.includes('cursor'), `${name}: cursor seed follows then rests ${JSON.stringify(l)}`);
+  } else ok(await page.evaluate(() => !document.querySelector('.tt-cursor')), `${name}: no cursor seed on touch`);
   // NLWdwz — about banners: five banners with counter discs; zig-zag on wide screens only, mirrored in Arabic
   const ib = await page.evaluate(() => [...document.querySelectorAll('[data-fx="banners"] .ib')].map(li => ({
     disc: getComputedStyle(li.querySelector('.ib-card'), '::before').content, tx: parseFloat(getComputedStyle(li).translate) || 0 })));
@@ -131,6 +131,7 @@ for (const c of (QUICK ? combos.filter(c => !c.reduced && c.theme === 'light') :
   if (c.reduced) { await page.waitForTimeout(1500); const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.length, `${name}: loops running under reduced motion: ${loops}`); }
   else { const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.some(l => ['globe', 'cube', 'morph', 'ambient', 'bubbles', 'water'].includes(l)), `${name}: off-screen loops still running at the footer: ${loops}`); }
   const csp = await page.evaluate(() => window.__csp); ok(!csp.length, `${name}: CSP violations: ${csp.join(' | ')}`);
+  ok(!(await page.evaluate(() => document.documentElement.outerHTML.includes('\u2014'))), `${name}: an em dash (\u2014) is on the page`);
   await fxChecks(page, c, name);
   // accessibility (axe) at top and bottom of the page
   await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(400);

@@ -28,11 +28,11 @@ const ver = p => JSON.parse(readFileSync(join(nm, p, 'package.json'), 'utf8')).v
 // (full three.module + three.core would be 720 KB; this is ~490 KB, ~125 KB gzipped). Loaded on demand.
 buildSync({
   entryPoints: [join(here, 'three-entry.mjs')], bundle: true, format: 'esm', minify: true, legalComments: 'none',
-  banner: { js: `/* three.js ${ver('three')} (subset: dev/tools/three-entry.mjs) — MIT, https://github.com/mrdoob/three.js */` },
+  banner: { js: `/* three.js ${ver('three')} (subset: dev/tools/three-entry.mjs), MIT, https://github.com/mrdoob/three.js */` },
   outfile: join(out, 'three-water.min.js'), logLevel: 'warning',
 });
 writeFileSync(join(out, 'VERSIONS.txt'),
   `gsap ${ver('gsap')} (GSAP Standard "no charge" license, https://gsap.com/standard-license)\n` +
   `lenis ${ver('lenis')} (MIT, https://github.com/darkroomengineering/lenis)\n` +
-  `three ${ver('three')} (MIT, https://github.com/mrdoob/three.js) — subset bundle three-water.min.js\n`);
+  `three ${ver('three')} (MIT, https://github.com/mrdoob/three.js), subset bundle three-water.min.js\n`);
 console.log('vendored', files.map(f => f[1]).join(', '), '+ three-water.min.js');

@@ -1,4 +1,4 @@
-// Markets globe — the portfolio's 2D-canvas dot globe (tglobe) extended with animated great-circle
+// Markets globe - the portfolio's 2D-canvas dot globe (tglobe) extended with animated great-circle
 // trade routes from Nigeria. Routes, regions and labels are read from the HTML market list, so the
 // Arabic page needs no extra data. Active routes = solid amber; opening routes = dashed green.
 // Portfolio fixes: no touch-action:none (vertical swipes scroll the page), loop only runs on screen,

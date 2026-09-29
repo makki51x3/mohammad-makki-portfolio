@@ -1,4 +1,4 @@
-/* TerraTrade — base layer: tokens, themes, reset, type, utilities, RTL.
+/* TerraTrade - base layer: tokens, themes, reset, type, utilities, RTL.
    Design language remixed from the Mohammad Makki portfolio (glass cards, mono eyebrows, gradient type,
    grain, blob field), re-toned to the TerraTrade brand (forest / leaf / mint / harvest amber). */
 @layer tokens, reset, base, components, sections, fx, utilities;
@@ -37,7 +37,7 @@
     --nav-h: 68px;
     color-scheme: light;
   }
-  /* "night harvest" — optional dark theme */
+  /* "night harvest" - optional dark theme */
   html.dark {
     --bg: #04150E; --bg-2: #07211A; --surface: #0A2419;
     --card: rgba(233, 255, 229, .05); --card-solid: #0C281C; --card-bd: rgba(233, 255, 229, .12);
@@ -55,7 +55,7 @@
   [dir="rtl"] {
     --disp: "Noto Kufi Arabic", "Lexend", sans-serif;
     --body: "IBM Plex Sans Arabic", "Sora", sans-serif;
-    /* a monospace fallback would render Arabic letters unjoined — use the Arabic text face (Latin digits
+    /* a monospace fallback would render Arabic letters unjoined - use the Arabic text face (Latin digits
        still come from Space Mono, next in the stack) */
     --mono: "IBM Plex Sans Arabic", "Sora", sans-serif;
   }

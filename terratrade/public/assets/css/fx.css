@@ -1,10 +1,10 @@
-/* TerraTrade — CodePen effect adaptations (layer "fx"). Each block is scoped under [data-fx="…"],
+/* TerraTrade - CodePen effect adaptations (layer "fx"). Each block is scoped under [data-fx="…"],
    credited to its original author (see also /credits.txt), and its raw source is kept in dev/pens/<id>/. */
 @layer fx {
   /* ==========================================================================================
-     S8 · About — mission, vision & core values as zig-zag infographic banners
+     S8 · About - mission, vision & core values as zig-zag infographic banners
      Adapted from "Responsive infographic banners with CSS variables" by Ana Tudor (thebabydino)
-     https://codepen.io/thebabydino/pen/NLWdwz — MIT. Source: dev/pens/NLWdwz/.
+     https://codepen.io/thebabydino/pen/NLWdwz - MIT. Source: dev/pens/NLWdwz/.
      Kept from the pen: the 10em-tall banner (widened to 36em), the 6.5×-scaled neumorphic counter disc
      (1.25×h/6.5 across, sunk .38em above the banner and hanging half out of its end), the
      2fr/3fr title/text rows with `grid-auto-flow: column dense`, the ±16% zig-zag driven by
@@ -86,11 +86,11 @@
   html.dark [data-fx="banners"] .ib-integrity { --num: #FFB938; }
   html.dark [data-fx="banners"] .ib-growth    { --num: #A9D99B; }
 
-  /* narrower screens: the pen's --wide:0 — banners stack centred, the disc stays inside the banner */
+  /* narrower screens: the pen's --wide:0 - banners stack centred, the disc stays inside the banner */
   @media (max-width: 900px) {
     [data-fx="banners"] { --wide: 0; }
   }
-  /* phones: the pen's --narr — a plain card with a smaller disc riding its top corner */
+  /* phones: the pen's --narr - a plain card with a smaller disc riding its top corner */
   @media (max-width: 560px) {
     [data-fx="banners"] { padding-top: 1.4em; font-size: 15px; }
     [data-fx="banners"] .ib { width: 100%; margin-bottom: 1.6em; }
@@ -109,9 +109,9 @@
   }
 
   /* ==========================================================================================
-     S5 · Products — 3D perspective flip cards
+     S5 · Products - 3D perspective flip cards
      Adapted from "3D Perspective cards with depth [CSS]" by Fernando Cohen (designfenix)
-     https://codepen.io/designfenix/pen/RwKPapa — MIT. Source: dev/pens/RwKPapa/.
+     https://codepen.io/designfenix/pen/RwKPapa - MIT. Source: dev/pens/RwKPapa/.
      Kept from the pen: the 1200px perspective, the cover that swings rotateY(-180deg) on hover while
      its inset frame (translateZ 30px), title (100px) and corner tag (60px) float forward in depth,
      the dark back face whose outlined button pops 60px toward you, and the photo darkening as it turns.
@@ -218,40 +218,41 @@
   }
 
   /* ==========================================================================================
-     S1 · Cursor lens — "Pure CSS cursor tracking" by Andrew Fisher (Andrew-Fisher-the-decoder)
-     https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd — MIT. Source: dev/pens/GgraMzd/.
-     Kept: the cheap 300px radial-gradient bloom (no blur filter to move) and the 150px backdrop lens
-     (blur · saturate 1.9 · contrast 1.15 · hue-rotate 14deg) with its soft radial mask. Motion: see
-     assets/js/fx/cursor-GgraMzd.js. Changed: brand colours for the bloom, and the mask is a ring with a
-     clear centre so the text under the pointer stays readable; the native cursor is kept.
+     S1 · Cursor seed. Motion from "Pure CSS cursor tracking" by Andrew Fisher (Andrew-Fisher-the-decoder)
+     https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd - MIT. Source: dev/pens/GgraMzd/.
+     The pen's servo motion is kept (assets/js/fx/cursor-GgraMzd.js); its blurred backdrop lens was replaced
+     by the logo's petals: a 14px seed that turns slowly, leans into the movement (--tilt), blooms to ~32px
+     over anything clickable and squeezes on press. No blur, no glow; the native cursor stays.
      ========================================================================================== */
-  .tt-lens {
-    position: fixed; left: 0; top: 0; z-index: 170; pointer-events: none;
-    opacity: 0; transition: opacity .35s ease; will-change: translate; isolation: isolate;
+  .tt-cursor {
+    --tc-a: var(--amber); --tc-g: #2F9A3C; --tc-line: rgba(255, 255, 255, .85);
+    position: fixed; left: 0; top: 0; z-index: 170; width: 34px; height: 34px; margin: -17px 0 0 -17px;
+    pointer-events: none; opacity: 0; transition: opacity .3s ease;
   }
-  .tt-lens.on { opacity: 1; }
-  /* the pen's filter chain; a gentler saturate on the pale daylight theme, the full one at night */
-  .tt-lens { --lens-f: blur(8px) saturate(1.45) contrast(1.1) hue-rotate(14deg); }
-  html.dark .tt-lens { --lens-f: blur(10px) saturate(1.9) contrast(1.15) hue-rotate(14deg); }
-  .tt-lens::before {
-    content: ''; position: absolute; width: 300px; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%;
-    background: radial-gradient(circle, rgba(84, 186, 71, .13) 0, rgba(255, 166, 18, .07) 35%, rgba(3, 199, 4, .035) 52%, transparent 72%);
+  html.dark .tt-cursor { --tc-g: #7ED957; --tc-line: rgba(4, 21, 14, .7); }
+  .tt-cursor.on { opacity: 1; }
+  .tt-cursor svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 1px 1.5px rgba(1, 30, 18, .28)); }
+  .tc-tilt { transform: rotate(var(--tilt, 0deg)); transform-box: view-box; transform-origin: 0 0; }
+  .tc-bloom { transform-box: view-box; transform-origin: 0 0; animation: tc-turn 16s linear infinite; }
+  .tc-p {
+    stroke: var(--tc-line); stroke-width: .7; transform-box: view-box; transform-origin: 0 0;
+    transform: rotate(var(--r)) scale(.46);
+    transition: transform .42s cubic-bezier(.34, 1.56, .64, 1); transition-delay: calc(var(--i) * 18ms);
   }
-  html.dark .tt-lens::before {
-    background: radial-gradient(circle, rgba(111, 219, 94, .16) 0, rgba(255, 185, 56, .11) 35%, rgba(3, 199, 4, .05) 52%, transparent 72%);
-  }
-  .tt-lens::after {
-    content: ''; position: absolute; width: 150px; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%;
-    -webkit-backdrop-filter: var(--lens-f); backdrop-filter: var(--lens-f);
-    -webkit-mask: radial-gradient(circle, transparent 0 24%, #000 44%, #0007 73%, #0002 87%, transparent);
-    mask: radial-gradient(circle, transparent 0 24%, #000 44%, #0007 73%, #0002 87%, transparent);
-  }
-  html.paused .tt-lens, html.reduced .tt-lens { display: none; }
-  @media (forced-colors: active), print { .tt-lens { display: none; } }
+  .tc-a { fill: var(--tc-a); }
+  .tc-g { fill: var(--tc-g); }
+  .tc-seed { fill: var(--tc-g); stroke: var(--tc-line); stroke-width: .7; transition: fill .3s ease, r .3s ease; }
+  /* over something clickable the petals open into a ring (hollow centre: the label under the pointer stays readable) */
+  .tt-cursor.bloom .tc-p { transform: rotate(calc(var(--r) + 14deg)) translateY(-7px) scale(.7); }
+  .tt-cursor.bloom .tc-seed { r: 1.4px; fill: var(--tc-a); }
+  .tt-cursor.press .tc-p { transform: rotate(calc(var(--r) + 30deg)) translateY(-4px) scale(.56); transition-duration: .14s; transition-delay: 0s; }
+  @keyframes tc-turn { to { transform: rotate(360deg); } }
+  html.paused .tt-cursor, html.reduced .tt-cursor { display: none; }
+  @media (forced-colors: active), print { .tt-cursor { display: none; } }
 
   /* ==========================================================================================
-     S12 · Chunky squircle buttons — "Chunky 3D Buttons" by Andrew Fisher (Andrew-Fisher-the-decoder)
-     https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe — MIT. Source: dev/pens/raMZQNe/.
+     S12 · Chunky squircle buttons - "Chunky 3D Buttons" by Andrew Fisher (Andrew-Fisher-the-decoder)
+     https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe - MIT. Source: dev/pens/raMZQNe/.
      The pen's colour recipe, per button pair (face --sq-hb, depth --sq-hd), mixed exactly as it does:
      footprint 60% black + a drop shadow at 35% black; base 80% black with a 50%-black rim (floating: the
      face tint, 70% white); extrusion slices 65% → 90% → 65% white; face stroke 70% white. Geometry +
@@ -277,8 +278,11 @@
   .sq-drop { flood-color: color-mix(in srgb, var(--sq-hd) 35%, black); flood-opacity: .3; }
   .sq-e { stop-color: color-mix(in srgb, var(--sq-hd) 65%, white); }
   .sq-m { stop-color: color-mix(in srgb, var(--sq-hd) 90%, white); }
-  [data-chunky="float"] .sq-base { stroke: color-mix(in srgb, var(--sq-hb) 70%, white); }
-  [data-chunky="float"] .sq-drop { flood-opacity: .15; }
+  /* floating WhatsApp: a solid green body (no pale side band), a crisp rim and a soft, short shadow */
+  [data-chunky="float"] .sq-e { stop-color: color-mix(in srgb, var(--sq-hd) 72%, black); }
+  [data-chunky="float"] .sq-m { stop-color: var(--sq-hd); }
+  [data-chunky="float"] .sq-drop { flood-color: #01160d; flood-opacity: .28; }
+  html.dark [data-chunky="float"] .sq-face { stroke: color-mix(in srgb, var(--sq-hb) 55%, white); }
 
   /* the floating WhatsApp squircle (the pen's floating square-icon variant) */
   .wa-float {
@@ -296,8 +300,8 @@
   @media (forced-colors: active) { .is-chunky > .sq { display: none; } .is-chunky { border: 1px solid ButtonText; } }
 
   /* ==========================================================================================
-     Contact · liquid-glass business card — Abdughafur Khujzoda (Abdughafur-Khujzoda)
-     https://codepen.io/Abdughafur-Khujzoda/pen/jEyVvqK — MIT. Source: dev/pens/jEyVvqK/.
+     Contact · liquid-glass business card - Abdughafur Khujzoda (Abdughafur-Khujzoda)
+     https://codepen.io/Abdughafur-Khujzoda/pen/jEyVvqK - MIT. Source: dev/pens/jEyVvqK/.
      Kept: 28px glass with a 1px white rim + 135° inner sheen (::before), the backdrop blur(3px) layer
      distorted by the SVG turbulence filter (::after, filter defs added by assets/js/fx/glass-jEyVvqK.js),
      inset highlight, avatar ring, stats row with a top rule, pill button, hover lift, scale while dragging.
@@ -352,13 +356,13 @@
   @media (forced-colors: active) { [data-fx="glass"] { border: 1px solid CanvasText; } }
 
   /* ==========================================================================================
-     S3 · Hero — liquid-glass bubbles with text orbiting the main bubble
+     S3 · Hero - liquid-glass bubbles with text orbiting the main bubble
      "[SVG] [CSS] Marquee Glass Bubble" by Fernando Cohen (designfenix)
-     https://codepen.io/designfenix/pen/QwdoddG — MIT. Source: dev/pens/QwdoddG/.
-     Kept: the whole SVG scene (morphing clip paths, liquid displacement filters, milky / iridescent
-     sheens, speculars, glass edge stroke + drop-shadow stack, the textPath marquee), the six blurred
+     https://codepen.io/designfenix/pen/QwdoddG - MIT. Source: dev/pens/QwdoddG/.
+     Kept: the SVG scene (morphing clip paths, milky / iridescent sheens, speculars, glass edge stroke + drop-shadow stack, the textPath marquee), the six blurred
      back-light glows and their geometry, and the right-hand placement bleeding off the edge.
-     Changed: TerraTrade photos (farmer / sesame / hibiscus), the commodity list on the path (EN/AR),
+     Changed: the displacement "ripple" filters are removed (client request: faces stay sharp), TerraTrade
+     photos (farmer / sesame / hibiscus), the commodity list on the path (EN/AR),
      pink iridescence → mint and harvest tints, glows re-lit for the mint daylight and night themes,
      site fonts, and a full-width scene under the copy on narrow screens instead of an off-canvas one.
      ========================================================================================== */
@@ -400,7 +404,7 @@
     fill: var(--txt); font-family: var(--body); font-size: 18px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase;
     paint-order: stroke fill; stroke: color-mix(in srgb, var(--bg) 40%, transparent); stroke-width: .6px;
   }
-  /* Arabic: no tracking (it breaks letter joining) — word spacing fills the loop instead; RTL text anchors at its
+  /* Arabic: no tracking (it breaks letter joining) - word spacing fills the loop instead; RTL text anchors at its
      end so it runs forward from the offset like the English does */
   [dir="rtl"] .hb-orbit-t { font-size: 28px; letter-spacing: 0; word-spacing: 12px; text-transform: none; text-anchor: end; }
   [data-fx="bubbles"] .hero-chip.c1 { top: 17%; inset-inline-start: -2%; }
@@ -421,8 +425,8 @@
   @media (forced-colors: active) { .hb-light { display: none; } }
 
   /* ==========================================================================================
-     How we trade · interactive harbour water — "Realistic Interactive Pool Water" by Temple (tmpl)
-     https://codepen.io/tmpl/pen/YPZQxeN — MIT. Source: dev/pens/YPZQxeN/. WebGL: assets/js/fx/water-YPZQxeN.js.
+     How we trade · interactive harbour water - "Realistic Interactive Pool Water" by Temple (tmpl)
+     https://codepen.io/tmpl/pen/YPZQxeN - MIT. Source: dev/pens/YPZQxeN/. WebGL: assets/js/fx/water-YPZQxeN.js.
      Kept: the 20:13 top-down basin, the soft teal drop shadow, crosshair cursor, touch-action:none on the canvas.
      The still fallback (phones are excluded; reduced motion / no WebGL2 floats) is a CSS picture of the same
      water: sea-green depth, a caustic shimmer pattern and the mark on the seabed.

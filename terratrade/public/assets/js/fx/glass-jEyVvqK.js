@@ -1,6 +1,6 @@
 // Contact · draggable liquid-glass business card.
 // Adapted from a liquid-glass GitHub profile card by Abdughafur Khujzoda (Abdughafur-Khujzoda)
-// https://codepen.io/Abdughafur-Khujzoda/pen/jEyVvqK — MIT. Source: dev/pens/jEyVvqK/.
+// https://codepen.io/Abdughafur-Khujzoda/pen/jEyVvqK - MIT. Source: dev/pens/jEyVvqK/.
 //
 // Kept from the pen: the SVG displacement filter (fractal-noise turbulence .012, seed 92, 2 octaves,
 // blurred 2, displacement scale 85 on R/G) applied over a 3px backdrop blur, the 28px-radius glass with its

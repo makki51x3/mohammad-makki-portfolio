@@ -7,7 +7,7 @@
 - Animal feed: soybean meal, wheat bran, cotton seed
 
 ## Operations
-- Two logistical hubs: north (Kano — food-crop sourcing from Kano and neighbouring northern states) and south (Lagos and Port Harcourt — animal-feed sourcing points next to the export seaports)
+- Two logistical hubs: north (Kano: food-crop sourcing from Kano and neighbouring northern states) and south (Lagos and Port Harcourt: animal-feed sourcing points next to the export seaports)
 - Farmer First policy: backward integration with smallholder farmers for quality control, economic empowerment and supply-chain resilience
 
 ## Contact

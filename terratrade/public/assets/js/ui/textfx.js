@@ -71,7 +71,7 @@ export function morph() {
   }, { el: box });
 }
 
-/* character roll (portfolio tabs) — used by the product filter heading. Letters are grouped per word
+/* character roll (portfolio tabs) - used by the product filter heading. Letters are grouped per word
    (nowrap) so lines only ever break between words. */
 export function chars(txt) {
   if (isAR()) return txt.split(' ').map(w => `<span class="ch">${esc(w)}</span>`).join(' ');

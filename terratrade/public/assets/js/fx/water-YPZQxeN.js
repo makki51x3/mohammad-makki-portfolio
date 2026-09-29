@@ -1,5 +1,5 @@
 // How we trade · interactive harbour water (WebGL).
-// Adapted from "Realistic Interactive Pool Water" by Temple (tmpl) — https://codepen.io/tmpl/pen/YPZQxeN — MIT.
+// Adapted from "Realistic Interactive Pool Water" by Temple (tmpl) - https://codepen.io/tmpl/pen/YPZQxeN - MIT.
 // Source: dev/pens/YPZQxeN/.
 //
 // Kept from the pen: the fixed-step 2D wave equation on a 256² half-float ping-pong target (no-flux walls,
@@ -280,7 +280,7 @@ export default function water(panel) {
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
     if (!renderer.extensions.has('EXT_color_buffer_float')) throw new Error('no float render targets'); // (r180 is WebGL2-only)
-  } catch (e) { renderer?.dispose(); console.info('[fx] water: still panel —', e.message); return false; } // keeps its CSS fallback
+  } catch (e) { renderer?.dispose(); console.info('[fx] water: still panel -', e.message); return false; } // keeps its CSS fallback
   panel.prepend(canvas);
   const CLEAR = '#1d7466';
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7));

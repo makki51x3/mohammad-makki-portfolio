@@ -1,4 +1,4 @@
-// Process cube — the portfolio's scroll-driven CSS-3D cube (gcube), one face per step:
+// Process cube - the portfolio's scroll-driven CSS-3D cube (gcube), one face per step:
 // Source → Aggregate → Verify → Process → Pack → Ship. Driven by the loop registry (only on screen).
 // Phones, reduced motion and no-JS get the plain step list instead (.cube-static).
 import { $, $$, REDUCED, isAR } from '../core/env.js';

@@ -1,4 +1,4 @@
-// TerraTrade — entry module. Mirrors the portfolio's bootstrap: every initialiser runs in isolation
+// TerraTrade - entry module. Mirrors the portfolio's bootstrap: every initialiser runs in isolation
 // (run()), light effects start immediately, heavy scenes (globe, cube) load when their section gets
 // close to the viewport. The pinned map loads right after page load so its pin spacing exists before
 // anyone uses the nav (otherwise in-page links would land in the wrong place).
@@ -32,7 +32,7 @@ lazy('#process', () => import('./scenes/process-cube.js'));
 lazy('#markets', () => import('./scenes/globe.js'));
 lazy('#top', () => import('./scenes/ambient.js'), '0px');
 lazy('.site-foot', () => import('./scenes/flora.js'), '400px 0px');
-// CodePen adaptations (slot registry) — see assets/js/fx/
+// CodePen adaptations (slot registry) - see assets/js/fx/
 import('./fx/registry.js').then(m => m.default()).catch(e => console.error('[fx]', e));
 
 if (window.ScrollTrigger) document.fonts?.ready.then(() => ScrollTrigger.refresh());
