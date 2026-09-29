@@ -54,6 +54,15 @@ async function fxChecks(page, c, name) {
   ok(ib.length === 5 && ib.every(b => /counter\(ib/.test(b.disc)), `${name}: banners + counter discs ${JSON.stringify(ib)}`);
   if (!c.mobile) ok(ib[0].tx * (c.lang === 'ar' ? -1 : 1) < 0 && ib[1].tx * (c.lang === 'ar' ? -1 : 1) > 0, `${name}: banner zig-zag direction ${ib.map(b => b.tx)}`);
   else ok(ib.every(b => b.tx === 0), `${name}: banners stack without zig-zag on phones ${ib.map(b => b.tx)}`);
+  // raMZQNe — chunky squircle buttons: SVG layer behind the live label, the face sinks while pressed;
+  // the floating WhatsApp squircle hides over the hero / contact / footer and shows in between
+  const ch = await page.evaluate(() => { const q = document.querySelector('.hero [data-chunky]');
+    q.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); const down = parseFloat(q.style.getPropertyValue('--sq-dy'));
+    q.dispatchEvent(new PointerEvent('pointerup', { bubbles: true })); const up = parseFloat(q.style.getPropertyValue('--sq-dy'));
+    return { n: document.querySelectorAll('.is-chunky > svg.sq .sq-face[d]').length, down, up, footer: document.querySelector('.wa-float').classList.contains('show') }; });
+  ok(ch.n === 3 && ch.down > 0 && ch.up === 0 && !ch.footer, `${name}: chunky buttons render + press, WhatsApp squircle hidden at the footer ${JSON.stringify(ch)}`);
+  await page.evaluate(() => document.getElementById('about').scrollIntoView()); await page.waitForTimeout(700);
+  ok(await page.evaluate(() => document.querySelector('.wa-float').classList.contains('show')), `${name}: floating WhatsApp squircle shows mid-page`);
   // RwKPapa — product flip cards: hover/focus turns the card on a fine pointer; touch shows front + back stacked
   if (!c.mobile) {
     await page.hover('.pcard[data-id="cashew"]'); await page.waitForTimeout(c.reduced ? 150 : 1500);

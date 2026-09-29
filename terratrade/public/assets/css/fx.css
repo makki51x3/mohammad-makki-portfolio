@@ -243,4 +243,50 @@
   }
   html.paused .tt-lens, html.reduced .tt-lens { display: none; }
   @media (forced-colors: active), print { .tt-lens { display: none; } }
+
+  /* ==========================================================================================
+     S12 · Chunky squircle buttons — "Chunky 3D Buttons" by Andrew Fisher (Andrew-Fisher-the-decoder)
+     https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe — MIT. Source: dev/pens/raMZQNe/.
+     The pen's colour recipe, per button pair (face --sq-hb, depth --sq-hd), mixed exactly as it does:
+     footprint 60% black + a drop shadow at 35% black; base 80% black with a 50%-black rim (floating: the
+     face tint, 70% white); extrusion slices 65% → 90% → 65% white; face stroke 70% white. Geometry +
+     press: assets/js/fx/chunky-raMZQNe.js. Only styled once the script has added its layer (.is-chunky),
+     so without JS these stay the site's regular buttons.
+     ========================================================================================== */
+  [data-chunky="amber"] { --sq-hb: #FFA612; --sq-hd: #D98700; --sq-ink: #2A1A00; }
+  [data-chunky="green"], [data-chunky="float"] { --sq-hb: #0A7A33; --sq-hd: #0B6A2E; --sq-ink: #fff; }
+  .is-chunky {
+    position: relative; isolation: isolate; color: var(--sq-ink);
+    border: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none;
+    border-radius: 16px; font-weight: 800; letter-spacing: .02em;
+  }
+  .btn.is-chunky, .btn.is-chunky:hover { background: none; border: 0; box-shadow: none; color: var(--sq-ink); }
+  .is-chunky > .sq { position: absolute; z-index: -1; overflow: visible; pointer-events: none; }
+  /* the live label rides the face; its backing matches the face so contrast tools read the real pair */
+  .is-chunky > :not(.sq) { translate: 0 var(--sq-dy, 0px); }
+  .is-chunky > span { background: var(--sq-hb); border-radius: 6px; box-shadow: 0 0 0 3px var(--sq-hb); }
+  .is-chunky:focus-visible { outline: 2px solid var(--txt); outline-offset: 6px; }
+  .sq-face { fill: var(--sq-hb); stroke: color-mix(in srgb, var(--sq-hb) 70%, white); stroke-width: 1.5; }
+  .sq-base { fill: color-mix(in srgb, var(--sq-hd) 80%, black); stroke: color-mix(in srgb, var(--sq-hd) 50%, black); stroke-width: 1; }
+  .sq-shadow { fill: color-mix(in srgb, var(--sq-hd) 60%, black); }
+  .sq-drop { flood-color: color-mix(in srgb, var(--sq-hd) 35%, black); flood-opacity: .3; }
+  .sq-e { stop-color: color-mix(in srgb, var(--sq-hd) 65%, white); }
+  .sq-m { stop-color: color-mix(in srgb, var(--sq-hd) 90%, white); }
+  [data-chunky="float"] .sq-base { stroke: color-mix(in srgb, var(--sq-hb) 70%, white); }
+  [data-chunky="float"] .sq-drop { flood-opacity: .15; }
+
+  /* the floating WhatsApp squircle (the pen's floating square-icon variant) */
+  .wa-float {
+    position: fixed; inset-block-end: 26px; inset-inline-end: 22px; z-index: 160;
+    display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px;
+    color: #fff; background: #0A7A33; box-shadow: var(--shadow);
+    transition: opacity .35s ease, translate .45s var(--ease), visibility 0s;
+  }
+  .wa-float.is-chunky { background: none; box-shadow: none; }
+  .wa-float .i { width: 26px; height: 26px; stroke: currentColor; }
+  .js .wa-float:not(.show) { opacity: 0; visibility: hidden; translate: 0 14px; transition: opacity .25s ease, translate .3s ease, visibility 0s .3s; }
+  html.dlgopen .wa-float { visibility: hidden; }
+  @media (max-width: 640px) { .wa-float { width: 48px; height: 48px; inset-block-end: 18px; inset-inline-end: 16px; } }
+  @media print { .wa-float { display: none; } }
+  @media (forced-colors: active) { .is-chunky > .sq { display: none; } .is-chunky { border: 1px solid ButtonText; } }
 }

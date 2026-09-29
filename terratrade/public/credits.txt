@@ -15,3 +15,4 @@ CodePen adaptations (MIT unless stated in the pen) — see /assets/css/fx.css an
 - About · mission, vision & values banners — "Responsive infographic banners with CSS variables" by Ana Tudor (thebabydino), https://codepen.io/thebabydino/pen/NLWdwz
 - Products · 3D flip cards — "3D Perspective cards with depth [CSS]" by Fernando Cohen (designfenix), https://codepen.io/designfenix/pen/RwKPapa
 - Site · cursor lens — "Pure CSS cursor tracking" by Andrew Fisher (Andrew-Fisher-the-decoder), https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd
+- Hero quote + form submit buttons, floating WhatsApp button — "Chunky 3D Buttons" by Andrew Fisher (Andrew-Fisher-the-decoder), https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe
