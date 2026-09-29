@@ -14,3 +14,4 @@ Map & globe geometry: Natural Earth via world-atlas (public domain).
 CodePen adaptations (MIT unless stated in the pen) — see /assets/css/fx.css and /assets/js/fx/:
 - About · mission, vision & values banners — "Responsive infographic banners with CSS variables" by Ana Tudor (thebabydino), https://codepen.io/thebabydino/pen/NLWdwz
 - Products · 3D flip cards — "3D Perspective cards with depth [CSS]" by Fernando Cohen (designfenix), https://codepen.io/designfenix/pen/RwKPapa
+- Site · cursor lens — "Pure CSS cursor tracking" by Andrew Fisher (Andrew-Fisher-the-decoder), https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd

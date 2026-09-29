@@ -211,4 +211,36 @@
   @media (forced-colors: active) {
     [data-fx="flip"] .pback { border: 1px solid CanvasText; }
   }
+
+  /* ==========================================================================================
+     S1 · Cursor lens — "Pure CSS cursor tracking" by Andrew Fisher (Andrew-Fisher-the-decoder)
+     https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd — MIT. Source: dev/pens/GgraMzd/.
+     Kept: the cheap 300px radial-gradient bloom (no blur filter to move) and the 150px backdrop lens
+     (blur · saturate 1.9 · contrast 1.15 · hue-rotate 14deg) with its soft radial mask. Motion: see
+     assets/js/fx/cursor-GgraMzd.js. Changed: brand colours for the bloom, and the mask is a ring with a
+     clear centre so the text under the pointer stays readable; the native cursor is kept.
+     ========================================================================================== */
+  .tt-lens {
+    position: fixed; left: 0; top: 0; z-index: 170; pointer-events: none;
+    opacity: 0; transition: opacity .35s ease; will-change: translate; isolation: isolate;
+  }
+  .tt-lens.on { opacity: 1; }
+  /* the pen's filter chain; a gentler saturate on the pale daylight theme, the full one at night */
+  .tt-lens { --lens-f: blur(8px) saturate(1.45) contrast(1.1) hue-rotate(14deg); }
+  html.dark .tt-lens { --lens-f: blur(10px) saturate(1.9) contrast(1.15) hue-rotate(14deg); }
+  .tt-lens::before {
+    content: ''; position: absolute; width: 300px; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%;
+    background: radial-gradient(circle, rgba(84, 186, 71, .13) 0, rgba(255, 166, 18, .07) 35%, rgba(3, 199, 4, .035) 52%, transparent 72%);
+  }
+  html.dark .tt-lens::before {
+    background: radial-gradient(circle, rgba(111, 219, 94, .16) 0, rgba(255, 185, 56, .11) 35%, rgba(3, 199, 4, .05) 52%, transparent 72%);
+  }
+  .tt-lens::after {
+    content: ''; position: absolute; width: 150px; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%;
+    -webkit-backdrop-filter: var(--lens-f); backdrop-filter: var(--lens-f);
+    -webkit-mask: radial-gradient(circle, transparent 0 24%, #000 44%, #0007 73%, #0002 87%, transparent);
+    mask: radial-gradient(circle, transparent 0 24%, #000 44%, #0007 73%, #0002 87%, transparent);
+  }
+  html.paused .tt-lens, html.reduced .tt-lens { display: none; }
+  @media (forced-colors: active), print { .tt-lens { display: none; } }
 }

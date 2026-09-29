@@ -40,6 +40,14 @@ async function scrollThrough(page) {
 
 // ---------------- CodePen effects (one block per adapted pen) ----------------
 async function fxChecks(page, c, name) {
+  // GgraMzd — cursor lens: fine pointers only; follows, then rests (its loop unregisters); never under reduced motion
+  if (!c.mobile) {
+    await page.mouse.move(400, 400); await page.mouse.move(700, 450, { steps: 3 }); await page.waitForTimeout(800);
+    const l = await page.evaluate(() => { const e = document.querySelector('.tt-lens'); if (!e) return null; const [x, y] = e.style.translate.split(' ').map(parseFloat);
+      return { on: e.classList.contains('on'), x, y, shown: getComputedStyle(e).display !== 'none', loops: window.__tt.loops() }; });
+    if (c.reduced) ok(l && (!l.on || !l.shown) && !l.loops.includes('cursor'), `${name}: no cursor lens under reduced motion ${JSON.stringify(l)}`);
+    else ok(l && l.on && Math.abs(l.x - 700) < 3 && Math.abs(l.y - 450) < 3 && !l.loops.includes('cursor'), `${name}: cursor lens follows then rests ${JSON.stringify(l)}`);
+  } else ok(await page.evaluate(() => !document.querySelector('.tt-lens')), `${name}: no cursor lens on touch`);
   // NLWdwz — about banners: five banners with counter discs; zig-zag on wide screens only, mirrored in Arabic
   const ib = await page.evaluate(() => [...document.querySelectorAll('[data-fx="banners"] .ib')].map(li => ({
     disc: getComputedStyle(li.querySelector('.ib-card'), '::before').content, tx: parseFloat(getComputedStyle(li).translate) || 0 })));
