@@ -107,4 +107,108 @@
     [data-fx="banners"] .ib-card { border: 1px solid CanvasText; }
     [data-fx="banners"] .ib-card::before { border-color: CanvasText; }
   }
+
+  /* ==========================================================================================
+     S5 · Products — 3D perspective flip cards
+     Adapted from "3D Perspective cards with depth [CSS]" by Fernando Cohen (designfenix)
+     https://codepen.io/designfenix/pen/RwKPapa — MIT. Source: dev/pens/RwKPapa/.
+     Kept from the pen: the 1200px perspective, the cover that swings rotateY(-180deg) on hover while
+     its inset frame (translateZ 30px), title (100px) and corner tag (60px) float forward in depth,
+     the dark back face whose outlined button pops 60px toward you, and the photo darkening as it turns.
+     Changed: TerraTrade product photos (<img>, not background-image), Lexend instead of Oswald, the
+     division label where the pen had a price (no prices are published), a "Spec sheet" action under
+     the quote button, backface-visibility instead of z-order tricks, keyboard focus flips the card
+     too (:focus-within), the flip mirrors in Arabic, a 1.2s flip instead of 2.3s, and touch / coarse
+     pointers get the front and back stacked (no hover to reveal a hidden side).
+     ========================================================================================== */
+  [data-fx="flip"] {
+    --flip-t: 1.2s; --flip-ease: cubic-bezier(.45, .05, .2, 1);
+    --back-bg: linear-gradient(160deg, #06291A, #021A10 70%);
+    --frame: rgba(233, 255, 229, .55);
+  }
+  [data-fx="flip"] .pflip { position: relative; }
+  [data-fx="flip"] .pfront {
+    position: relative; aspect-ratio: 4 / 3; overflow: hidden; border-radius: var(--r) var(--r) 0 0;
+    background: var(--forest); color: #fff; isolation: isolate;
+  }
+  [data-fx="flip"] .pfront > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  /* the pen's darkening veil (rgba(0,0,0,.4)), graded so the title always reads */
+  [data-fx="flip"] .pfront::after {
+    content: ''; position: absolute; inset: 0; z-index: -1; transition: background-color 1.3s ease, opacity 1.3s ease;
+    background: linear-gradient(to top, rgba(1, 22, 13, .8), rgba(1, 22, 13, .08) 55%, rgba(1, 22, 13, .34));
+  }
+  [data-fx="flip"] .pframe {
+    position: absolute; inset: 16px; border: 4px solid var(--frame); box-shadow: 0 0 12px rgba(0, 0, 0, .3);
+    pointer-events: none; transition: transform var(--flip-t) var(--flip-ease);
+  }
+  [data-fx="flip"] .ptop {
+    position: absolute; inset-block-start: 30px; inset-inline: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    transition: transform var(--flip-t) var(--flip-ease);
+  }
+  [data-fx="flip"] .ptop .idx { color: rgba(255, 255, 255, .8); text-shadow: 0 1px 8px rgba(0, 0, 0, .5); }
+  /* where the pen shows the price (Oswald 200, 2em): the division, set light and large */
+  [data-fx="flip"] .ptop .tag { font: 300 16px/1.2 var(--disp); letter-spacing: .01em; text-transform: none; color: #fff; text-shadow: 0 1px 10px rgba(0, 0, 0, .45); }
+  [data-fx="flip"] .pfront h3 {
+    position: absolute; inset-inline: 30px; inset-block-end: 28px;
+    font: 600 clamp(22px, 2.1vw, 30px)/1.08 var(--disp); letter-spacing: -.01em; color: #fff; text-wrap: balance;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, .35); transition: transform var(--flip-t) var(--flip-ease);
+  }
+  [dir="rtl"] [data-fx="flip"] .pfront h3 { line-height: 1.45; }
+  [data-fx="flip"] .pback {
+    display: flex; flex-direction: column; gap: 10px; padding: 20px 22px 22px;
+    border-radius: 0 0 var(--r) var(--r); background: var(--back-bg); color: #EEFAE9;
+  }
+  [data-fx="flip"] .pback-name { display: none; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #9BE88C; }
+  [data-fx="flip"] .pback .blurb { margin: 0; color: rgba(238, 250, 233, .86); font-size: 14px; flex: 0 1 auto; }
+  [data-fx="flip"] .pacts { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: auto; padding-top: 6px; }
+  /* the pen's outlined "Add to cart" button */
+  [data-fx="flip"] .pquote {
+    display: inline-flex; justify-content: center; min-width: 78%; padding: 12px 26px; border: 1px solid #EEFAE9;
+    font: 300 17px/1.2 var(--disp); letter-spacing: .02em; color: #EEFAE9; background: transparent;
+    transition: transform var(--flip-t) var(--flip-ease), background-color .5s ease, color .5s ease;
+  }
+  [data-fx="flip"] .pquote:hover, [data-fx="flip"] .pquote:focus-visible { background: #EEFAE9; color: #021A10; }
+  [data-fx="flip"] .pback .open {
+    align-self: center; border: 0; padding: 6px 8px; color: #9BE88C; background: none; font-weight: 500;
+    transition: transform var(--flip-t) var(--flip-ease), color .2s;
+  }
+  [data-fx="flip"] .pback .open:hover { color: #fff; background: none; }
+  [data-fx="flip"] :is(.pquote, .open):focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+  html.dark [data-fx="flip"] .pback { box-shadow: inset 0 0 0 1px rgba(233, 255, 229, .13); }
+  @media (max-width: 460px) { [data-fx="flip"] .pfront { aspect-ratio: 16 / 11; } }
+
+  /* the flip itself: only for a real hover pointer */
+  @media (hover: hover) and (pointer: fine) {
+    [data-fx="flip"] .pflip { perspective: 1200px; aspect-ratio: 3 / 4; }
+    [data-fx="flip"] .pcover {
+      position: absolute; inset: 0; transform-style: preserve-3d;
+      transition: transform var(--flip-t) var(--flip-ease);
+    }
+    [data-fx="flip"] :is(.pfront, .pback) { position: absolute; inset: 0; border-radius: var(--r); backface-visibility: hidden; transform-style: preserve-3d; }
+    [data-fx="flip"] .pfront { aspect-ratio: auto; overflow: visible; isolation: auto; box-shadow: var(--shadow); }
+    /* every layer hides its own back, so nothing pokes through mid-turn */
+    [data-fx="flip"] :is(.pfront > *, .pfront::after, .pback > *, .pacts > *) { backface-visibility: hidden; }
+    [data-fx="flip"] .pfront > img, [data-fx="flip"] .pfront::after { border-radius: inherit; }
+    [data-fx="flip"] .pfront > img { z-index: 0; } /* inside a 3D context the -2/-1 stack would sort behind the face */
+    [data-fx="flip"] .pfront::after { z-index: 0; }
+    [data-fx="flip"] :is(.pframe, .ptop, .pfront h3) { z-index: 1; }
+    [data-fx="flip"] .pback { transform: rotateY(180deg); justify-content: center; padding: 30px 28px; text-align: center; }
+    [dir="rtl"] [data-fx="flip"] .pback { transform: rotateY(-180deg); }
+    [data-fx="flip"] .pback .blurb { font-size: 14.5px; }
+    [data-fx="flip"] .pback-name { display: block; }
+    [data-fx="flip"] .pacts { margin-top: 12px; }
+
+    [data-fx="flip"] .pcard:is(:hover, :focus-within) .pcover { transform: rotateY(-180deg); }
+    [dir="rtl"] [data-fx="flip"] .pcard:is(:hover, :focus-within) .pcover { transform: rotateY(180deg); }
+    [data-fx="flip"] .pcard:is(:hover, :focus-within) .pframe { transform: translateZ(30px); }
+    [data-fx="flip"] .pcard:is(:hover, :focus-within) .pfront h3 { transform: translateZ(100px); }
+    [data-fx="flip"] .pcard:is(:hover, :focus-within) .ptop { transform: translateZ(60px); }
+    [data-fx="flip"] .pcard:is(:hover, :focus-within) .pfront::after { background-color: #000; opacity: .9; }
+    [data-fx="flip"] .pcard:is(:hover, :focus-within) :is(.pquote, .pback .open) { transform: translateZ(60px); }
+    [data-fx="flip"] .pcard { cursor: pointer; }
+  }
+  @media (forced-colors: active) {
+    [data-fx="flip"] .pback { border: 1px solid CanvasText; }
+  }
 }

@@ -57,4 +57,6 @@ export function spec() {
   document.addEventListener('click', e => { const b = e.target.closest('[data-spec]'); if (b) open(b.dataset.spec, b); });
   // the whole card opens the sheet too (the button stays the keyboard target)
   $$('.pcard').forEach(c => c.addEventListener('click', e => { if (!e.target.closest('button, a')) open(c.dataset.id, $('[data-spec]', c)); }));
+  // a card's "Request a quote" prefills the form with that product (without JS it is a plain #contact link)
+  $$('[data-quote]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); prefillQuote(a.dataset.quote, 'card'); }));
 }

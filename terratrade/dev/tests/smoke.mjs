@@ -46,6 +46,18 @@ async function fxChecks(page, c, name) {
   ok(ib.length === 5 && ib.every(b => /counter\(ib/.test(b.disc)), `${name}: banners + counter discs ${JSON.stringify(ib)}`);
   if (!c.mobile) ok(ib[0].tx * (c.lang === 'ar' ? -1 : 1) < 0 && ib[1].tx * (c.lang === 'ar' ? -1 : 1) > 0, `${name}: banner zig-zag direction ${ib.map(b => b.tx)}`);
   else ok(ib.every(b => b.tx === 0), `${name}: banners stack without zig-zag on phones ${ib.map(b => b.tx)}`);
+  // RwKPapa — product flip cards: hover/focus turns the card on a fine pointer; touch shows front + back stacked
+  if (!c.mobile) {
+    await page.hover('.pcard[data-id="cashew"]'); await page.waitForTimeout(c.reduced ? 150 : 1500);
+    const f = await page.evaluate(() => { const q = document.querySelector('.pcard[data-id="cashew"] .pquote'), r = q.getBoundingClientRect();
+      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      return { turned: getComputedStyle(q.closest('.pcover')).transform !== 'none', hit: !!hit?.closest('.pquote') }; });
+    ok(f.turned && f.hit, `${name}: hovered product card turns to its quote button ${JSON.stringify(f)}`);
+    await page.mouse.move(2, 2);
+  } else {
+    const f = await page.evaluate(() => { const b = document.querySelector('.pcard[data-id="cashew"] .pback'); return { pos: getComputedStyle(b).position, tf: getComputedStyle(b.closest('.pcover')).transform, h: b.offsetHeight }; });
+    ok(f.pos === 'static' && f.tf === 'none' && f.h > 80, `${name}: product card back is stacked on touch ${JSON.stringify(f)}`);
+  }
 }
 
 // ---------------- matrix ----------------
@@ -110,7 +122,8 @@ log('• structure');
   // keyboard: first Tab lands on the skip link
   await page.keyboard.press('Tab'); ok(await page.evaluate(() => document.activeElement?.classList.contains('skip')), 'first Tab focuses the skip link');
   // spec dialog: open, Escape, focus return; quote prefill
-  const btn = page.locator('[data-spec="sesame"]'); await btn.scrollIntoViewIfNeeded(); await btn.click();
+  // (the Spec-sheet button is on the flip card's back: hover the card first, as a mouse user would)
+  const btn = page.locator('[data-spec="sesame"]'); await btn.scrollIntoViewIfNeeded(); await page.hover('.pcard[data-id="sesame"]'); await page.waitForTimeout(1500); await btn.click();
   ok(await page.evaluate(() => document.getElementById('spec').open), 'spec dialog opens');
   ok(await page.evaluate(() => document.querySelectorAll('#specTable tr').length > 2), 'spec table rendered');
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
@@ -131,6 +144,8 @@ log('• structure');
   await page.click('#rfqAgain'); await page.waitForTimeout(200);
   ok(await page.evaluate(() => !document.activeElement?.closest('.hp') && document.activeElement?.id === 'f-name'), '"Send another request" focuses the name field (never the honeypot)');
   ok(srv.lastForm?.['form-name'] === 'rfq' && srv.lastForm?.email === 'buyer@example.com' && srv.lastForm?.product === 'sesame' && srv.lastForm?.lang === 'en', 'posted fields reach the server: ' + JSON.stringify(srv.lastForm));
+  await page.evaluate(() => document.querySelector('.pcard[data-id="ginger"] .pquote').click()); await page.waitForTimeout(300);
+  ok(await page.evaluate(() => document.querySelector('#rfq [name=product]').value === 'ginger' && document.querySelector('#rfq [name=source]').value === 'card:ginger'), 'card "Request a quote" prefills product + source');
   ok(!errs.filter(e => !/500/.test(e)).length, 'structure run errors: ' + errs.join(' | '));
   await ctx.close();
 }

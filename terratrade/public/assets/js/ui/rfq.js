@@ -12,11 +12,12 @@ export function toast(msg) {
   clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2200);
 }
 
-export function prefillQuote(productId) {
+/** @param {string} productId @param {'spec'|'card'} [via] where the request started (sent as the form's source) */
+export function prefillQuote(productId, via = 'spec') {
   const form = $('#rfq'); if (!form) return;
   if (form.hidden) { form.hidden = false; $('#rfqDone').hidden = true; } // re-open after a previous send
   const sel = form.elements.product; if (sel && productId) sel.value = productId;
-  form.elements.source.value = 'spec:' + productId;
+  form.elements.source.value = via + ':' + productId;
   scrollToEl($('#contact'));
   setTimeout(() => {
     const first = $$('input:not([type=hidden]):not([type=radio]):not([type=checkbox]), select, textarea', form).find(f => !f.value && !f.closest('.hp'));
