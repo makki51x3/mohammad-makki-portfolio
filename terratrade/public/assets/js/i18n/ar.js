@@ -251,6 +251,9 @@ export default {
   "contact.chat": "محادثة",
   "contact.office": "المكتب",
   "contact.city": "كانو، نيجيريا",
+  "contact.cardProducts": "سلع",
+  "contact.cardMarkets": "أسواق",
+  "contact.cardEst": "التأسيس",
   "contact.photoAlt": "مزارعة مبتسمة في حقل ذرة تناول سلة من المحصول لمشترٍ",
 
   // ---- form ----

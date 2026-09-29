@@ -63,6 +63,15 @@ async function fxChecks(page, c, name) {
   ok(ch.n === 3 && ch.down > 0 && ch.up === 0 && !ch.footer, `${name}: chunky buttons render + press, WhatsApp squircle hidden at the footer ${JSON.stringify(ch)}`);
   await page.evaluate(() => document.getElementById('about').scrollIntoView()); await page.waitForTimeout(700);
   ok(await page.evaluate(() => document.querySelector('.wa-float').classList.contains('show')), `${name}: floating WhatsApp squircle shows mid-page`);
+  // jEyVvqK — contact glass card: distortion filter wired, drags with the pointer and stays on its photo (desktop only)
+  if (!c.mobile) {
+    const card = page.locator('[data-fx="glass"]'); await card.scrollIntoViewIfNeeded(); await page.waitForTimeout(300);
+    const b0 = await card.boundingBox(), toward = c.lang === 'ar' ? 400 : -400; // drag it far past the photo's top/start corner
+    await page.mouse.move(b0.x + 30, b0.y + 30); await page.mouse.down(); await page.mouse.move(b0.x + 30 + toward, b0.y - 900, { steps: 6 }); await page.mouse.up();
+    const g = await page.evaluate(() => { const e = document.querySelector('[data-fx="glass"]'), f = e.parentElement;
+      return { glass: e.classList.contains('is-glass'), filter: !!document.getElementById('tt-glass-distort'), x: e.offsetLeft, y: e.offsetTop, max: f.clientWidth - e.offsetWidth }; });
+    ok(g.glass && g.filter && g.y === 0 && g.x === (c.lang === 'ar' ? g.max : 0), `${name}: glass card drags and stays inside the photo ${JSON.stringify(g)}`);
+  } else ok(await page.evaluate(() => !document.querySelector('.gcard-defs')), `${name}: glass card script not loaded on phones`);
   // RwKPapa — product flip cards: hover/focus turns the card on a fine pointer; touch shows front + back stacked
   if (!c.mobile) {
     await page.hover('.pcard[data-id="cashew"]'); await page.waitForTimeout(c.reduced ? 150 : 1500);
@@ -171,7 +180,7 @@ log('• structure');
   const s = await page.evaluate(() => ({ canonical: document.querySelector('link[rel=canonical]').href, og: document.querySelector('meta[property="og:image"]').content, locale: document.querySelector('meta[property="og:locale"]').content, lang: document.querySelector('#rfq [name=lang]').value, action: document.querySelector('#rfq').getAttribute('action'), title: document.title, words: JSON.parse(document.getElementById('morphbox').dataset.words)[0] }));
   ok(s.canonical === 'https://terratrade.global/ar/' && /og-ar\.jpg$/.test(s.og) && s.locale === 'ar_AR' && s.lang === 'ar' && s.action === '/ar/thanks/' && /تيرا/.test(s.title) && /[؀-ۿ]/.test(s.words), 'Arabic head/form: ' + JSON.stringify(s));
   // no English prose left in the Arabic page (allow brand names, codes, digits, emails)
-  const leftovers = await page.evaluate(() => { const allow = /^(TerraTrade|Terra|Trade|NG|SA|AE|QA|LB|SY|JP|KR|CN|FOB|CFR|CIF|KOR|MT|N|English|info@terratrade\.global|[\d\s+·.,%–—/-]+)$/;
+  const leftovers = await page.evaluate(() => { const allow = /^(TerraTrade|Terra|Trade|NG|SA|AE|QA|LB|SY|JP|KR|CN|FOB|CFR|CIF|KOR|MT|N|English|info@terratrade\.global|terratrade\.global|[\d\s+·.,%–—/-]+)$/;
     const out = []; const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n;
     while ((n = w.nextNode())) { const t = n.textContent.trim(); if (!t || n.parentElement.closest('script,style,svg,.foot-word,[aria-hidden=true] .ltr,.hp')) continue; if (/[A-Za-z]{3,}/.test(t) && !/[\u0600-\u06FF]/.test(t) && !allow.test(t)) out.push(t.slice(0, 40)); } return out; });
   ok(!leftovers.length, 'English text left on the Arabic page: ' + leftovers.slice(0, 10).join(' | '));

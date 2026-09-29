@@ -289,4 +289,60 @@
   @media (max-width: 640px) { .wa-float { width: 48px; height: 48px; inset-block-end: 18px; inset-inline-end: 16px; } }
   @media print { .wa-float { display: none; } }
   @media (forced-colors: active) { .is-chunky > .sq { display: none; } .is-chunky { border: 1px solid ButtonText; } }
+
+  /* ==========================================================================================
+     Contact · liquid-glass business card — Abdughafur Khujzoda (Abdughafur-Khujzoda)
+     https://codepen.io/Abdughafur-Khujzoda/pen/jEyVvqK — MIT. Source: dev/pens/jEyVvqK/.
+     Kept: 28px glass with a 1px white rim + 135° inner sheen (::before), the backdrop blur(3px) layer
+     distorted by the SVG turbulence filter (::after, filter defs added by assets/js/fx/glass-jEyVvqK.js),
+     inset highlight, avatar ring, stats row with a top rule, pill button, hover lift, scale while dragging.
+     Changed: brand-green shadows and a faint forest tint behind the text for legibility on a photo,
+     site fonts, a taller photo so the card has room to roam.
+     ========================================================================================== */
+  .cc-photo { position: relative; }
+  .cc-photo:has([data-fx="glass"]) img { aspect-ratio: 4 / 5; object-position: 38% 30%; }
+  .gcard-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+  [data-fx="glass"] {
+    position: absolute; inset-block-end: 18px; inset-inline-end: 18px; z-index: 2;
+    width: 256px; padding: 26px 18px 20px; border-radius: 28px; isolation: isolate;
+    color: #fff; text-align: center; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
+    box-shadow: 0 24px 96px rgba(1, 40, 25, .28), inset 0 1px 0 rgba(255, 255, 255, .5);
+    transition: transform 300ms cubic-bezier(.4, 0, .2, 1), box-shadow 300ms cubic-bezier(.4, 0, .2, 1);
+  }
+  [data-fx="glass"]::before {
+    content: ''; position: absolute; inset: 0; z-index: 0; border-radius: inherit; pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, .22);
+    background-color: rgba(1, 30, 18, .22);
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, .08), transparent 50%);
+  }
+  [data-fx="glass"]::after {
+    content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  }
+  [data-fx="glass"].is-glass::after { filter: url(#tt-glass-distort); }
+  [data-fx="glass"]:not(.dragging):hover { transform: translateY(-4px); }
+  [data-fx="glass"].dragging {
+    cursor: grabbing; transition: none; transform: scale(1.03) translateY(-4px);
+    box-shadow: 0 32px 120px rgba(1, 40, 25, .45), inset 0 1px 0 rgba(255, 255, 255, .6);
+  }
+  .gcard-in { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+  .gcard-av { width: 70px; height: 70px; padding: 3px; border-radius: 50%; background: rgba(255, 255, 255, .3); box-shadow: 0 4px 12px rgba(0, 0, 0, .2); margin-bottom: 10px; }
+  .gcard-av img { width: 100%; height: 100%; border-radius: 50%; pointer-events: none; }
+  .gcard-name { font: 700 1.12rem/1.3 var(--disp); letter-spacing: .02em; text-shadow: 0 2px 4px rgba(0, 0, 0, .3); }
+  .gcard-handle { margin: 2px 0 12px; font: .78rem/1.4 var(--mono); color: rgba(255, 255, 255, .82); }
+  .gcard-stats { display: flex; justify-content: center; gap: 12px; width: 100%; margin: 0 0 16px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, .18); }
+  .gcard-stats > div { display: flex; flex-direction: column-reverse; align-items: center; }
+  .gcard-stats dd { font: 700 .98rem/1.3 var(--disp); text-shadow: 0 1px 2px rgba(0, 0, 0, .25); }
+  .gcard-stats dt { margin-top: 2px; font: 600 .6rem/1.3 var(--body); text-transform: uppercase; letter-spacing: .04em; color: rgba(255, 255, 255, .8); }
+  [dir="rtl"] .gcard-stats dt { text-transform: none; letter-spacing: 0; font-size: .72rem; }
+  .gcard-btn {
+    display: inline-flex; align-items: center; gap: 7px; padding: 8px 20px; border-radius: 9px;
+    border: 1px solid rgba(255, 255, 255, .32); background: rgba(1, 40, 25, .6); color: #fff; font-size: .82rem; font-weight: 600;
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); transition: background .2s ease, transform .2s ease;
+  }
+  .gcard-btn:hover { background: rgba(1, 40, 25, .85); transform: scale(1.02); }
+  .gcard-btn .i { width: 15px; height: 15px; }
+  .gcard-btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { [data-fx="glass"] { transition: none; } }
+  @media (forced-colors: active) { [data-fx="glass"] { border: 1px solid CanvasText; } }
 }
