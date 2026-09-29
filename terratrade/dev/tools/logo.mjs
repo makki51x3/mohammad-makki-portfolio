@@ -83,7 +83,8 @@ writeFileSync(join(TMP, 'mark-inline.svg'),
   `<rect class="bloom-tile" x="0" y="${parts.tile.y}" width="${tile.w}" height="${tile.h}" rx="${R}"/>` +
   parts.amber.map((d, i) => `<path class="petal petal-a" style="--i:${i}" d="${d}"/>`).join('') +
   parts.white.map((d, i) => `<path class="petal petal-w" style="--i:${i + 2}" d="${d}"/>`).join('') + `</svg>`);
-// Inject the inline mark into the hero between <!-- BLOOM --> markers.
+// Inject the inline mark between <!-- BLOOM --> markers, if a page has them (the hero no longer does: its
+// logo bloom was replaced by the liquid-glass bubbles — the output file stays available for reuse).
 const idx = join(here, '..', '..', 'public', 'index.html');
 try {
   const html = readFileSync(idx, 'utf8');

@@ -17,3 +17,4 @@ CodePen adaptations (MIT unless stated in the pen) — see /assets/css/fx.css an
 - Site · cursor lens — "Pure CSS cursor tracking" by Andrew Fisher (Andrew-Fisher-the-decoder), https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd
 - Hero quote + form submit buttons, floating WhatsApp button — "Chunky 3D Buttons" by Andrew Fisher (Andrew-Fisher-the-decoder), https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe
 - Contact · draggable liquid-glass card — liquid-glass GitHub profile card by Abdughafur Khujzoda (Abdughafur-Khujzoda), https://codepen.io/Abdughafur-Khujzoda/pen/jEyVvqK
+- Hero · liquid-glass bubbles with orbiting text — "[SVG] [CSS] Marquee Glass Bubble" by Fernando Cohen (designfenix), https://codepen.io/designfenix/pen/QwdoddG

@@ -40,6 +40,15 @@ async function scrollThrough(page) {
 
 // ---------------- CodePen effects (one block per adapted pen) ----------------
 async function fxChecks(page, c, name) {
+  // QwdoddG — hero bubbles: the SMIL scene is frozen off-screen (we are at the footer) and under reduced motion,
+  // runs at the top otherwise; the orbiting text fits one lap of its path; all four photos decode
+  const hb = await page.evaluate(async () => { const svg = document.getElementById('hbScene'), t = svg.querySelector('.hb-orbit-t');
+    const imgs = await Promise.all([...svg.querySelectorAll('image')].map(i => new Promise(r => { const im = new Image(); im.onload = () => r(im.naturalWidth > 0); im.onerror = () => r(false); im.src = i.href.baseVal; })));
+    return { pausedOff: svg.animationsPaused(), fit: +(t.getComputedTextLength() / svg.querySelector('#hbMainPath').getTotalLength()).toFixed(3), imgs }; });
+  ok(hb.pausedOff && hb.fit > .75 && hb.fit <= 1 && hb.imgs.length === 4 && hb.imgs.every(Boolean), `${name}: hero bubbles paused off-screen, orbit text fits, photos load ${JSON.stringify(hb)}`);
+  await page.evaluate(() => document.querySelector('[data-fx="bubbles"]').scrollIntoView({ block: 'center' })); await page.waitForTimeout(600);
+  const hbRun = await page.evaluate(() => !document.getElementById('hbScene').animationsPaused());
+  ok(c.reduced ? !hbRun : hbRun, `${name}: hero bubbles animate only when motion is allowed (running=${hbRun})`);
   // GgraMzd — cursor lens: fine pointers only; follows, then rests (its loop unregisters); never under reduced motion
   if (!c.mobile) {
     await page.mouse.move(400, 400); await page.mouse.move(700, 450, { steps: 3 }); await page.waitForTimeout(800);
@@ -75,6 +84,8 @@ async function fxChecks(page, c, name) {
   // RwKPapa — product flip cards: hover/focus turns the card on a fine pointer; touch shows front + back stacked
   if (!c.mobile) {
     await page.hover('.pcard[data-id="cashew"]'); await page.waitForTimeout(c.reduced ? 150 : 1500);
+    await page.waitForFunction(() => { const r = document.querySelector('.pcard[data-id="cashew"] .pquote').getBoundingClientRect();
+      return document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.closest('.pquote'); }, null, { timeout: 2000 }).catch(() => {});
     const f = await page.evaluate(() => { const q = document.querySelector('.pcard[data-id="cashew"] .pquote'), r = q.getBoundingClientRect();
       const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
       return { turned: getComputedStyle(q.closest('.pcover')).transform !== 'none', hit: !!hit?.closest('.pquote') }; });

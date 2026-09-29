@@ -207,6 +207,11 @@
     [data-fx="flip"] .pcard:is(:hover, :focus-within) .pfront::after { background-color: #000; opacity: .9; }
     [data-fx="flip"] .pcard:is(:hover, :focus-within) :is(.pquote, .pback .open) { transform: translateZ(60px); }
     [data-fx="flip"] .pcard { cursor: pointer; }
+    /* only the face that's turned toward you takes the pointer (3D hit-testing of a backface-hidden face is not
+       something to rely on) */
+    [data-fx="flip"] .pback { pointer-events: none; }
+    [data-fx="flip"] .pcard:is(:hover, :focus-within) .pback { pointer-events: auto; }
+    [data-fx="flip"] .pcard:is(:hover, :focus-within) .pfront { pointer-events: none; }
   }
   @media (forced-colors: active) {
     [data-fx="flip"] .pback { border: 1px solid CanvasText; }
@@ -345,4 +350,73 @@
   .gcard-btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
   @media (prefers-reduced-motion: reduce) { [data-fx="glass"] { transition: none; } }
   @media (forced-colors: active) { [data-fx="glass"] { border: 1px solid CanvasText; } }
+
+  /* ==========================================================================================
+     S3 · Hero — liquid-glass bubbles with text orbiting the main bubble
+     "[SVG] [CSS] Marquee Glass Bubble" by Fernando Cohen (designfenix)
+     https://codepen.io/designfenix/pen/QwdoddG — MIT. Source: dev/pens/QwdoddG/.
+     Kept: the whole SVG scene (morphing clip paths, liquid displacement filters, milky / iridescent
+     sheens, speculars, glass edge stroke + drop-shadow stack, the textPath marquee), the six blurred
+     back-light glows and their geometry, and the right-hand placement bleeding off the edge.
+     Changed: TerraTrade photos (farmer / sesame / hibiscus), the commodity list on the path (EN/AR),
+     pink iridescence → mint and harvest tints, glows re-lit for the mint daylight and night themes,
+     site fonts, and a full-width scene under the copy on narrow screens instead of an off-canvas one.
+     ========================================================================================== */
+  [data-fx="bubbles"] {
+    --glow-a: 255, 255, 247; --glow-b: 255, 249, 228; --glow-c: 238, 255, 226;
+    position: relative; z-index: 1; margin: -40px 0 -30px; margin-inline-end: calc(-1 * clamp(0px, 7vw, 120px));
+    width: clamp(420px, 42vw, 640px); aspect-ratio: 1100 / 850; isolation: isolate; pointer-events: none;
+  }
+  html.dark [data-fx="bubbles"] { --glow-a: 84, 186, 71; --glow-b: 255, 166, 18; --glow-c: 111, 219, 94; }
+  .hb-scene { position: relative; z-index: 1; display: block; width: 100%; height: 100%; overflow: visible; }
+  .hb-light { position: absolute; z-index: -1; inset: -14% -16% -17% -15%; pointer-events: none; }
+  .hb-glow { position: absolute; display: block; border-radius: 50%; transform: translateZ(0); }
+  .hb-glow--ambient { left: 17%; top: -1%; width: 78%; height: 82%; filter: blur(70px); transform: scale(1.13);
+    background: radial-gradient(ellipse at 58% 44%, rgba(var(--glow-a), .52), rgba(var(--glow-b), .34) 24%, rgba(var(--glow-c), .18) 44%, rgba(var(--glow-c), .08) 60%, transparent 80%); }
+  .hb-glow--core { left: 33%; top: 4%; width: 54%; height: 58%; filter: blur(42px); transform: scale(1.18);
+    background: radial-gradient(ellipse at 51% 42%, rgba(var(--glow-a), .98), rgba(var(--glow-a), .88) 15%, rgba(var(--glow-b), .6) 34%, rgba(var(--glow-c), .3) 54%, rgba(var(--glow-c), .1) 70%, transparent 84%); }
+  .hb-glow--sun { left: 45%; top: 5%; width: 31%; height: 34%; filter: blur(28px); transform: scale(1.14);
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 1), rgba(var(--glow-a), .92) 18%, rgba(var(--glow-b), .56) 44%, rgba(var(--glow-c), .18) 66%, transparent 84%); }
+  .hb-glow--bottom { left: 38%; top: 55%; width: 47%; height: 31%; filter: blur(54px); transform: scale(1.18);
+    background: radial-gradient(ellipse at 52% 34%, rgba(var(--glow-b), .3), rgba(var(--glow-b), .16) 34%, rgba(var(--glow-c), .08) 58%, transparent 80%); }
+  .hb-glow--secondary { left: 12%; top: 50%; width: 38%; height: 40%; filter: blur(38px); transform: scale(1.08);
+    background: radial-gradient(circle, rgba(var(--glow-a), .26), rgba(var(--glow-c), .12) 48%, transparent 76%); }
+  .hb-glow--drop { left: 59%; top: 70%; width: 24%; height: 23%; filter: blur(32px); transform: scale(1.16);
+    background: radial-gradient(circle, rgba(var(--glow-a), .24), rgba(var(--glow-c), .1) 50%, transparent 76%); }
+  /* at night the white hot-spots would read as fog: the same lights, dimmed and tinted */
+  html.dark .hb-glow { opacity: .42; }
+  html.dark .hb-glow--sun { opacity: .22; }
+  .hb-warm { mix-blend-mode: soft-light; }
+  .hb-edge {
+    fill: rgba(255, 255, 255, .02); stroke: url(#hbStroke); stroke-width: 4; vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, .98)) drop-shadow(0 0 7px rgba(236, 255, 240, .42)) drop-shadow(0 0 10px rgba(255, 232, 196, .28)) drop-shadow(0 14px 24px rgba(1, 61, 39, .1));
+  }
+  .hb-edge--main {
+    stroke-width: 4.7;
+    filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 8px rgba(236, 255, 240, .48)) drop-shadow(0 0 13px rgba(255, 232, 196, .3)) drop-shadow(0 16px 30px rgba(1, 61, 39, .12));
+  }
+  .hb-orbit { pointer-events: none; }
+  .hb-orbit-t {
+    fill: var(--txt); font-family: var(--body); font-size: 18px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase;
+    paint-order: stroke fill; stroke: color-mix(in srgb, var(--bg) 40%, transparent); stroke-width: .6px;
+  }
+  /* Arabic: no tracking (it breaks letter joining) — word spacing fills the loop instead; RTL text anchors at its
+     end so it runs forward from the offset like the English does */
+  [dir="rtl"] .hb-orbit-t { font-size: 28px; letter-spacing: 0; word-spacing: 12px; text-transform: none; text-anchor: end; }
+  [data-fx="bubbles"] .hero-chip.c1 { top: 17%; inset-inline-start: -2%; }
+  [data-fx="bubbles"] .hero-chip.c2 { bottom: 9%; inset-inline-end: 4%; }
+  html.paused [data-fx="bubbles"] .hero-chip { animation-play-state: paused; }
+
+  @media (max-width: 960px) {
+    [data-fx="bubbles"] { width: min(100%, 620px); margin: 26px auto 0; justify-self: center; }
+  }
+  @media (max-width: 640px) {
+    [data-fx="bubbles"] { width: calc(100% + 32px); margin: 18px -16px 0; }
+    .hb-orbit-t { font-size: 22px; letter-spacing: 2px; }
+    [dir="rtl"] .hb-orbit-t { font-size: 30px; word-spacing: 8px; }
+    [data-fx="bubbles"] .hero-chip { font-size: 10px; }
+    [data-fx="bubbles"] .hero-chip.c1 { top: 4%; inset-inline-start: 18px; }
+    [data-fx="bubbles"] .hero-chip.c2 { bottom: 2%; inset-inline-end: 18px; }
+  }
+  @media (forced-colors: active) { .hb-light { display: none; } }
 }

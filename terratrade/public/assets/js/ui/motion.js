@@ -1,6 +1,6 @@
 // Motion layer ported from the portfolio: Lenis smooth scroll on the GSAP ticker, reveal-on-scroll,
 // hero melt + photo parallax, scroll-velocity skew on the product grid, tilt + cursor glow cards,
-// magnetic buttons, contact spotlight, manifesto fallback, Farmer-First "growing stem", logo petal bloom.
+// magnetic buttons, contact spotlight, manifesto fallback, Farmer-First "growing stem".
 import { $, $$, html, REDUCED, TOUCH, FINE, hasGSAP } from '../core/env.js';
 
 export function smooth() {
@@ -37,11 +37,9 @@ export function reveal() {
 
 export function depth() {
   if (!hasGSAP() || REDUCED) return;
-  // hero melts away as you scroll past it (portfolio "giana" melt)
-  gsap.to('#heroInner', { opacity: 0, filter: 'blur(8px)', y: -60, ease: 'none', scrollTrigger: { trigger: '#top', start: 'top -35%', end: 'bottom 10%', scrub: true } });
-  // hero photo: slow parallax + a clip-path "open" as it scrolls
-  const img = $('.hero-photo img');
-  if (img) gsap.fromTo(img, { clipPath: 'inset(0% 0% 0% 0% round 24px)', scale: 1 }, { clipPath: 'inset(6% 3% 6% 3% round 32px)', scale: 1.06, ease: 'none', scrollTrigger: { trigger: '.hero-photo', start: 'top 70%', end: 'bottom top', scrub: true } });
+  // hero melts away as you scroll past it (portfolio "giana" melt) — keyed to the hero's bottom edge, so on phones,
+  // where the bubble scene sits under the copy, it only starts once that scene is on its way out too
+  gsap.to('#heroInner', { opacity: 0, filter: 'blur(8px)', y: -60, ease: 'none', scrollTrigger: { trigger: '#top', start: 'bottom 55%', end: 'bottom 5%', scrub: true } });
   // scroll-velocity skew on the product grid
   const grid = $('#pgrid');
   if (grid) {
@@ -108,12 +106,3 @@ export function stem() {
   addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(up); } }, { passive: true }); up();
 }
 
-/* The logo's petals bloom once per session in the hero (replaces the portfolio's curtain preloader). */
-export function bloom() {
-  const b = $('#bloom'); if (!b) return;
-  let seen = false; try { seen = sessionStorage.getItem('tt-bloom') === '1'; sessionStorage.setItem('tt-bloom', '1'); } catch (e) { /* ignore */ }
-  if (REDUCED || seen) return;
-  b.classList.add('pre');
-  requestAnimationFrame(() => requestAnimationFrame(() => { b.classList.remove('pre'); b.classList.add('go'); }));
-  b.addEventListener('pointerenter', () => { b.classList.remove('go'); void b.offsetWidth; b.classList.add('go'); });
-}

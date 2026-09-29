@@ -4,6 +4,8 @@
 import { FINE } from '../core/env.js';
 
 const SLOTS = [
+  // S3 hero liquid-glass bubbles — Fernando Cohen, "[SVG] [CSS] Marquee Glass Bubble"
+  ['bubbles', () => document.querySelector('[data-fx="bubbles"]') && import('./bubbles-QwdoddG.js')],
   // S1 cursor lens — Andrew Fisher, "Pure CSS cursor tracking" (fine pointers only)
   ['cursor', () => FINE && import('./cursor-GgraMzd.js')],
   // Contact glass card — Abdughafur Khujzoda, liquid-glass profile card (the photo it sits on shows ≥ 961px)

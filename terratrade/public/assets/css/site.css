@@ -159,20 +159,6 @@
   .fact { border: 1px solid var(--card-bd); border-radius: 14px; background: var(--card); backdrop-filter: blur(8px); padding: 12px 14px; display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 2px; }
   .fact dd { margin: 0; font-family: var(--disp); font-weight: 700; font-size: clamp(22px, 2.6vw, 30px); line-height: 1.1; color: var(--txt); }
   .fact dt { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-  .hero-mark { position: relative; width: clamp(220px, 24vw, 320px); margin-inline-end: 40px; aspect-ratio: 1; display: grid; place-items: center; }
-  .bloom { width: 58%; aspect-ratio: 1; filter: drop-shadow(0 30px 50px rgba(1, 61, 39, .35)); z-index: 2; }
-  .bloom-svg { width: 100%; height: 100%; overflow: visible; }
-  .bloom-tile { fill: var(--logo); }
-  .petal { transform-box: fill-box; transform-origin: 50% 100%; }
-  .petal-a { fill: var(--amber); }
-  .petal-w { fill: #fff; }
-  .js .bloom.pre .petal { transform: scale(0) rotate(-25deg); opacity: 0; }
-  .bloom.go .petal { animation: petal .8s var(--ease) both; animation-delay: calc(var(--i) * 70ms + 120ms); }
-  @keyframes petal { from { transform: scale(0) rotate(-25deg); opacity: 0; } to { transform: none; opacity: 1; } }
-  .orbit { position: absolute; inset: 6%; border-radius: 50%; border: 1px dashed color-mix(in srgb, var(--accent) 35%, transparent); animation: moveInCircle 40s linear infinite; }
-  .orbit.o2 { inset: 20%; border-style: solid; border-color: color-mix(in srgb, var(--warm) 30%, transparent); animation-duration: 28s; animation-direction: reverse; }
-  .orbit::after { content: ''; position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; border-radius: 50%; background: var(--sprout); box-shadow: 0 0 14px var(--sprout); }
-  .orbit.o2::after { background: var(--amber); box-shadow: 0 0 14px var(--amber); top: auto; bottom: -5px; }
   .hero-chip { position: absolute; z-index: 3; display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; padding: 7px 12px; border-radius: 999px;
     background: var(--card-solid); border: 1px solid var(--card-bd); box-shadow: var(--shadow); white-space: nowrap; animation: floaty 6s ease-in-out infinite; }
   .hero-chip b { color: var(--accent); }
@@ -180,27 +166,16 @@
   .hero-chip.c1 { top: 8%; inset-inline-start: -18%; }
   .hero-chip.c2 { bottom: 10%; inset-inline-end: -12%; animation-delay: -3s; }
   @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-  .hero-photo { position: relative; z-index: 3; margin-top: 46px; }
-  .hero-photo picture, .hero-photo img { display: block; width: 100%; border-radius: var(--r-lg); }
-  .hero-photo img { aspect-ratio: 2288 / 623; object-fit: cover; box-shadow: var(--shadow); }
-  .js .hero-photo img { clip-path: inset(0 0 0 0 round var(--r-lg)); }
-  .photo-tag { position: absolute; bottom: 16px; inset-inline-start: 40px; display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: .06em;
-    text-transform: uppercase; padding: 7px 12px; border-radius: 999px; color: #fff; background: rgba(1, 30, 18, .55); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, .25); }
-  .photo-tag .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 0 rgba(255, 166, 18, .6); animation: ping 2.2s infinite; }
-  @keyframes ping { 70% { box-shadow: 0 0 0 10px rgba(255, 166, 18, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 166, 18, 0); } }
   .scroll-cue { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 3; display: none; flex-direction: column; align-items: center; gap: 6px;
     font-family: var(--mono); font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--muted); }
   .scroll-cue i { width: 1px; height: 30px; background: linear-gradient(var(--accent), transparent); animation: cue 1.8s ease-in-out infinite; }
   @keyframes cue { 0%, 100% { transform: scaleY(.4); opacity: .4; } 50% { transform: scaleY(1); opacity: 1; } }
   @media (max-width: 960px) {
     .hero-row { grid-template-columns: 1fr; }
-    .hero-mark { display: none; }
   }
   @media (max-width: 640px) {
     .hero { padding-top: calc(var(--nav-h) + 26px); }
     .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .hero-photo img { aspect-ratio: 1; }
-    .photo-tag { inset-inline-start: 36px; bottom: 14px; }
     .actions .btn { flex: 1 1 auto; }
   }
 
