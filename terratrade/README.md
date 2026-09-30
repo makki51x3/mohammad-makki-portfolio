@@ -69,7 +69,7 @@ Each tool regenerates one kind of asset:
 | `node tools/geo.mjs` | Globe dots and the inline Nigeria map |
 | `node tools/logo.mjs && node tools/logo-check.mjs` | Logo SVGs, checked against the original PNG |
 | `node tools/icons.mjs` | Icon sprite and favicons |
-| `python3 tools/images.py` | WebP sets (needs Pillow, plus the client originals in `dev/src-assets/`). `--infographics` rebuilds only the infographics from `dev/src-assets/infographic-en.png` / `infographic-ar.png`, with the text corrections from `tools/fix_infographics.py` (its coordinates fit these two sheets; a regenerated sheet replaces them) |
+| `python3 tools/images.py` | WebP sets (needs Pillow, plus the client originals in `dev/src-assets/`). `--infographics` rebuilds only the infographics from `dev/src-assets/infographic-en.png` / `infographic-ar.png`, with the text corrections from `tools/fix_infographics.py` (its coordinates fit these two sheets; a regenerated sheet replaces them). Images are cached for a week, so after regenerating bump the `?v=` on the infographic URLs in `index.html` and `ar.js` |
 | `node tools/og.mjs` | Social preview images |
 
 ## Deploy on Netlify

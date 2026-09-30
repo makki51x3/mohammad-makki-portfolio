@@ -156,7 +156,7 @@ for (const c of (QUICK ? combos.filter(c => !c.reduced && c.theme === 'light') :
     const full = a && await fetch(a.href).then(async r => { await r.arrayBuffer(); return r.status + ' ' + r.headers.get('content-type'); }, () => 'fetch failed');
     return { src: img?.currentSrc, loaded: !!(img?.complete && img.naturalWidth), alt: img?.alt.length, lazy: img?.loading, href: a?.getAttribute('href'), full };
   });
-  ok(new RegExp(`/infographic/${c.lang}-\\d+\\.webp$`).test(ig.src) && ig.loaded && ig.alt > 60 && ig.lazy === 'lazy' && ig.href === `/assets/img/infographic/${c.lang}-full.webp` && ig.full === '200 image/webp',
+  ok(new RegExp(`/infographic/${c.lang}-\\d+\\.webp\\?v=\\d+$`).test(ig.src) && ig.loaded && ig.alt > 60 && ig.lazy === 'lazy' && ig.href.startsWith(`/assets/img/infographic/${c.lang}-full.webp?v=`) && ig.full === '200 image/webp',
     `${name}: infographic ${JSON.stringify(ig)}`);
   if (c.reduced) { await page.waitForTimeout(1500); const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.length, `${name}: loops running under reduced motion: ${loops}`); }
   else { const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.some(l => ['globe', 'cube', 'morph', 'ambient', 'bubbles', 'water'].includes(l)), `${name}: off-screen loops still running at the footer: ${loops}`); }
