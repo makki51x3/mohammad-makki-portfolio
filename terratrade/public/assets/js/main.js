@@ -13,6 +13,8 @@ import { spec } from './ui/spec.js';
 import { rfq, copyMail } from './ui/rfq.js';
 
 // A failed dictionary load falls back to the English runtime strings instead of stopping the page.
+// hold the hero's SMIL bubbles still until the page has loaded (fx/bubbles-QwdoddG.js starts them): content first
+document.getElementById('hbScene')?.pauseAnimations?.();
 await loadDict().catch(e => console.error('[i18n]', e));
 
 run([reveal, smooth, nav, progress, sections, theme, motionToggle, heroLetters, typed, morph, counters, marquee,

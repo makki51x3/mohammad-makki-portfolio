@@ -62,12 +62,14 @@ export function morph() {
   spans[0].style.opacity = 1;
   // size the box to the longest word so the line doesn't jump
   box.style.minWidth = Math.max(...spans.map(s => s.getBoundingClientRect().width)) + 'px';
+  // the fade blur is capped at 6px: a wider halo made Chrome count a morphing word as the Largest Contentful Paint
+  // (it grew the word's painted box past the real content), which pushed LCP to ~5s on phones
   addLoop('morph', (_, dt) => {
     frac += dt / 1000; if (frac >= 2.6) { frac = 0; i = (i + 1) % spans.length; }
     const cur = spans[i], nxt = spans[(i + 1) % spans.length], f = Math.min(1, Math.max(0, frac - 1.6));
     for (const s of spans) if (s !== cur && s !== nxt) s.style.opacity = 0;
-    cur.style.opacity = Math.max(0, 1 - f * 1.6); cur.style.filter = `blur(${Math.min(20, 8 / Math.max(.0001, 1 - f) - 8)}px)`;
-    nxt.style.opacity = Math.max(0, f * 1.4 - .1); nxt.style.filter = `blur(${Math.min(20, 8 / Math.max(.0001, f) - 8)}px)`;
+    cur.style.opacity = Math.max(0, 1 - f * 1.6); cur.style.filter = `blur(${Math.min(6, 8 / Math.max(.0001, 1 - f) - 8)}px)`;
+    nxt.style.opacity = Math.max(0, f * 1.4 - .1); nxt.style.filter = `blur(${Math.min(6, 8 / Math.max(.0001, f) - 8)}px)`;
   }, { el: box });
 }
 

@@ -4,11 +4,13 @@
 //  - applies public/_redirects rules of the form "/path  key=value  /target  302"
 //  - accepts Netlify Forms posts: POST / → 200 (or 500 when the form was posted with ?fail / field fail=1);
 //    non-AJAX posts get a 303 to the form's action page.
+//  - compresses text responses (Brotli, else gzip) like Netlify's CDN, so size/speed audits match production
 // Usage: node tests/server.mjs [port]   (exports start() for tests)
 import { createServer } from 'node:http';
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join, extname, normalize, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { brotliCompressSync, gzipSync, constants as Z } from 'node:zlib';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const ROOT = join(here, '..', '..', 'public');
@@ -84,7 +86,14 @@ export function start(port = 0) {
       if (!existsSync(file)) { status = 404; file = join(ROOT, (rewrite404 || '/404.html').slice(1)); if (!existsSync(file)) { res.writeHead(404); return res.end('not found'); } }
       const headers = { 'Content-Type': TYPES[extname(file)] || 'application/octet-stream' };
       for (const rule of parseHeaders()) if (globToRe(rule.path).test(path)) for (const [k, v] of rule.headers) headers[k] = v;
-      res.writeHead(status, headers); res.end(readFileSync(file));
+      let body = readFileSync(file);
+      const enc = String(req.headers['accept-encoding'] || '');
+      if (/^(text\/|application\/(javascript|json|xml|manifest)|image\/svg)/.test(headers['Content-Type']) && body.length > 1024) {
+        if (/\bbr\b/.test(enc)) { body = brotliCompressSync(body, { params: { [Z.BROTLI_PARAM_QUALITY]: 5 } }); headers['Content-Encoding'] = 'br'; }
+        else if (/\bgzip\b/.test(enc)) { body = gzipSync(body); headers['Content-Encoding'] = 'gzip'; }
+        if (headers['Content-Encoding']) headers.Vary = 'Accept-Encoding';
+      }
+      res.writeHead(status, headers); res.end(body);
     });
     server.listen(port, '127.0.0.1', () => resolve(server));
   });

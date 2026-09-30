@@ -49,14 +49,29 @@ async function fxChecks(page, c, name) {
   await page.evaluate(() => document.querySelector('[data-fx="bubbles"]').scrollIntoView({ block: 'center' })); await page.waitForTimeout(600);
   const hbRun = await page.evaluate(() => !document.getElementById('hbScene').animationsPaused());
   ok(c.reduced ? !hbRun : hbRun, `${name}: hero bubbles animate only when motion is allowed (running=${hbRun})`);
-  // GgraMzd — cursor seed (the pen's servo motion): fine pointers only; follows, then rests (its loop unregisters); never under reduced motion
+  // GgraMzd — custom cursor (the pen's servo motion): fine pointers only. The system pointer is hidden while it is
+  // active, so the hotspot dot must sit exactly on the pointer after any sequence of moves; a resize hands control
+  // back to the system pointer (no stale position) until the next move, which re-snaps; text fields keep the I-beam.
   if (!c.mobile) {
-    await page.mouse.move(400, 400); await page.mouse.move(700, 450, { steps: 3 }); await page.waitForTimeout(800);
-    const l = await page.evaluate(() => { const e = document.querySelector('.tt-cursor'); if (!e) return null; const [x, y] = e.style.translate.split(' ').map(parseFloat);
-      return { on: e.classList.contains('on'), x, y, shown: getComputedStyle(e).display !== 'none', loops: window.__tt.loops() }; });
-    if (c.reduced) ok(l && (!l.on || !l.shown) && !l.loops.includes('cursor'), `${name}: no cursor seed under reduced motion ${JSON.stringify(l)}`);
-    else ok(l && l.on && Math.abs(l.x - 700) < 3 && Math.abs(l.y - 450) < 3 && !l.loops.includes('cursor'), `${name}: cursor seed follows then rests ${JSON.stringify(l)}`);
-  } else ok(await page.evaluate(() => !document.querySelector('.tt-cursor')), `${name}: no cursor seed on touch`);
+    const read = () => page.evaluate(() => { const d = document.querySelector('.tt-dot'), b = document.querySelector('.tt-cursor'); if (!d) return null;
+      const [x, y] = d.style.translate.split(' ').map(parseFloat), [bx, by] = b.style.translate.split(' ').map(parseFloat);
+      return { x, y, bx, by, on: document.documentElement.classList.contains('tt-cursor-on'), sys: getComputedStyle(document.body).cursor, shown: d.classList.contains('on') && getComputedStyle(d).display !== 'none', loops: window.__tt.loops() }; });
+    await page.mouse.move(400, 400); await page.mouse.move(700, 450, { steps: 5 }); await page.mouse.move(313, 377, { steps: 3 }); await page.waitForTimeout(800);
+    const l = await read();
+    if (c.reduced) ok(l && !l.on && !l.shown && l.sys !== 'none' && !l.loops.includes('cursor'), `${name}: system pointer kept under reduced motion ${JSON.stringify(l)}`);
+    else {
+      ok(l && l.on && l.shown && l.sys === 'none' && l.x === 313 && l.y === 377 && Math.abs(l.bx - 313) < .5 && Math.abs(l.by - 377) < .5 && !l.loops.includes('cursor'),
+        `${name}: custom cursor exact on the pointer, system pointer hidden, then idle ${JSON.stringify(l)}`);
+      const field = await page.evaluate(() => { const f = document.getElementById('f-name'); return getComputedStyle(f).cursor; });
+      ok(field === 'text', `${name}: text fields keep the I-beam (${field})`);
+      await page.setViewportSize({ width: 1400, height: 880 }); await page.waitForTimeout(250);
+      const r = await read();
+      await page.mouse.move(520, 260); await page.waitForTimeout(150);
+      const s2 = await read();
+      await page.setViewportSize({ width: 1440, height: 900 }); await page.waitForTimeout(250);
+      ok(!r.on && !r.shown && s2.on && s2.x === 520 && s2.y === 260, `${name}: resize hands back the system pointer, next move re-snaps exactly ${JSON.stringify({ r, s2 })}`);
+    }
+  } else ok(await page.evaluate(() => !document.querySelector('.tt-cursor, .tt-dot') && !document.documentElement.classList.contains('tt-cursor-on')), `${name}: no custom cursor on touch`);
   // NLWdwz — about banners: five banners with counter discs; zig-zag on wide screens only, mirrored in Arabic
   const ib = await page.evaluate(() => [...document.querySelectorAll('[data-fx="banners"] .ib')].map(li => ({
     disc: getComputedStyle(li.querySelector('.ib-card'), '::before').content, tx: parseFloat(getComputedStyle(li).translate) || 0 })));

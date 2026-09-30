@@ -9,17 +9,19 @@
 // .025 per 60 fps frame, secondary × 1.55, drop × 2.15) - on the shared loop registry, and it freezes the
 // SMIL timeline while the hero is off-screen, when motion is paused, and under reduced motion.
 import { $, FINE, REDUCED, isPaused } from '../core/env.js';
-import { addLoop } from '../core/loop.js';
+import { addLoop, loadSettled } from '../core/loop.js';
 
 const INTENSITY = .5, SMOOTHNESS = .025, GAIN = [1, 1.55, 2.15];
 
 export default function bubbles() {
   const fig = $('[data-fx="bubbles"]'), svg = fig && $('svg.hb-scene', fig); if (!svg) return;
 
-  let onScreen = true;
+  // main.js pauses the SMIL timeline as soon as it runs; it starts once the page has loaded (see loop.js)
+  let onScreen = true, settled = false;
   const sync = () => {
-    if (onScreen && !REDUCED && !isPaused()) svg.unpauseAnimations(); else svg.pauseAnimations();
+    if (settled && onScreen && !REDUCED && !isPaused()) svg.unpauseAnimations(); else svg.pauseAnimations();
   };
+  loadSettled.then(() => { settled = true; sync(); });
   if (REDUCED) { svg.pauseAnimations(); svg.setCurrentTime(0); }
   new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; sync(); }).observe(fig);
   addEventListener('tt:motion', sync);

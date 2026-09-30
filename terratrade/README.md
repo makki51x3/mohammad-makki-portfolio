@@ -54,6 +54,7 @@ npm run ar && npm run csp         # after editing index.html, ar.js, or any page
 npm test                          # i18n coverage + 16-run matrix: EN/AR × light/dark × desktop/phone × motion/reduced (incl. a check per CodePen effect)
 node tests/shots.mjs --lang ar --theme dark --w 390   # per-section screenshots → dev/out/shots/
 node tests/elshot.mjs --sel '[data-fx="flip"]' --hover '.pcard' --margin 20   # one element → dev/out/el/
+node tests/lighthouse.mjs                              # Lighthouse, EN/AR × mobile/desktop (the dev server compresses like Netlify)
 ```
 
 If Playwright can't find a browser, set `PLAYWRIGHT_BROWSERS_PATH`.
@@ -63,7 +64,7 @@ Each tool regenerates one kind of asset:
 | Tool | Regenerates |
 |---|---|
 | `node tools/vendor.mjs` | GSAP / Lenis, and the tree-shaken three.js subset (`tools/three-entry.mjs`, bundled with esbuild) |
-| `node tools/fonts.mjs` | Self-hosted fonts |
+| `node tools/fonts.mjs` then `python3 tools/subset_fonts.py` | Self-hosted fonts; the second step trims the Arabic faces to standard Arabic (173 KB → 58 KB, all shaping features kept; needs `fonttools` + `brotli`) |
 | `node tools/geo.mjs` | Globe dots and the inline Nigeria map |
 | `node tools/logo.mjs && node tools/logo-check.mjs` | Logo SVGs, checked against the original PNG |
 | `node tools/icons.mjs` | Icon sprite and favicons |

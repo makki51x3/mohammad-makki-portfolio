@@ -605,10 +605,13 @@
   .hud a.on::before { background: var(--accent); border-color: var(--accent); transform: scale(1.35); }
   .hud a span { inset-inline-start: 28px; }
 
-  /* pause-motion toggle icons */
-  #motionToggle .i-play { opacity: 0; transform: scale(.6); }
-  html.paused #motionToggle .i-play { opacity: 1; transform: none; }
-  html.paused #motionToggle .i-pause { opacity: 0; transform: scale(.6); }
+  /* "Pause animations" (WCAG 2.2.2) lives in the footer line; aria-pressed carries the state, the icon follows it */
+  .foot-motion { display: inline-flex; align-items: center; gap: 6px; padding: 4px 2px; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+  .foot-motion:hover { color: var(--accent); }
+  .foot-motion svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .foot-motion .i-play { display: none; fill: currentColor; stroke: none; }
+  html.paused .foot-motion .i-play { display: block; }
+  html.paused .foot-motion .i-pause { display: none; }
   .icon-btn .i-pause, .icon-btn .i-play { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
   .icon-btn .i-play { fill: currentColor; stroke-width: 1.4; }
   @media (max-width: 380px) { .nav-tools { gap: 5px; } .icon-btn, .burger { width: 36px; height: 36px; } }
