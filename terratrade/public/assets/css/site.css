@@ -250,6 +250,30 @@
   .mline:hover .alt { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
   @media (prefers-reduced-motion: reduce) { .mline .fill { background-size: 100% 100%, 100% 100%; animation: none; } }
 
+  /* ---- AT A GLANCE (the client's infographic; the points beside it are its text summary) ---- */
+  .glance-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); grid-template-areas: "head fig" "pts fig"; grid-template-rows: auto 1fr; column-gap: 56px; }
+  .glance .section-head { grid-area: head; margin-block-end: 28px; }
+  .glance-pts { grid-area: pts; display: grid; gap: 12px; align-content: start; }
+  .glance-pts li { display: flex; gap: 14px; align-items: flex-start; border: 1px solid var(--card-bd); border-radius: var(--r); padding: 16px 18px; background: var(--card); backdrop-filter: blur(8px); }
+  .glance-pts .i { width: 40px; height: 40px; padding: 7px; border-radius: 12px; color: var(--on-accent); background: var(--grad-btn); }
+  .glance-pts h3 { font-size: 16px; }
+  .glance-pts p { margin-top: 4px; font-size: 14px; line-height: 1.6; color: var(--muted); }
+  .glance-fig { grid-area: fig; align-self: center; margin: 0; }
+  .glance-card { display: block; max-width: 600px; margin-inline: auto; border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--card-bd); background: var(--card-solid);
+    box-shadow: var(--shadow); transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .25s; }
+  .glance-card img { display: block; width: 100%; height: auto; background: #FDF9F1; }
+  .glance-open { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 18px; border-top: 1px solid var(--card-bd); font-size: 14px; font-weight: 600; color: var(--accent); }
+  .glance-open .i { width: 18px; height: 18px; transition: transform .35s var(--ease); }
+  [dir="rtl"] .glance-open .i { transform: scaleX(-1); }
+  .glance-card:hover, .glance-card:focus-visible { transform: translateY(-4px); border-color: color-mix(in srgb, var(--accent) 45%, var(--card-bd)); box-shadow: 0 34px 70px -34px rgba(1, 61, 39, .55); }
+  .glance-card:hover .glance-open .i { transform: translate(2px, -2px); }
+  [dir="rtl"] .glance-card:hover .glance-open .i { transform: scaleX(-1) translate(2px, -2px); }
+  @media (max-width: 960px) {
+    .glance-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "fig" "pts"; grid-template-rows: none; }
+    .glance-fig { margin-block-end: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glance-card, .glance-open .i { transition: none; } .glance-card:hover, .glance-card:focus-visible { transform: none; } }
+
   /* ---- OPERATIONS (Nigeria map story) ---- */
   .ops-stage { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 50px; align-items: center; }
   .ngmap { position: relative; border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--card-bd); box-shadow: var(--shadow); background: var(--sea); aspect-ratio: 1000 / 837; }
@@ -584,6 +608,11 @@
   .mline .alt { inset: auto; top: 100%; left: 0; font-size: max(.16em, 13px); padding: .35em .8em; clip-path: none; position: absolute; white-space: nowrap; transform-origin: 0 50%; transition: transform .45s var(--ease), background .3s; }
   [dir="rtl"] .mline .alt { left: auto; right: 0; transform-origin: 100% 50%; }
   .mline:hover .alt { transform: scale(1.04); }
+  /* phones: a caption can be wider than the screen, so it joins the flow under its word and wraps */
+  @media (max-width: 600px) {
+    .mline { margin-bottom: .6em; }
+    .mline .alt { position: static; display: block; width: fit-content; max-width: 100%; margin-top: .25em; white-space: normal; line-height: 1.45; }
+  }
 
   /* form: focus rings that survive forced colours, visible per-field errors */
   .field :is(input, select, textarea):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }

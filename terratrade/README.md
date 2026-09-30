@@ -11,6 +11,7 @@ The design remixes the [portfolio](../_publish/index.html) design language (glas
 | **Hero** | Split-letter gradient headline, gooey rotating commodity word, fact counters, and a liquid-glass bubble scene (farmer / sesame / hibiscus) with the commodity list orbiting the main bubble ✦ |
 | **Products** | 8 commodities split into 2 divisions, with a filter and character-roll heading. Each card is a 3D flip card ✦: the framed photo turns to reveal "Request a quote" and "Spec sheet". The spec-sheet dialog shows indicative specs, harvest months and packaging, prints, and has "request a quote for this product" |
 | **About** | Scroll-lit paragraph, facts, mission / vision / three core values as zig-zag infographic banners ✦, manifesto scroll-fill |
+| **At a glance** | TerraTrade's own infographic (an English and an Arabic version, one per page), lazy-loaded, opening full size, with a three-point text summary beside it. The generator's corner mark is cropped off in `tools/images.py` |
 | **Operations** | Pinned Nigeria map story: outline draws, Kano sourcing zone, Lagos and Port Harcourt hubs, cargo moving to the ports, then out to export markets |
 | **Process** | Scroll-driven CSS 3D cube: Source → Aggregate → Verify → Process → Pack → Ship |
 | **Why TerraTrade** | Three strengths, plus Farmer First "growing stem" |
@@ -68,7 +69,7 @@ Each tool regenerates one kind of asset:
 | `node tools/geo.mjs` | Globe dots and the inline Nigeria map |
 | `node tools/logo.mjs && node tools/logo-check.mjs` | Logo SVGs, checked against the original PNG |
 | `node tools/icons.mjs` | Icon sprite and favicons |
-| `python3 tools/images.py` | WebP sets (needs Pillow, plus the client originals in `dev/src-assets/`) |
+| `python3 tools/images.py` | WebP sets (needs Pillow, plus the client originals in `dev/src-assets/`). `--infographics` rebuilds only the infographics from `dev/src-assets/infographic-en.png` / `infographic-ar.png`: drop in a corrected 2048 × 2048 PNG and rerun |
 | `node tools/og.mjs` | Social preview images |
 
 ## Deploy on Netlify
@@ -92,6 +93,9 @@ Each tool regenerates one kind of asset:
 - [ ] **Arabic.** Native-speaker review of `public/assets/js/i18n/ar.js`, and the Arabic brand name (currently «تيرا تريد»).
 - [ ] **Markets.** Confirm that listing Syria and Lebanon as active markets is intended.
 - [ ] **Privacy notice.** Legal review of `/privacy/`.
+- [ ] **Infographic text.** Worth regenerating before launch:
+  - Arabic: «آسق آسيا» should read «شرق آسيا»; «تجروتي» (in the feed list) is garbled.
+  - English: "oliseeds" should be "oilseeds"; "8 key commodities" lists only five; the heading "Active Middle East & East Asia routes" says East Asia is active, while the site (and the infographic's own line below it) calls it expansion.
 
 ## CodePen effects
 

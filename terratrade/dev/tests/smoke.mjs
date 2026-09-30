@@ -143,6 +143,14 @@ for (const c of (QUICK ? combos.filter(c => !c.reduced && c.theme === 'light') :
   ok(!over.length, `${name}: horizontal overflow from ${over.join(', ')}`);
   const badImgs = await page.evaluate(() => [...document.images].filter(i => (i.getAttribute('src') || i.srcset) && i.getClientRects().length && (!i.complete || !i.naturalWidth)).map(i => i.currentSrc || i.src));
   ok(!badImgs.length, `${name}: images not loaded: ${badImgs.join(', ')}`);
+  // "At a glance": this language's infographic, loaded lazily, and its full-size link resolves
+  const ig = await page.evaluate(async () => {
+    const img = document.querySelector('.glance-card img'), a = img?.closest('a');
+    const full = a && await fetch(a.href).then(async r => { await r.arrayBuffer(); return r.status + ' ' + r.headers.get('content-type'); }, () => 'fetch failed');
+    return { src: img?.currentSrc, loaded: !!(img?.complete && img.naturalWidth), alt: img?.alt.length, lazy: img?.loading, href: a?.getAttribute('href'), full };
+  });
+  ok(new RegExp(`/infographic/${c.lang}-\\d+\\.webp$`).test(ig.src) && ig.loaded && ig.alt > 60 && ig.lazy === 'lazy' && ig.href === `/assets/img/infographic/${c.lang}-full.webp` && ig.full === '200 image/webp',
+    `${name}: infographic ${JSON.stringify(ig)}`);
   if (c.reduced) { await page.waitForTimeout(1500); const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.length, `${name}: loops running under reduced motion: ${loops}`); }
   else { const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.some(l => ['globe', 'cube', 'morph', 'ambient', 'bubbles', 'water'].includes(l)), `${name}: off-screen loops still running at the footer: ${loops}`); }
   const csp = await page.evaluate(() => window.__csp); ok(!csp.length, `${name}: CSP violations: ${csp.join(' | ')}`);

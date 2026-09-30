@@ -1,7 +1,7 @@
 """Builds the site's raster images from the client's originals in dev/src-assets/ (gitignored).
 
 Sources were extracted from the TerraTrade company-profile PDF. Output goes to public/assets/img/.
-Requires Pillow (pip install pillow). Run: python3 tools/images.py
+Requires Pillow (pip install pillow). Run: python3 tools/images.py  [--infographics: only the infographics]
 """
 from pathlib import Path
 from PIL import Image, ImageOps
@@ -18,6 +18,9 @@ PRODUCTS = {  # id -> source file (PDF page/xref)
 }
 PHOTOS = {'hero': 'p1_x8.png', 'seedling': 'p9_x113.png', 'farmer': 'p11_x142.png'}
 PARTNERS = {'nepc': 'p10_x128.png', 'dufil': 'p10_x129.png', 'fmn': 'p10_x126.png', 'olam-agri': 'p10_x127.png', 'bua-foods': 'p10_x125.png'}
+# the client's own infographics (2048 x 2048 PNG, one per language) for the "At a glance" section
+INFOGRAPHICS = {'en': 'infographic-en.png', 'ar': 'infographic-ar.png'}
+INFOGRAPHIC_CROP = (48, 48, 2000, 2000)  # left, top, right, bottom
 
 
 def opaque_crop(im):
@@ -78,6 +81,24 @@ def main():
         im.save(OUT / 'partners' / f'{name}.webp', 'WEBP', quality=88, method=6)
         print('partner', name, im.size)
 
+    infographics()
+
+
+def infographics():
+    # Infographics: the generator stamps its name in the bottom-right corner (y 2025-2036 of 2048; the lowest
+    # content ends at y 1963). Cropping a centred 1952px square drops that strip and keeps every element with a
+    # 32-56px margin. Higher quality than the photos keeps the small print crisp; "-full" is the full-size link.
+    (OUT / 'infographic').mkdir(parents=True, exist_ok=True)
+    for old in (OUT / 'infographic').glob('*.webp'):
+        old.unlink()
+    for lang, f in INFOGRAPHICS.items():
+        im = Image.open(SRC / f).crop(INFOGRAPHIC_CROP).convert('RGB')
+        for w in (800, 1200, 1600):
+            im.resize((w, round(im.height * w / im.width)), Image.LANCZOS).save(OUT / 'infographic' / f'{lang}-{w}.webp', 'WEBP', quality=84, method=6)
+        im.save(OUT / 'infographic' / f'{lang}-full.webp', 'WEBP', quality=84, method=6)
+        print('infographic', lang, im.size)
+
 
 if __name__ == '__main__':
-    main()
+    import sys
+    infographics() if '--infographics' in sys.argv else main()
