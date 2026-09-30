@@ -100,6 +100,13 @@ async function fxChecks(page, c, name) {
   ok(ch.n === 3 && ch.down > 0 && ch.up === 0 && !ch.footer, `${name}: chunky buttons render + press, WhatsApp squircle hidden at the footer ${JSON.stringify(ch)}`);
   await page.evaluate(() => document.getElementById('about').scrollIntoView()); await page.waitForTimeout(700);
   ok(await page.evaluate(() => document.querySelector('.wa-float').classList.contains('show')), `${name}: floating WhatsApp squircle shows mid-page`);
+  // every squircle layer keeps its full width (nothing like the reset's svg max-width squeezes it), so each face
+  // is as wide as its button and centred on the label
+  const sq = await page.evaluate(() => [...document.querySelectorAll('.is-chunky')].map(b => {
+    const s = b.querySelector('.sq'), r = b.getBoundingClientRect(), f = s.querySelector('.sq-face').getBoundingClientRect();
+    return { c: b.className.split(' ')[0], w: +(s.getBoundingClientRect().width - parseFloat(s.style.width)).toFixed(1), face: +(f.width - r.width).toFixed(1), mid: +((f.left + f.right) / 2 - (r.left + r.right) / 2).toFixed(1) };
+  }));
+  ok(sq.every(s => Math.abs(s.w) < .6 && Math.abs(s.face) < 2.5 && Math.abs(s.mid) < 1), `${name}: squircle faces match their buttons ${JSON.stringify(sq)}`);
   // jEyVvqK — contact glass card: distortion filter wired, drags with the pointer and stays on its photo (desktop only)
   if (!c.mobile) {
     const card = page.locator('[data-fx="glass"]'); await card.scrollIntoViewIfNeeded(); await page.waitForTimeout(300);

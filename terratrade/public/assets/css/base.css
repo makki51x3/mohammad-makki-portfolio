@@ -120,7 +120,7 @@
     .photo-tag, .map-note, .mline .alt, .season-cap, .spec-cap, .hero-chip, .vnum, .snum, .acc-n, .idx, .face .fnum, .hud a span) { letter-spacing: 0 !important; text-transform: none !important; }
 }
 
-/* "Pause animations" toggle (WCAG 2.2.2): freezes every CSS animation; JS loops check html.paused */
+/* animation pause state (core/env.js): freezes every CSS animation; JS loops check html.paused */
 html.paused *, html.paused *::before, html.paused *::after { animation-play-state: paused !important; }
 
 @media (forced-colors: active) {

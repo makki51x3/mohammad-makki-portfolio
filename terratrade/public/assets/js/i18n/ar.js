@@ -24,7 +24,6 @@ export default {
   "nav.langHref": "/",
   "nav.langCode": "en",
   "nav.cta": "اطلب عرض سعر",
-  "nav.motion": "إيقاف الحركة مؤقتاً",
   "brand.name": "تيرا تريد",
   "nav.themeDark": "التبديل إلى الوضع الداكن",
   "nav.themeLight": "التبديل إلى الوضع الفاتح",

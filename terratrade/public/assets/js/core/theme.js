@@ -1,7 +1,7 @@
 // Light (default) / dark "night harvest" theme with the portfolio's circular view-transition reveal.
 // Persisted in localStorage('tt-theme'); the inline head script applies it before first paint.
 // Also wires the "Pause animations" switch (WCAG 2.2.2).
-import { html, REDUCED, $, isPaused, setPaused } from './env.js';
+import { html, REDUCED, $ } from './env.js';
 import { t } from './i18n.js';
 
 const meta = () => document.querySelector('meta[name="theme-color"]');
@@ -31,11 +31,4 @@ export function theme() {
       vt.ready?.catch(() => {}); vt.finished?.catch(() => {});
     } else go();
   });
-}
-
-export function motionToggle() {
-  const btn = $('#motionToggle'); if (!btn) return;
-  const sync = () => { btn.setAttribute('aria-pressed', String(isPaused())); };
-  sync();
-  btn.addEventListener('click', () => { setPaused(!isPaused()); sync(); });
 }

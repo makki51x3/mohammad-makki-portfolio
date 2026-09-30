@@ -4,7 +4,7 @@
 // anyone uses the nav (otherwise in-page links would land in the wrong place).
 import { run, $ } from './core/env.js';
 import { loadDict } from './core/i18n.js';
-import { theme, motionToggle } from './core/theme.js';
+import { theme } from './core/theme.js';
 import { nav, progress, sections } from './ui/nav.js';
 import { typed, heroLetters, morph, aboutLit, counters, marquee } from './ui/textfx.js';
 import { smooth, reveal, depth, tilt, magnetic, spotlight, manifesto, stem } from './ui/motion.js';
@@ -17,7 +17,7 @@ import { rfq, copyMail } from './ui/rfq.js';
 document.getElementById('hbScene')?.pauseAnimations?.();
 await loadDict().catch(e => console.error('[i18n]', e));
 
-run([reveal, smooth, nav, progress, sections, theme, motionToggle, heroLetters, typed, morph, counters, marquee,
+run([reveal, smooth, nav, progress, sections, theme, heroLetters, typed, morph, counters, marquee,
   depth, products, spec, tilt, magnetic, aboutLit, manifesto, stem, spotlight, copyMail, rfq]);
 
 const scene = (sel, loader) => loader().then(m => m.default($(sel))).catch(e => console.error('[scene]', sel, e));

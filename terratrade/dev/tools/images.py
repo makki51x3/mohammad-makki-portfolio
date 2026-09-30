@@ -5,6 +5,7 @@ Requires Pillow (pip install pillow). Run: python3 tools/images.py  [--infograph
 """
 from pathlib import Path
 from PIL import Image, ImageOps
+from fix_infographics import fixed
 
 HERE = Path(__file__).resolve().parent
 SRC = HERE.parent / 'src-assets'
@@ -92,7 +93,7 @@ def infographics():
     for old in (OUT / 'infographic').glob('*.webp'):
         old.unlink()
     for lang, f in INFOGRAPHICS.items():
-        im = Image.open(SRC / f).crop(INFOGRAPHIC_CROP).convert('RGB')
+        im = fixed(lang, Image.open(SRC / f)).crop(INFOGRAPHIC_CROP)  # text corrections: tools/fix_infographics.py
         for w in (800, 1200, 1600):
             im.resize((w, round(im.height * w / im.width)), Image.LANCZOS).save(OUT / 'infographic' / f'{lang}-{w}.webp', 'WEBP', quality=84, method=6)
         im.save(OUT / 'infographic' / f'{lang}-full.webp', 'WEBP', quality=84, method=6)

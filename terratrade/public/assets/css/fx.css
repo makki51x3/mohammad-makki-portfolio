@@ -276,7 +276,9 @@
     border-radius: 16px; font-weight: 800; letter-spacing: .02em;
   }
   .btn.is-chunky, .btn.is-chunky:hover { background: none; border: 0; box-shadow: none; color: var(--sq-ink); }
-  .is-chunky > .sq { position: absolute; z-index: -1; overflow: visible; pointer-events: none; }
+  /* the layer is deliberately wider than its button (the extrusion hangs 5 units past each side): lift the reset's
+     svg { max-width: 100% } cap, which squeezed the face narrower than the button and off-centre from its label */
+  .is-chunky > .sq { position: absolute; z-index: -1; overflow: visible; pointer-events: none; max-width: none; }
   /* the live label rides the face; its backing matches the face so contrast tools read the real pair */
   .is-chunky > :not(.sq) { translate: 0 var(--sq-dy, 0px); }
   .is-chunky > span { background: var(--sq-hb); border-radius: 6px; box-shadow: 0 0 0 3px var(--sq-hb); }

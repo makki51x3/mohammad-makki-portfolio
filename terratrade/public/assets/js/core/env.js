@@ -12,14 +12,14 @@ if (REDUCED) html.classList.add('reduced');
 // Follow an OS-level change without a reload (effects that already ran keep their final state).
 RM.addEventListener?.('change', e => { REDUCED = e.matches; html.classList.toggle('reduced', e.matches); window.dispatchEvent(new CustomEvent('tt:motion')); });
 
-/** User "pause animations" switch (WCAG 2.2.2). Freezes CSS animations (html.paused) and JS loops. */
+/** Animation pause state: html.paused freezes CSS animations and JS loops check isPaused(). The footer switch that set
+ *  it was removed at the client's request (reduced motion still applies); a pause it saved on an earlier visit is
+ *  cleared, so nobody is left with a frozen page and no switch to undo it. */
 let paused = false;
-try { paused = localStorage.getItem('tt-motion') === 'paused'; } catch (e) { /* storage blocked */ }
-html.classList.toggle('paused', paused);
+try { localStorage.removeItem('tt-motion'); } catch (e) { /* storage blocked */ }
 export const isPaused = () => paused;
 export function setPaused(v) {
   paused = !!v; html.classList.toggle('paused', paused);
-  try { localStorage.setItem('tt-motion', paused ? 'paused' : 'on'); } catch (e) { /* ignore */ }
   window.dispatchEvent(new CustomEvent('tt:motion'));
 }
 

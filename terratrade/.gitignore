@@ -2,3 +2,4 @@
 dev/out/
 dev/src-assets/
 dev/node_modules/
+__pycache__/

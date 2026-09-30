@@ -11,13 +11,13 @@ The design remixes the [portfolio](../_publish/index.html) design language (glas
 | **Hero** | Split-letter gradient headline, gooey rotating commodity word, fact counters, and a liquid-glass bubble scene (farmer / sesame / hibiscus) with the commodity list orbiting the main bubble ✦ |
 | **Products** | 8 commodities split into 2 divisions, with a filter and character-roll heading. Each card is a 3D flip card ✦: the framed photo turns to reveal "Request a quote" and "Spec sheet". The spec-sheet dialog shows indicative specs, harvest months and packaging, prints, and has "request a quote for this product" |
 | **About** | Scroll-lit paragraph, facts, mission / vision / three core values as zig-zag infographic banners ✦, manifesto scroll-fill |
-| **At a glance** | TerraTrade's own infographic (an English and an Arabic version, one per page), lazy-loaded, opening full size, with a three-point text summary beside it. The generator's corner mark is cropped off in `tools/images.py` |
+| **At a glance** | TerraTrade's own infographic (an English and an Arabic version, one per page), lazy-loaded, opening full size, with a three-point text summary beside it. Its text errors are corrected by `tools/fix_infographics.py` and the generator's corner mark is cropped off in `tools/images.py` |
 | **Operations** | Pinned Nigeria map story: outline draws, Kano sourcing zone, Lagos and Port Harcourt hubs, cargo moving to the ports, then out to export markets |
 | **Process** | Scroll-driven CSS 3D cube: Source → Aggregate → Verify → Process → Pack → Ship |
 | **Why TerraTrade** | Three strengths, plus Farmer First "growing stem" |
 | **Markets** | The portfolio's dot globe, extended with animated great-circle trade routes. Active markets (KSA, UAE, Qatar, Lebanon, Syria) are solid amber; opening markets (Japan, South Korea, China) are dashed green |
 | **Partners** | Partner logo grid |
-| **Site-wide** | Petal cursor ✦ (fine pointers), floating WhatsApp squircle ✦, pause-animations switch, light/dark themes |
+| **Site-wide** | Petal cursor ✦ (fine pointers), floating WhatsApp squircle ✦, light/dark themes. Motion follows the OS reduced-motion setting (the footer pause switch was removed at the client's request) |
 | **How we trade** | Terms, packaging, documents, samples, plus an interactive WebGL harbour-water panel ✦ with the mark on the seabed |
 | **Contact** | Quote form (Netlify Forms, AJAX with no-JS fallback) with a chunky squircle submit ✦, WhatsApp, copy-email, and a draggable liquid-glass business card on the photo ✦ |
 
@@ -69,7 +69,7 @@ Each tool regenerates one kind of asset:
 | `node tools/geo.mjs` | Globe dots and the inline Nigeria map |
 | `node tools/logo.mjs && node tools/logo-check.mjs` | Logo SVGs, checked against the original PNG |
 | `node tools/icons.mjs` | Icon sprite and favicons |
-| `python3 tools/images.py` | WebP sets (needs Pillow, plus the client originals in `dev/src-assets/`). `--infographics` rebuilds only the infographics from `dev/src-assets/infographic-en.png` / `infographic-ar.png`: drop in a corrected 2048 × 2048 PNG and rerun |
+| `python3 tools/images.py` | WebP sets (needs Pillow, plus the client originals in `dev/src-assets/`). `--infographics` rebuilds only the infographics from `dev/src-assets/infographic-en.png` / `infographic-ar.png`, with the text corrections from `tools/fix_infographics.py` (its coordinates fit these two sheets; a regenerated sheet replaces them) |
 | `node tools/og.mjs` | Social preview images |
 
 ## Deploy on Netlify
@@ -93,17 +93,15 @@ Each tool regenerates one kind of asset:
 - [ ] **Arabic.** Native-speaker review of `public/assets/js/i18n/ar.js`, and the Arabic brand name (currently «تيرا تريد»).
 - [ ] **Markets.** Confirm that listing Syria and Lebanon as active markets is intended.
 - [ ] **Privacy notice.** Legal review of `/privacy/`.
-- [ ] **Infographic text.** Worth regenerating before launch:
-  - Arabic: «آسق آسيا» should read «شرق آسيا»; «تجروتي» (in the feed list) is garbled.
-  - English: "oliseeds" should be "oilseeds"; "8 key commodities" lists only five; the heading "Active Middle East & East Asia routes" says East Asia is active, while the site (and the infographic's own line below it) calls it expansion.
+- [x] **Infographic text.** Corrected in `tools/fix_infographics.py` (applied by `tools/images.py --infographics`): English "oliseeds" paragraph now lists all eight commodities, "Active Middle East & East Asia routes" became "Middle East today, East Asia next"; Arabic «آسق آسيا» → «شرق آسيا» (and the timeline now runs Middle East → East Asia), the garbled «تجروتي» feed row and the swapped sesame / hibiscus labels. A regenerated sheet would need its own check.
 
 ## CodePen effects
 
-Each pen is kept as supplied in `dev/pens/<id>/`, adapted to the brand, fonts, i18n, RTL, themes and motion rules, and credited in its code header and in `public/credits.txt`. CSS lives in `assets/css/fx.css` under `[data-fx="…"]`; JS modules are in `assets/js/fx/`, loaded on demand by `fx/registry.js`. All JS runs on the shared loop registry, so it pauses off-screen, with the pause switch, and under reduced motion.
+Each pen is kept as supplied in `dev/pens/<id>/`, adapted to the brand, fonts, i18n, RTL, themes and motion rules, and credited in its code header and in `public/credits.txt`. CSS lives in `assets/css/fx.css` under `[data-fx="…"]`; JS modules are in `assets/js/fx/`, loaded on demand by `fx/registry.js`. All JS runs on the shared loop registry, so it pauses off-screen and under reduced motion.
 
 | Pen | Where | Notes |
 |---|---|---|
-| [designfenix/QwdoddG](https://codepen.io/designfenix/pen/QwdoddG) — Marquee Glass Bubble | Hero visual | The pen's SVG scene (generated from its markup) with TerraTrade photos. The ripple/displacement filters are removed so faces stay sharp. The orbit text is translatable (EN/AR). SMIL is frozen off-screen, when paused and under reduced motion. Pointer parallax on fine pointers. |
+| [designfenix/QwdoddG](https://codepen.io/designfenix/pen/QwdoddG) — Marquee Glass Bubble | Hero visual | The pen's SVG scene (generated from its markup) with TerraTrade photos. The ripple/displacement filters are removed so faces stay sharp. The orbit text is translatable (EN/AR). SMIL is frozen off-screen and under reduced motion. Pointer parallax on fine pointers. |
 | [designfenix/RwKPapa](https://codepen.io/designfenix/pen/RwKPapa) — 3D perspective cards | Product cards | Flips on hover or keyboard focus, mirrored in Arabic. Touch gets front and back stacked. The quote link prefills the form (`source=card:<id>`). |
 | [thebabydino/NLWdwz](https://codepen.io/thebabydino/pen/NLWdwz) — infographic banners | About: mission, vision, values | Brand gradients with contrast-checked ink. Zig-zag on wide screens, stacked on phones. |
 | [Andrew-Fisher/raMZQNe](https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe) — Chunky 3D Buttons | Hero quote, form submit, floating WhatsApp | The SVG squircle is an aria-hidden layer behind the real button, so the label stays live text. The floating button hides over the hero, contact and footer. |
