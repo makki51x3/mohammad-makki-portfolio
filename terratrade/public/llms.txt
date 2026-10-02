@@ -1,0 +1,18 @@
+# TerraTrade
+
+> TerraTrade is a trading company based in Kano, Nigeria (established 2023). It sources, processes and packages Nigerian agri-commodities and hardwood charcoal to international quality standards and exports them to buyers in the Middle East (Saudi Arabia, UAE, Qatar, Lebanon, Syria) and Asia (Japan, South Korea, China).
+
+## Products
+- Food-grade crops: sesame seeds, raw cashew nuts (in shell), dried hibiscus flower, soybean
+- Animal feed: soybean meal, wheat bran
+- Wood-based products: hardwood lump charcoal
+
+## Operations
+- Two logistical hubs: north (Kano: food-crop sourcing) and south (Lagos: animal-feed sourcing next to the export seaport)
+- Core values: trust, quality, consistency
+
+## Contact
+- Email: info@terratrade.global
+- Phone / WhatsApp: +234 803 444 5888
+- Quote requests: https://terratrade-global.netlify.app/#contact
+- Arabic version: https://terratrade-global.netlify.app/ar/

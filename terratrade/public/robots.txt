@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://terratrade-global.netlify.app/sitemap.xml
+# LLM-friendly summary: https://terratrade-global.netlify.app/llms.txt

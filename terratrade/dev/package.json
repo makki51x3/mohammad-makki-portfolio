@@ -1,0 +1,36 @@
+{
+  "name": "terratrade-dev",
+  "private": true,
+  "type": "module",
+  "description": "Dev-only tooling for the TerraTrade site (asset generation + tests). Nothing here is deployed.",
+  "scripts": {
+    "vendor": "node tools/vendor.mjs",
+    "fonts": "node tools/fonts.mjs",
+    "geo": "node tools/geo.mjs",
+    "ar": "node tools/render-ar.mjs",
+    "csp": "node tools/csp-hash.mjs",
+    "origin": "node tools/origin.mjs",
+    "og": "node tools/og.mjs",
+    "build:gen": "npm run ar && npm run csp",
+    "serve": "node tests/server.mjs",
+    "test:i18n": "node tests/i18n-coverage.mjs",
+    "test": "node tests/i18n-coverage.mjs && node tests/smoke.mjs"
+  },
+  "devDependencies": {
+    "@fontsource/ibm-plex-sans-arabic": "^5.2.0",
+    "@fontsource/lexend": "^5.2.0",
+    "@fontsource/noto-kufi-arabic": "^5.2.0",
+    "@fontsource/sora": "^5.2.0",
+    "@fontsource/space-mono": "^5.2.0",
+    "axe-core": "^4.10.0",
+    "gsap": "^3.13.0",
+    "html-validate": "^9.0.0",
+    "lenis": "^1.3.0",
+    "lighthouse": "^12.8.2",
+    "linkedom": "^0.18.0",
+    "playwright": "1.56.1",
+    "potrace": "^2.1.8",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  }
+}

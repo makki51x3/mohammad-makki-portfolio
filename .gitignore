@@ -10,6 +10,7 @@
 !/_publish/
 !/netlify/
 !/test/
+!/terratrade/
 
 node_modules/
 .netlify/

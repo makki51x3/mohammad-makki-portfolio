@@ -1,0 +1,430 @@
+/* =========================================================
+1. PAGE / BACKGROUND
+   Purely decorative. Does not participate in tracking.
+   ========================================================= */
+
+html,body{
+  margin:0;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  background:
+    radial-gradient(circle at 20% 25%,#ff5c7a55,#0000 32%),
+    radial-gradient(circle at 82% 30%,#ff9d4d44,#0000 30%),
+    radial-gradient(circle at 28% 82%,#3fd6c844,#0000 32%),
+    radial-gradient(circle at 80% 78%,#7b5cff55,#0000 35%),
+    #0d0a14;
+  color:#efe9f5;
+}
+
+
+/* =========================================================
+   2. PAGE CONTENT
+   Decorative text underneath the lens.
+   pointer-events:none prevents it from interfering with
+   the CSS hover sensors.
+   ========================================================= */
+
+.page{
+  position:fixed;
+  inset:0;
+  display:grid;
+  align-content:center;
+  padding:7vw;
+  pointer-events:none;
+  z-index:1;
+}
+
+small{
+  font:11px system-ui;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+  opacity:.5;
+}
+
+h1{
+  font:300 clamp(60px,12vw,180px)/.78 Georgia,serif;
+  letter-spacing:-.065em;
+  margin:.12em 0;
+  max-width:8ch;
+}
+
+em{
+  font-weight:bold;
+  font-style:italic;
+}
+
+
+/* =========================================================
+   3. SERVO POINT
+   .p is the invisible point trying to reach the mouse.
+
+   --x / --y = transition duration for each axis
+   --X / --Y = tiny retarget offsets
+   ========================================================= */
+
+.p{
+  --x:1.4s;
+  --y:1.4s;
+  --X:0px;
+  --Y:0px;
+
+  position:fixed;
+  left:50%;
+  top:50%;
+
+  anchor-name:--p;
+
+  transition:
+    left var(--x) linear,
+    top var(--y) linear;
+
+  will-change:left,top;
+}
+
+
+/* =========================================================
+   4. FOUR DIRECTION SENSORS
+
+   child 1 = NW
+   child 2 = NE
+   child 3 = SW
+   child 4 = SE
+
+   Each sensor extends one viewport outward from .p.
+   ========================================================= */
+
+.p>i{
+  position:absolute;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* horizontal side */
+.p>i:nth-child(odd){
+  right:0;
+}
+
+.p>i:nth-child(even){
+  left:0;
+}
+
+/* vertical side */
+.p>i:nth-child(-n+2){
+  bottom:0;
+}
+
+.p>i:nth-child(n+3){
+  top:0;
+}
+
+
+/* =========================================================
+   5. DIRECTION → FAR DRIVE TARGET
+
+   The servo never aims directly at the mouse.
+   It aims far beyond the viewport.
+
+   That gives the transition a long straight path,
+   while the distance bands below control its speed.
+   ========================================================= */
+
+/* NW */
+.p:has(>i:first-child:hover){
+  --a:-12000px;
+  --b:-12000px;
+}
+
+/* NE */
+.p:has(>i:nth-child(2):hover){
+  --a:calc(100vw + 12000px);
+  --b:-12000px;
+}
+
+/* SW */
+.p:has(>i:nth-child(3):hover){
+  --a:-12000px;
+  --b:calc(100vh + 12000px);
+}
+
+/* SE */
+.p:has(>i:last-child:hover){
+  --a:calc(100vw + 12000px);
+  --b:calc(100vh + 12000px);
+}
+
+
+/* Apply direction target + retarget offsets */
+.p:has(>i:hover){
+  left:calc(var(--a) + var(--X));
+  top:calc(var(--b) + var(--Y));
+}
+
+
+/* =========================================================
+   6. DISTANCE SENSOR GEOMETRY
+
+   <u> = Y-distance bands
+   nested <b> = X-distance bands
+
+   Both use the same four sizes:
+   1800 → 220 → 24 → 2px
+   ========================================================= */
+
+.p :is(u,b){
+  position:absolute;
+}
+
+
+/* Y bands */
+.p u{
+  width:100%;
+  height:var(--s);
+}
+
+/* X bands */
+.p b{
+  height:100%;
+  width:var(--s);
+}
+
+
+/* Y band orientation follows quadrant */
+
+.p>i:nth-child(-n+2) u{
+  bottom:0;
+}
+
+.p>i:nth-child(n+3) u{
+  top:0;
+}
+
+
+/* X band orientation follows quadrant */
+
+.p>i:nth-child(odd) b{
+  right:0;
+}
+
+.p>i:nth-child(even) b{
+  left:0;
+}
+
+
+/* =========================================================
+   7. DISTANCE BAND SIZES
+
+   X distance is encoded by <b> nesting depth.
+   Y distance is encoded by <u> sibling position.
+   ========================================================= */
+
+/* far */
+.p u:first-child,
+.p b{
+  --s:1800px;
+}
+
+/* medium */
+.p u:nth-child(2),
+.p b b{
+  --s:220px;
+}
+
+/* near */
+.p u:nth-child(3),
+.p b b b{
+  --s:24px;
+}
+
+/* very near */
+.p u:last-child,
+.p b b b b{
+  --s:2px;
+}
+
+
+/* =========================================================
+   8. X-AXIS GAIN CONTROLLER
+
+   Farther away = shorter transition = faster movement.
+   Closer = longer transition = finer movement.
+
+   --X changes slightly at every level so changing gain
+   also changes the destination and forces CSS to retarget.
+   ========================================================= */
+
+.p:has(b:hover){
+  --x:1.4s;
+  --X:0px;
+}
+
+.p:has(b b:hover){
+  --x:8s;
+  --X:1px;
+}
+
+.p:has(b b b:hover){
+  --x:70s;
+  --X:2px;
+}
+
+.p:has(b b b b:hover){
+  --x:700s;
+  --X:3px;
+}
+
+
+/* =========================================================
+   9. Y-AXIS GAIN CONTROLLER
+   Same idea as X, independently.
+   ========================================================= */
+
+.p:has(u:first-child:hover){
+  --y:1.4s;
+  --Y:0px;
+}
+
+.p:has(u:nth-child(2):hover){
+  --y:8s;
+  --Y:1px;
+}
+
+.p:has(u:nth-child(3):hover){
+  --y:70s;
+  --Y:2px;
+}
+
+.p:has(u:last-child:hover){
+  --y:700s;
+  --Y:3px;
+}
+
+
+/* =========================================================
+   10. REST / ANTI-JITTER STATE
+
+   When BOTH axes are inside the finest 2px band,
+   make movement effectively stop.
+
+   Importantly, the existing quadrant remains hovered,
+   so the drive target stays defined and the lens
+   does not disappear.
+   ========================================================= */
+
+.p:has(u:last-child:hover):has(b b b b:hover){
+  --x:99999s;
+  --y:99999s;
+}
+
+
+/* =========================================================
+   11. VISUAL FOLLOWER
+
+   .l follows the invisible servo point with a short lag.
+   It has no pointer events, so it never affects sensing.
+   ========================================================= */
+
+.l{
+  position:fixed;
+  position-anchor:--p;
+
+  left:anchor(center);
+  top:anchor(center);
+
+  pointer-events:none;
+  z-index:2;
+
+  transition:
+    left .07s ease-out,
+    top .07s ease-out;
+
+  will-change:left,top;
+
+  isolation:isolate;
+}
+
+
+/* =========================================================
+   12. SOFT COLOR BLOOM
+
+   Cheap visual glow.
+   Uses a radial gradient instead of filter:blur(),
+   so it is much cheaper to move.
+   ========================================================= */
+
+.l:before{
+  content:"";
+
+  position:absolute;
+
+  width:300px;
+  aspect-ratio:1;
+
+  translate:-50% -50%;
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      circle,
+      #ff5c7a2e 0,
+      #7b5cff20 35%,
+      #3fd6c810 52%,
+      #0000 72%
+    );
+}
+
+
+/* =========================================================
+   13. ACTUAL BACKDROP LENS
+
+   This is the expensive visual effect.
+
+   It blurs / saturates / shifts the background under
+   the circle, while the radial mask softens the edge.
+   ========================================================= */
+
+.l:after{
+  content:"";
+
+  position:absolute;
+
+  width:150px;
+  aspect-ratio:1;
+
+  translate:-50% -50%;
+  border-radius:50%;
+
+  backdrop-filter:
+    blur(10px)
+    saturate(1.9)
+    contrast(1.15)
+    hue-rotate(14deg);
+
+  -webkit-backdrop-filter:
+    blur(10px)
+    saturate(1.9)
+    contrast(1.15)
+    hue-rotate(14deg);
+
+  -webkit-mask:
+    radial-gradient(
+      circle,
+      #000 38%,
+      #000d 57%,
+      #0007 73%,
+      #0002 87%,
+      #0000
+    );
+
+  mask:
+    radial-gradient(
+      circle,
+      #000 38%,
+      #000d 57%,
+      #0007 73%,
+      #0002 87%,
+      #0000
+    );

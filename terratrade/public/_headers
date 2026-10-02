@@ -1,0 +1,18 @@
+# Security + caching. The script-src hash is the inline theme-init script in each page's <head>;
+# dev/tools/csp-hash.mjs keeps it in sync (tests fail if it drifts).
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-FNTPMktM+ReW0ollMsEhkBJ3k5lPeJ6Go5/s3/AY6JM='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; manifest-src 'self'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  Cross-Origin-Opener-Policy: same-origin
+  X-Frame-Options: DENY
+
+/assets/fonts/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=2592000
+
+/assets/img/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/assets/js/vendor/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
