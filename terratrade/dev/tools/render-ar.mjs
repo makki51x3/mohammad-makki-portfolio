@@ -41,9 +41,12 @@ for (const [src, dst, enPath, arPath] of PAGES) {
   // head: canonical / og for the Arabic URL, Arabic fonts preloaded instead of Latin ones
   document.querySelector('link[rel="canonical"]')?.setAttribute('href', SITE + arPath);
   document.querySelector('meta[property="og:url"]')?.setAttribute('content', SITE + arPath);
-  document.querySelector('meta[property="og:locale"]')?.setAttribute('content', 'ar_AR');
-  document.querySelector('meta[property="og:locale:alternate"]')?.setAttribute('content', 'en_US');
-  document.querySelector('meta[property="og:image"]')?.setAttribute('content', SITE + '/assets/img/og-ar.jpg');
+  const ogLoc = document.querySelector('meta[property="og:locale"]'), enLoc = ogLoc?.getAttribute('content') || 'en_GB';
+  ogLoc?.setAttribute('content', 'ar_AR');
+  document.querySelector('meta[property="og:locale:alternate"]')?.setAttribute('content', enLoc);
+  // same cache-busting version as the English og:image (bump both when the images are regenerated)
+  const ogImg = document.querySelector('meta[property="og:image"]'), ver = (ogImg?.getAttribute('content') || '').split('?')[1];
+  ogImg?.setAttribute('content', SITE + '/assets/img/og-ar.jpg' + (ver ? '?' + ver : ''));
   const pre = [...document.querySelectorAll('link[rel="preload"][as="font"]')];
   if (pre[0]) pre[0].setAttribute('href', '/assets/fonts/noto-kufi-arabic-arabic-700-normal.woff2');
   if (pre[1]) pre[1].setAttribute('href', '/assets/fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2');

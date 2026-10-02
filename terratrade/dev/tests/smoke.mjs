@@ -202,7 +202,7 @@ log('• structure');
   ok(!s.ext.length, `target=_blank without noopener: ${s.ext}`);
   ok(s.tel && s.mail && s.wa, `tel/mailto/wa links malformed ${[s.tel, s.mail, s.wa]}`);
   ok(!s.unlabeled.length, `unlabeled form controls: ${s.unlabeled}`);
-  ok(s.hreflang.length === 3 && s.canonical === SITE + '/' && s.ogUrl === SITE + '/' && /og-en\.jpg$/.test(s.ogImg), `EN head tags ${JSON.stringify(s)}`);
+  ok(s.hreflang.length === 3 && s.canonical === SITE + '/' && s.ogUrl === SITE + '/' && /og-en\.jpg(\?v=\d+)?$/.test(s.ogImg), `EN head tags ${JSON.stringify(s)}`);
   ok(s.h1 === 1 && s.skip === '#main', 'one h1 + skip link');
   // keyboard: first Tab lands on the skip link
   await page.keyboard.press('Tab'); ok(await page.evaluate(() => document.activeElement?.classList.contains('skip')), 'first Tab focuses the skip link');
@@ -245,7 +245,7 @@ log('• structure');
 { // Arabic page head + form language
   const { ctx, page } = await newPage({ lang: 'ar' });
   const s = await page.evaluate(() => ({ canonical: document.querySelector('link[rel=canonical]').href, og: document.querySelector('meta[property="og:image"]').content, locale: document.querySelector('meta[property="og:locale"]').content, lang: document.querySelector('#rfq [name=lang]').value, action: document.querySelector('#rfq').getAttribute('action'), title: document.title, words: JSON.parse(document.getElementById('morphbox').dataset.words)[0] }));
-  ok(s.canonical === SITE + '/ar/' && /og-ar\.jpg$/.test(s.og) && s.locale === 'ar_AR' && s.lang === 'ar' && s.action === '/ar/thanks/' && /تيرا/.test(s.title) && /[؀-ۿ]/.test(s.words), 'Arabic head/form: ' + JSON.stringify(s));
+  ok(s.canonical === SITE + '/ar/' && /og-ar\.jpg(\?v=\d+)?$/.test(s.og) && s.locale === 'ar_AR' && s.lang === 'ar' && s.action === '/ar/thanks/' && /تيرا/.test(s.title) && /[؀-ۿ]/.test(s.words), 'Arabic head/form: ' + JSON.stringify(s));
   // no English prose left in the Arabic page (allow brand names, codes, digits, emails)
   const leftovers = await page.evaluate(() => { const allow = /^(TerraTrade|Terra|Trade|NG|SA|AE|QA|LB|SY|JP|KR|CN|FOB|CFR|CIF|KOR|MT|N|English|info@terratrade\.global|terratrade\.global|[\d\s+·.,%–—/-]+)$/;
     const out = []; const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n;
