@@ -51,6 +51,7 @@ cd terratrade/dev
 npm install                       # dev tools only (Playwright, axe, linkedom, world-atlas, fontsource, gsap, lenis…)
 npm run serve                     # http://127.0.0.1:8787, applies _headers/_redirects and accepts form posts
 npm run ar && npm run csp         # after editing index.html, ar.js, or any page's inline <head> script
+npm run origin -- https://host    # switch the public address in every absolute URL (see "Connect the domain")
 npm test                          # i18n coverage + 16-run matrix: EN/AR × light/dark × desktop/phone × motion/reduced (incl. a check per CodePen effect)
 node tests/shots.mjs --lang ar --theme dark --w 390   # per-section screenshots → dev/out/shots/
 node tests/elshot.mjs --sel '[data-fx="flip"]' --margin 20   # one element → dev/out/el/
@@ -76,7 +77,7 @@ Each tool regenerates one kind of asset:
 1. **Create the site.** The Netlify project **`terratrade-global`** already exists (https://app.netlify.com/projects/terratrade-global), with Forms enabled. Link it to this repository under *Project configuration → Build & deploy → Link repository*, or add a new site from this repository. Set **Base directory** to `terratrade` and leave the build command empty; `terratrade/netlify.toml` sets `publish = "public"`. It is a separate site from the portfolio; the portfolio's edge "gate" and analytics functions don't apply here.
 2. **Turn on forms.** Go to **Forms** and enable form detection, then trigger **Deploys → Trigger deploy → Deploy site**. The `rfq` form is detected from the static HTML. The `ignore` rule in `netlify.toml` never skips a same-commit redeploy.
 3. **Set up notifications.** Go to Forms → Notifications and add email notifications to **info@terratrade.global**.
-4. **Connect the domain.** Add `terratrade.global` under Domain management. If the domain already has email, only add the web records (A/ALIAS for the apex, CNAME for `www`) and leave the MX/SPF/DKIM records untouched.
+4. **Connect the domain.** Add `terratrade.global` under Domain management. If the domain already has email, only add the web records (A/ALIAS for the apex, CNAME for `www`) and leave the MX/SPF/DKIM records untouched. Then switch the site's public address to the domain: `cd dev && npm run origin -- https://terratrade.global`, commit and push. Until that switch, every absolute URL (canonical, hreflang, link-preview image, sitemap, JSON-LD) uses `https://terratrade-global.netlify.app`: link previews in WhatsApp and elsewhere only show the image when it is on the host that actually serves the site (today terratrade.global points somewhere else).
 
 ## Content to confirm with TerraTrade before launch
 

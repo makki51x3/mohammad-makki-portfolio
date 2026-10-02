@@ -14,5 +14,5 @@
 ## Contact
 - Email: info@terratrade.global
 - Phone / WhatsApp: +234 803 444 5888
-- Quote requests: https://terratrade.global/#contact
-- Arabic version: https://terratrade.global/ar/
+- Quote requests: https://terratrade-global.netlify.app/#contact
+- Arabic version: https://terratrade-global.netlify.app/ar/

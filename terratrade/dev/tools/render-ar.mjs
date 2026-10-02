@@ -12,7 +12,7 @@ import { parseHTML } from 'linkedom';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const PUB = join(here, '..', '..', 'public');
-const SITE = 'https://terratrade.global';
+import { SITE } from '../site.mjs';
 const AR = (await import(pathToFileURL(join(PUB, 'assets', 'js', 'i18n', 'ar.js')).href + '?t=' + Date.now())).default;
 const PAGES = [['index.html', 'ar/index.html', '/', '/ar/'], ['thanks/index.html', 'ar/thanks/index.html', '/thanks/', '/ar/thanks/'],
   ['privacy/index.html', 'ar/privacy/index.html', '/privacy/', '/ar/privacy/'], ['404.html', 'ar/404.html', '/404.html', '/ar/404.html']];
