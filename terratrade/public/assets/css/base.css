@@ -13,7 +13,7 @@
 
     /* light theme = default ("mint daylight", like the deck) */
     --bg: #F3FBF0; --bg-2: #E6F7E0; --surface: #FFFFFF;
-    --card: rgba(255, 255, 255, .66); --card-solid: #FFFFFF; --card-bd: rgba(1, 61, 39, .13);
+    --card: rgba(255, 255, 255, .72); --card-solid: #FFFFFF; --card-bd: rgba(1, 61, 39, .13);
     --txt: #0B2A1C; --muted: #486152; --faint: rgba(11, 42, 28, .35);
     --accent: #0A7A33;            /* text-safe green: 5.4:1 on white */
     --accent-2: #54BA47; --warm: #FFA612; --warm-ink: #8A5200; /* amber text on light = dark ochre (4.9:1) */

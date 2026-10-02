@@ -4,7 +4,7 @@
 // Portfolio fixes: no touch-action:none (vertical swipes scroll the page), loop only runs on screen,
 // colours are cached per theme instead of getComputedStyle every frame, HTML tooltips (translatable).
 import { DOTS, TAGS } from '../geo/globe-data.js';
-import { $, $$, REDUCED, TOUCH } from '../core/env.js';
+import { $, $$, REDUCED } from '../core/env.js';
 import { addLoop, redraw } from '../core/loop.js';
 import { t } from '../core/i18n.js';
 import { isDark } from '../core/theme.js';
@@ -31,7 +31,7 @@ const PALETTE = {
 export default function globe() {
   const cv = $('#globe'), box = cv?.parentElement, tip = $('#globeTip'); if (!cv) return;
   const ctx = cv.getContext('2d');
-  const D = Math.min(devicePixelRatio || 1, TOUCH ? 1.5 : 2);
+  const D = Math.min(devicePixelRatio || 1, 1.5); // ~2,000 dots per frame: 1.5x is sharp enough and 44% fewer pixels than 2x
   let S = 0;
   const resize = () => { S = Math.round(cv.clientWidth * D); cv.width = S; cv.height = S; redraw('globe'); };
 
@@ -68,12 +68,16 @@ export default function globe() {
   const scr = q => [CX - q[0] * R, CX - q[1] * R];
   const visible = q => q[2] >= 0 || Math.hypot(q[0], q[1]) > 1;
 
+  let last = 0;
   function draw(now) {
     if (!S) return;
-    if (target) { rot += (target.r - rot) * .08; tilt += (target.t - tilt) * .08; if (Math.abs(target.r - rot) < .004 && Math.abs(target.t - tilt) < .004) target = null; }
+    // the slow idle spin and route comets read fine at ~30 fps, which halves the globe's cost; a drag follows every frame
+    if (!REDUCED && !drag && now - last < 31) return;
+    const f = Math.min(now - last, 100) / (1000 / 60); last = now; // elapsed time in 60 fps frames (easing stays frame-rate independent)
+    if (target) { const k = 1 - Math.pow(.92, f); rot += (target.r - rot) * k; tilt += (target.t - tilt) * k; if (Math.abs(target.r - rot) < .004 && Math.abs(target.t - tilt) < .004) target = null; }
     else if (!drag && !REDUCED && now > idleUntil) {
       if (region === 'all') { if (now > autoFlip && !focus) { autoFlip = now + 7000; flip = !flip; goto(flip ? views.asia : views.me); } }
-      else rot -= .0006;
+      else rot -= .0006 * f;
     }
     cosr = Math.cos(rot); sinr = Math.sin(rot); cost = Math.cos(tilt); sint = Math.sin(tilt);
     R = S * .4; CX = S / 2;

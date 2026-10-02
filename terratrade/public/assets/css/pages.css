@@ -3,7 +3,7 @@
   body.page { min-height: 100dvh; background: radial-gradient(900px 500px at 80% -10%, color-mix(in srgb, var(--sprout) 22%, transparent), transparent 70%), var(--bg); }
   .page-top { display: flex; align-items: center; justify-content: space-between; height: 84px; }
   .page-main { padding-block: 40px 90px; }
-  .page-card { max-width: 640px; margin: 6vh auto 0; text-align: center; display: grid; justify-items: center; gap: 16px; padding: 48px 32px; border-radius: 28px; border: 1px solid var(--card-bd); background: var(--card); backdrop-filter: blur(12px); box-shadow: var(--shadow); }
+  .page-card { max-width: 640px; margin: 6vh auto 0; text-align: center; display: grid; justify-items: center; gap: 16px; padding: 48px 32px; border-radius: 28px; border: 1px solid var(--card-bd); background: var(--card); box-shadow: var(--shadow); }
   .page-card h1 { font-size: clamp(26px, 4vw, 40px); }
   .page-card p { color: var(--muted); max-width: 460px; }
   .page-card hr { width: 60%; border: 0; border-top: 1px solid var(--card-bd); margin: 10px 0; }
