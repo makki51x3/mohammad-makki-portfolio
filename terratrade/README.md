@@ -1,6 +1,6 @@
 # TerraTrade · website
 
-**Bridging Nigerian agriculture with global markets.** Marketing site for TerraTrade, a Nigerian agri-commodity exporter based in Kano (est. 2023). It is bilingual: English at `/` and Arabic (RTL) at `/ar/`.
+**Bridging Nigerian agriculture with global markets.** Marketing site for TerraTrade, a Nigerian agri-commodity and charcoal exporter based in Kano (est. 2023), selling to the Middle East and Asia. It is bilingual: English at `/` and Arabic (RTL) at `/ar/`.
 
 The design remixes the [portfolio](../_publish/index.html) design language (glass cards, mono eyebrows, gradient type, grain, blob field, and the motion system) into the TerraTrade brand: forest `#013D27`, logo green `#21401C`, leaf `#00AA01`, sprout `#54BA47`, mint `#E9FFE5` and harvest amber `#FFA612`.
 
@@ -8,18 +8,17 @@ The design remixes the [portfolio](../_publish/index.html) design language (glas
 
 | Section | Built from |
 |---|---|
-| **Hero** | Split-letter gradient headline, gooey rotating commodity word, fact counters, and a liquid-glass bubble scene (farmer / sesame / hibiscus) with the commodity list orbiting the main bubble ✦ |
-| **Products** | 8 commodities split into 2 divisions, with a filter and character-roll heading. Each card is a 3D flip card ✦: the framed photo turns to reveal "Request a quote" and "Spec sheet". The spec-sheet dialog shows indicative specs, harvest months and packaging, prints, and has "request a quote for this product" |
-| **About** | Scroll-lit paragraph, facts, mission / vision / three core values as zig-zag infographic banners ✦, manifesto scroll-fill |
-| **At a glance** | TerraTrade's own infographic (an English and an Arabic version, one per page), lazy-loaded, opening full size, with a three-point text summary beside it. Its text errors are corrected by `tools/fix_infographics.py` and the generator's corner mark is cropped off in `tools/images.py` |
-| **Operations** | Pinned Nigeria map story: outline draws, Kano sourcing zone, Lagos and Port Harcourt hubs, cargo moving to the ports, then out to export markets |
+| **Menu** | About us · Products · Operations · Contact us (header, mobile menu and footer), plus the language link, theme switch and "Request a quote" |
+| **Hero** | Split-letter gradient headline, gooey rotating commodity word, fact counters (est. 2023, 2 hubs, 7 commodities, 8 export markets), a green chunky "Request a quote" ✦, and a liquid-glass bubble scene (farmer / sesame / hibiscus) with the commodity list orbiting the main bubble ✦ |
+| **About us** | Scroll-lit paragraph, facts, mission and vision as zig-zag infographic banners ✦, then **Core values**: the Trust · Quality · Consistency scroll-fill lines |
+| **Products** | 7 commodities in 3 divisions (food-grade crops, animal feed, wood-based products), with a filter and character-roll heading. Each card is a 3D flip card ✦: clicking (or tapping, or Enter) turns the photo over to "Request a quote" and "Spec sheet". The spec-sheet dialog shows indicative specs, harvest months and packaging, prints, and has "request a quote for this product" |
+| **Operations** | Pinned Nigeria map story: outline draws, "Sourcing zone · Kano", the Lagos hub, cargo moving to the port, then out to export markets |
 | **Process** | Scroll-driven CSS 3D cube: Source → Aggregate → Verify → Process → Pack → Ship |
-| **Why TerraTrade** | Three strengths, plus Farmer First "growing stem" |
-| **Markets** | The portfolio's dot globe, extended with animated great-circle trade routes. Active markets (KSA, UAE, Qatar, Lebanon, Syria) are solid amber; opening markets (Japan, South Korea, China) are dashed green |
+| **Why TerraTrade** | Two strengths: effective partnerships, and local + Middle East / Asia market insight |
+| **Markets** | The portfolio's dot globe, extended with animated great-circle export routes: Middle East (KSA, UAE, Qatar, Lebanon, Syria) in amber and Asia (Japan, South Korea, China) in green |
 | **Partners** | Partner logo grid |
-| **Site-wide** | Petal cursor ✦ (fine pointers), floating WhatsApp squircle ✦, light/dark themes. Motion follows the OS reduced-motion setting (the footer pause switch was removed at the client's request) |
-| **How we trade** | Terms, packaging, documents, samples, plus an interactive WebGL harbour-water panel ✦ with the mark on the seabed |
-| **Contact** | Quote form (Netlify Forms, AJAX with no-JS fallback) with a chunky squircle submit ✦, WhatsApp, copy-email, and a draggable liquid-glass business card on the photo ✦ |
+| **Contact us** | Quote form (Netlify Forms, AJAX with no-JS fallback) asking only for name, company, email, phone / WhatsApp and a message, with a chunky squircle submit ✦; WhatsApp, copy-email, and a draggable liquid-glass business card ✦ that starts centred on a high-resolution photo |
+| **Site-wide** | Petal cursor ✦ (fine pointers), floating WhatsApp squircle ✦, light/dark themes. Motion follows the OS reduced-motion setting (the footer pause switch was removed at the client's request); the footer keeps only the privacy notice |
 
 ✦ = adapted from a CodePen (see [CodePen effects](#codepen-effects)).
 
@@ -35,12 +34,12 @@ terratrade/
     assets/css/        fonts.css (generated) · base.css (tokens, themes, RTL) · site.css · pages.css · fx.css (CodePen adaptations)
     assets/js/         main.js · core/ (env, loop registry, i18n, theme) · ui/ · scenes/ (globe, nigeria-map, process-cube, ambient)
                        fx/ (CodePen adaptations + registry.js) · i18n/en.js (runtime strings) · i18n/ar.js (all Arabic)
-                       data.js (spec values) · geo/ (generated) · vendor/ (GSAP, Lenis, three.js subset)
+                       data.js (spec values) · geo/ (generated) · vendor/ (GSAP, Lenis)
     assets/img/        brand/ (logo SVGs, sprite, app icons) · products/ · photos/ · partners/ · icons.svg · og-en.jpg · og-ar.jpg
   dev/                 tooling + tests only; never deployed
     tools/             vendor, fonts, logo, icons, geo, images.py, og, render-ar, csp-hash, logo-check
     tests/             server.mjs (Netlify imitation), smoke.mjs (Playwright + axe matrix), shots.mjs / elshot.mjs (screenshots)
-    pens/<id>/         the seven CodePen sources as supplied (promo popups removed) + meta.json (title, author, URL)
+    pens/<id>/         the CodePen sources in use, as supplied (promo popups removed) + meta.json (title, author, URL)
 ```
 
 There is no build step at deploy time. The files in `public/` that tools generate are committed. Rerun a tool only when its input changes.
@@ -54,7 +53,7 @@ npm run serve                     # http://127.0.0.1:8787, applies _headers/_red
 npm run ar && npm run csp         # after editing index.html, ar.js, or any page's inline <head> script
 npm test                          # i18n coverage + 16-run matrix: EN/AR × light/dark × desktop/phone × motion/reduced (incl. a check per CodePen effect)
 node tests/shots.mjs --lang ar --theme dark --w 390   # per-section screenshots → dev/out/shots/
-node tests/elshot.mjs --sel '[data-fx="flip"]' --hover '.pcard' --margin 20   # one element → dev/out/el/
+node tests/elshot.mjs --sel '[data-fx="flip"]' --margin 20   # one element → dev/out/el/
 node tests/lighthouse.mjs                              # Lighthouse, EN/AR × mobile/desktop (the dev server compresses like Netlify)
 ```
 
@@ -64,12 +63,12 @@ Each tool regenerates one kind of asset:
 
 | Tool | Regenerates |
 |---|---|
-| `node tools/vendor.mjs` | GSAP / Lenis, and the tree-shaken three.js subset (`tools/three-entry.mjs`, bundled with esbuild) |
+| `node tools/vendor.mjs` | GSAP / Lenis |
 | `node tools/fonts.mjs` then `python3 tools/subset_fonts.py` | Self-hosted fonts; the second step trims the Arabic faces to standard Arabic (173 KB → 58 KB, all shaping features kept; needs `fonttools` + `brotli`) |
 | `node tools/geo.mjs` | Globe dots and the inline Nigeria map |
 | `node tools/logo.mjs && node tools/logo-check.mjs` | Logo SVGs, checked against the original PNG |
 | `node tools/icons.mjs` | Icon sprite and favicons |
-| `python3 tools/images.py` | WebP sets (needs Pillow, plus the client originals in `dev/src-assets/`). `--infographics` rebuilds only the infographics from `dev/src-assets/infographic-en.png` / `infographic-ar.png`, with the text corrections from `tools/fix_infographics.py` (its coordinates fit these two sheets; a regenerated sheet replaces them). Images are cached for a week, so after regenerating bump the `?v=` on the infographic URLs in `index.html` and `ar.js` |
+| `python3 tools/images.py [name …]` | WebP sets (needs Pillow, plus the client originals in `dev/src-assets/`); names rebuild only those outputs, e.g. `charcoal contact`. Images are cached for a week, so a changed photo gets a new file name |
 | `node tools/og.mjs` | Social preview images |
 
 ## Deploy on Netlify
@@ -81,19 +80,16 @@ Each tool regenerates one kind of asset:
 
 ## Content to confirm with TerraTrade before launch
 
-- [ ] **Spec values and harvest months** in `public/assets/js/data.js`. They are industry-typical ranges, labelled "indicative" on the page.
-- [ ] **Trade terms.** Incoterms, packaging (25/50 kg PP bags, jumbo bags, 80 kg jute for cashew), export documents list, samples policy.
+- [ ] **Spec values and harvest months** in `public/assets/js/data.js`. They are industry-typical ranges, labelled "indicative" on the page (charcoal: fixed carbon, ash, volatiles, lump size, calorific value, packaging).
 - [ ] **Partner wording and logos.** The deck says "Our partnerships"; confirm each company agrees to be listed, and supply official SVG logos.
 - [ ] **Photos.**
-  - The deck's "raw cashew" photo shows **shelled kernels**, not in-shell raw cashew nuts; please supply a correct photo.
-  - **Ginger:** confirm the export form (e.g. dried split) and supply a matching photo. The deck photo shows fresh root, so the copy currently says just "Nigerian ginger".
-  - Confirm the stock-photo licences cover web use.
+  - The in-shell cashew, charcoal and contact-card photos are the examples from the revision notes, upscaled 4× with Real-ESRGAN (stock-photo sites are not reachable from the build environment). Original high-resolution files, if TerraTrade has them, would be better still.
+  - Confirm the photo licences cover web use.
 - [ ] **Registration details.** CAC / NEPC registration numbers and the full Kano address.
 - [ ] **Messaging apps.** Is +234 803 444 5888 on WhatsApp? Any WeChat, LINE or KakaoTalk account? WhatsApp is blocked in China.
 - [ ] **Arabic.** Native-speaker review of `public/assets/js/i18n/ar.js`, and the Arabic brand name (currently «تيرا تريد»).
 - [ ] **Markets.** Confirm that listing Syria and Lebanon as active markets is intended.
 - [ ] **Privacy notice.** Legal review of `/privacy/`.
-- [x] **Infographic text.** Corrected in `tools/fix_infographics.py` (applied by `tools/images.py --infographics`): English "oliseeds" paragraph now lists all eight commodities, "Active Middle East & East Asia routes" became "Middle East today, East Asia next"; Arabic «آسق آسيا» → «شرق آسيا» (and the timeline now runs Middle East → East Asia), the garbled «تجروتي» feed row and the swapped sesame / hibiscus labels. A regenerated sheet would need its own check.
 
 ## CodePen effects
 
@@ -102,12 +98,11 @@ Each pen is kept as supplied in `dev/pens/<id>/`, adapted to the brand, fonts, i
 | Pen | Where | Notes |
 |---|---|---|
 | [designfenix/QwdoddG](https://codepen.io/designfenix/pen/QwdoddG) — Marquee Glass Bubble | Hero visual | The pen's SVG scene (generated from its markup) with TerraTrade photos. The ripple/displacement filters are removed so faces stay sharp. The orbit text is translatable (EN/AR). SMIL is frozen off-screen and under reduced motion. Pointer parallax on fine pointers. |
-| [designfenix/RwKPapa](https://codepen.io/designfenix/pen/RwKPapa) — 3D perspective cards | Product cards | Flips on hover or keyboard focus, mirrored in Arabic. Touch gets front and back stacked. The quote link prefills the form (`source=card:<id>`). |
-| [thebabydino/NLWdwz](https://codepen.io/thebabydino/pen/NLWdwz) — infographic banners | About: mission, vision, values | Brand gradients with contrast-checked ink. Zig-zag on wide screens, stacked on phones. |
+| [designfenix/RwKPapa](https://codepen.io/designfenix/pen/RwKPapa) — 3D perspective cards | Product cards | Turns over only when clicked, tapped or activated from the keyboard (never on hover), mirrored in Arabic; the hidden face is invisible and inert, so nothing shows through. Escape, a "back to the photo" button or a click elsewhere turns it back. The quote link records the product and starts the message (`source=card:<id>`). |
+| [thebabydino/NLWdwz](https://codepen.io/thebabydino/pen/NLWdwz) — infographic banners | About: mission, vision | Brand gradients with contrast-checked ink. Zig-zag on wide screens, stacked on phones. |
 | [Andrew-Fisher/raMZQNe](https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe) — Chunky 3D Buttons | Hero quote, form submit, floating WhatsApp | The SVG squircle is an aria-hidden layer behind the real button, so the label stays live text. The floating button hides over the hero, contact and footer. |
-| [Abdughafur-Khujzoda/jEyVvqK](https://codepen.io/Abdughafur-Khujzoda/pen/jEyVvqK) — liquid-glass card | Contact photo | Draggable (kept inside the photo). Only on screens ≥ 961px, where the photo shows. |
+| [Abdughafur-Khujzoda/jEyVvqK](https://codepen.io/Abdughafur-Khujzoda/pen/jEyVvqK) — liquid-glass card | Contact photo | Starts centred on the photo, draggable (kept inside it). Only on screens ≥ 961px, where the photo shows. |
 | [Andrew-Fisher/GgraMzd](https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd) — pure-CSS cursor tracking | Site cursor | The pen's speed bands drive a JS servo (a CSS hover grid would block clicks). The visual is a small seed made of the logo's petals that opens into a ring over clickable things (the blurred lens was too heavy). Fine pointers only. |
-| [tmpl/YPZQxeN](https://codepen.io/tmpl/pen/YPZQxeN) — Interactive Pool Water | How we trade | three.js subset (~125 KB gzipped), loaded only on screens ≥ 961px with motion allowed. Sand seabed with the mark, quay walls. Anything else shows a still CSS panel. |
 
 ## Credits
 

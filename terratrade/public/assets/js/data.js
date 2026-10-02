@@ -20,11 +20,6 @@ export const PRODUCTS = {
     specs: [['spec.form', { k: 'spec.v.calyces' }], ['spec.colour', { k: 'spec.v.deepRed' }], ['spec.moisture', '≤ 12%'], ['spec.admixture', '≤ 1%']],
     pack: 'pack.bags',
   },
-  ginger: {
-    months: [11, 12, 1, 2, 3],
-    specs: [['spec.form', { k: 'spec.v.split' }], ['spec.moisture', '≤ 12%'], ['spec.admixture', '≤ 1%']],
-    pack: 'pack.bags',
-  },
   soybean: {
     months: [10, 11, 12],
     specs: [['spec.protein', '36 – 40%'], ['spec.oil', '18 – 20%'], ['spec.moisture', '≤ 13%'], ['spec.foreign', '≤ 2%']],
@@ -40,9 +35,11 @@ export const PRODUCTS = {
     specs: [['spec.form', { k: 'spec.v.branPellets' }], ['spec.cprotein', '14 – 17%'], ['spec.cfibre', '≤ 12%'], ['spec.moisture', '≤ 13%']],
     pack: 'pack.meal',
   },
-  'cotton-seed': {
-    months: [11, 12, 1, 2, 3],
-    specs: [['spec.form', { k: 'spec.v.wholeSeed' }], ['spec.oil', '17 – 20%'], ['spec.protein', '20 – 24%'], ['spec.moisture', '≤ 10%']],
-    pack: 'pack.bags',
+  // wood-based products: hardwood lump charcoal (produced year-round; typical export-grade ranges)
+  charcoal: {
+    months: ALL, yearRound: true, yearRoundKey: 'spec.yearRoundMade',
+    specs: [['spec.form', { k: 'spec.v.hardwoodLump' }], ['spec.fixedCarbon', '≥ 75%'], ['spec.moisture', '≤ 8%'], ['spec.ash', '≤ 4%'],
+      ['spec.volatile', '≤ 20%'], ['spec.size', { n: '3 – 15', u: 'spec.u.cm' }], ['spec.calorific', { n: '≥ 7,000', u: 'spec.u.kcalKg' }]],
+    pack: 'pack.charcoal',
   },
 };

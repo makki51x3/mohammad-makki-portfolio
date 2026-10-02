@@ -1,7 +1,9 @@
 // Quote form → Netlify Forms (AJAX url-encoded POST to "/"), with per-field error messages
 // (aria-describedby), an aria-live status, a success state that takes focus, and a no-JS fallback
 // (native validation, then a normal POST that lands on /thanks/).
-// Also: copy-email button + toast, and prefill from the spec sheet.
+// The form asks only for name, company, email, phone / WhatsApp and a message. A product's "Request a quote"
+// (card or spec sheet) records the product in a hidden field and starts the message for the visitor.
+// Also: copy-email button + toast.
 import { $, $$ } from '../core/env.js';
 import { t } from '../core/i18n.js';
 import { scrollToEl } from './nav.js';
@@ -12,16 +14,19 @@ export function toast(msg) {
   clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2200);
 }
 
+let prefilled = ''; // the message we wrote, so a later product replaces it but a visitor's own words are kept
 /** @param {string} productId @param {'spec'|'card'} [via] where the request started (sent as the form's source) */
 export function prefillQuote(productId, via = 'spec') {
   const form = $('#rfq'); if (!form) return;
   if (form.hidden) { form.hidden = false; $('#rfqDone').hidden = true; } // re-open after a previous send
-  const sel = form.elements.product; if (sel && productId) sel.value = productId;
+  form.elements.product.value = productId || '';
   form.elements.source.value = via + ':' + productId;
+  const msg = form.elements.message, name = $(`.pcard[data-id="${productId}"] h3`)?.textContent.trim();
+  if (name && (!msg.value.trim() || msg.value === prefilled)) { msg.value = prefilled = t('form.prefill', { p: name }); }
   scrollToEl($('#contact'));
   setTimeout(() => {
-    const first = $$('input:not([type=hidden]):not([type=radio]):not([type=checkbox]), select, textarea', form).find(f => !f.value && !f.closest('.hp'));
-    (first || sel).focus({ preventScroll: true });
+    const first = $$('input:not([type=hidden]), textarea', form).find(f => !f.value && !f.closest('.hp'));
+    (first || msg).focus({ preventScroll: true });
   }, 900);
 }
 
@@ -36,9 +41,8 @@ export function copyMail() {
 // validity → message key
 function message(f) {
   const v = f.validity;
-  if (f.type === 'checkbox') return 'form.errConsent';
   if (f.type === 'email' && !v.valueMissing && v.typeMismatch) return 'form.errEmailFormat';
-  return { name: 'form.errName', email: 'form.errEmail', country: 'form.errCountry', product: 'form.errProduct' }[f.name] || 'form.errRequired';
+  return { name: 'form.errName', email: 'form.errEmail' }[f.name] || 'form.errRequired';
 }
 
 export function rfq() {
@@ -74,7 +78,7 @@ export function rfq() {
     } finally { inFlight = false; submit.removeAttribute('aria-disabled'); label.textContent = orig; }
   });
   $('#rfqAgain')?.addEventListener('click', () => {
-    form.reset(); form.elements.source.value = 'contact';
+    form.reset(); form.elements.source.value = 'contact'; form.elements.product.value = ''; prefilled = '';
     done.hidden = true; form.hidden = false;
     $('#f-name', form).focus(); // never the honeypot
   });

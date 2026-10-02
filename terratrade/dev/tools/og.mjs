@@ -7,8 +7,8 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const OUT = join(here, '..', '..', 'public', 'assets', 'img');
 const COPY = {
-  en: { dir: 'ltr', k: 'Nigerian agri-commodity exports · Est. 2023', t1: 'Bridging Nigerian agriculture', t2: 'with global markets', chips: ['Sesame', 'Raw cashew', 'Hibiscus', 'Ginger', 'Soybean', 'Feed ingredients'], url: 'terratrade.global' },
-  ar: { dir: 'rtl', k: 'تصدير السلع الزراعية النيجيرية · تأسست 2023', t1: 'نربط الزراعة النيجيرية', t2: 'بالأسواق العالمية', chips: ['السمسم', 'الكاجو الخام', 'الكركديه', 'الزنجبيل', 'فول الصويا', 'مكونات الأعلاف'], url: 'terratrade.global/ar' },
+  en: { dir: 'ltr', k: 'Nigerian agri-commodity exports · Est. 2023', t1: 'Bridging Nigerian agriculture', t2: 'with global markets', chips: ['Sesame', 'Raw cashew', 'Hibiscus', 'Soybean', 'Feed ingredients', 'Charcoal'], url: 'terratrade.global' },
+  ar: { dir: 'rtl', k: 'تصدير السلع الزراعية النيجيرية · تأسست 2023', t1: 'نربط الزراعة النيجيرية', t2: 'بالأسواق العالمية', chips: ['السمسم', 'الكاجو الخام', 'الكركديه', 'فول الصويا', 'مكونات الأعلاف', 'الفحم النباتي'], url: 'terratrade.global/ar' },
 };
 const tpl = c => `<!doctype html><html lang="${c.dir === 'rtl' ? 'ar' : 'en'}" dir="${c.dir}"><head><link rel="stylesheet" href="/assets/css/fonts.css"><style>
 *{box-sizing:border-box;margin:0}body{width:1200px;height:630px;overflow:hidden;font-family:${c.dir === 'rtl' ? '"IBM Plex Sans Arabic"' : 'Sora'},sans-serif;color:#EEFAE9;
@@ -26,7 +26,7 @@ h1 span{display:block;background:linear-gradient(100deg,#9BE88C,#54BA47 40%,#FFA
 <svg class="logo" viewBox="0 0 752 264"><use href="/assets/img/brand/brand.svg#tt-logo"/></svg>
 <p class="k">${c.k}</p><h1>${c.t1}<span>${c.t2}</span></h1>
 <div class="chips">${c.chips.map(x => `<b>${x}</b>`).join('')}</div></div>
-<div class="ph"><img src="/assets/img/photos/hero-sq-622.webp"><span class="url">${c.url}</span></div></div></body></html>`;
+<div class="ph"><img src="/assets/img/photos/contact-880.webp"><span class="url">${c.url}</span></div></div></body></html>`;
 const srv = await start(0); const base = `http://127.0.0.1:${srv.address().port}`;
 const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1200, height: 630 } });
 for (const [lang, c] of Object.entries(COPY)) {

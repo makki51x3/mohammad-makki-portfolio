@@ -1,6 +1,6 @@
 // Motion layer ported from the portfolio: Lenis smooth scroll on the GSAP ticker, reveal-on-scroll,
 // hero melt + photo parallax, scroll-velocity skew on the product grid, tilt + cursor glow cards,
-// magnetic buttons, contact spotlight, manifesto fallback, Farmer-First "growing stem".
+// magnetic buttons, contact spotlight, manifesto (core values) fallback.
 import { $, $$, html, REDUCED, TOUCH, FINE, hasGSAP } from '../core/env.js';
 
 export function smooth() {
@@ -89,20 +89,3 @@ export function manifesto() {
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .4 });
   $$('.mline').forEach(el => io.observe(el));
 }
-
-/* Farmer-First stem: a green rail grows with scroll; leaves open as it reaches them (portfolio timeline) */
-export function stem() {
-  const list = $('#stem'), fill = $('#stemFill'); if (!list || !fill) return;
-  const items = $$('.stem-item', list);
-  if (REDUCED) { items.forEach(i => i.classList.add('in')); fill.style.height = '100%'; return; }
-  let tick = false;
-  const up = () => {
-    tick = false;
-    const r = list.getBoundingClientRect(); const pr = Math.max(0, Math.min(1, (innerHeight * .7 - r.top) / r.height));
-    fill.style.height = pr * 100 + '%';
-    const y = r.top + pr * r.height;
-    items.forEach(it => it.classList.toggle('in', it.getBoundingClientRect().top + 12 < y));
-  };
-  addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(up); } }, { passive: true }); up();
-}
-

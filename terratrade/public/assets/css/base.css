@@ -89,7 +89,7 @@
   ::selection { background: color-mix(in srgb, var(--sprout) 40%, transparent); color: var(--txt); }
   h1, h2, h3, h4 { font-family: var(--disp); letter-spacing: -.015em; line-height: 1.08; font-weight: 700; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
-  :where(p, dd, .consent, .fine) a:not([class]) { color: var(--accent); text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  :where(p, dd, .fine) a:not([class]) { color: var(--accent); text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }
   /* numbers, phones, emails, spec values never get bidi-reordered inside RTL */
   bdi { unicode-bidi: isolate; direction: ltr; }
 }
@@ -117,14 +117,14 @@
   [dir="rtl"] body { line-height: 1.85; }
   [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4 { letter-spacing: 0; line-height: 1.45; }
   [dir="rtl"] :is(.kicker, .eyebrow, .num, .tag, .chip, .mono, .label, .btn, .tab, .marquee, .values-h, .scroll-cue, .mk-h, .globe-hint, .ch-k, .fitem dt, .fact dt,
-    .photo-tag, .map-note, .mline .alt, .season-cap, .spec-cap, .hero-chip, .vnum, .snum, .acc-n, .idx, .face .fnum, .hud a span) { letter-spacing: 0 !important; text-transform: none !important; }
+    .photo-tag, .map-note, .mline .alt, .season-cap, .spec-cap, .hero-chip, .vnum, .snum, .idx, .face .fnum, .hud a span) { letter-spacing: 0 !important; text-transform: none !important; }
 }
 
 /* animation pause state (core/env.js): freezes every CSS animation; JS loops check html.paused */
 html.paused *, html.paused *::before, html.paused *::after { animation-play-state: paused !important; }
 
 @media (forced-colors: active) {
-  .tab.active, .seg input:checked + span { forced-color-adjust: none; background: Highlight; color: HighlightText; border-color: Highlight; }
+  .tab.active { forced-color-adjust: none; background: Highlight; color: HighlightText; border-color: Highlight; }
   .h1-accent .ltr, .gradient-text, .h1-accent, .mline .fill, .marquee.m1 li, .big404 { forced-color-adjust: none; background: none !important; color: CanvasText !important; -webkit-text-fill-color: CanvasText; }
 }
 

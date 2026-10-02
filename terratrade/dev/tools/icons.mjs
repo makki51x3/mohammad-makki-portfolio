@@ -58,6 +58,8 @@ for (const [id, file, mode] of ICONS) {
   const d = shrink(await glyph(file, mode));
   sprite += `<symbol id="i-${id}" viewBox="0 0 ${N} ${N}"><path fill="currentColor" fill-rule="evenodd" d="${d}"/></symbol>\n`;
 }
+// hand-drawn: the profile has no pictogram for wood-based products (charcoal), so a flame over two crossed logs
+sprite += '<symbol id="i-charcoal" viewBox="0 0 128 128"><g fill="currentColor"><path fill-rule="evenodd" d="M64 10C71 28 86 36 86 58C86 73 76 84 64 84C52 84 42 73 42 60C42 49 49 42 54 35C55 44 58 49 62 51C59 38 60 24 64 10ZM64 50C68 57 73 61 73 68C73 74 69 79 64 79C59 79 55 74 55 69C55 63 60 58 64 50Z"/><rect x="16" y="90" width="96" height="15" rx="7.5" transform="rotate(11 64 97.5)"/><rect x="16" y="90" width="96" height="15" rx="7.5" transform="rotate(-11 64 97.5)"/></g></symbol>\n';
 sprite += '</svg>\n';
 writeFileSync(join(PUB, 'assets', 'img', 'icons.svg'), sprite);
 console.log('sprite', sprite.length, 'bytes');

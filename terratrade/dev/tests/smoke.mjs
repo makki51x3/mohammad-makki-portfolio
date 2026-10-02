@@ -72,25 +72,18 @@ async function fxChecks(page, c, name) {
       ok(!r.on && !r.shown && s2.on && s2.x === 520 && s2.y === 260, `${name}: resize hands back the system pointer, next move re-snaps exactly ${JSON.stringify({ r, s2 })}`);
     }
   } else ok(await page.evaluate(() => !document.querySelector('.tt-cursor, .tt-dot') && !document.documentElement.classList.contains('tt-cursor-on')), `${name}: no custom cursor on touch`);
-  // NLWdwz — about banners: five banners with counter discs; zig-zag on wide screens only, mirrored in Arabic
+  // NLWdwz — about banners: mission + vision with counter discs; zig-zag on wide screens only, mirrored in Arabic
   const ib = await page.evaluate(() => [...document.querySelectorAll('[data-fx="banners"] .ib')].map(li => ({
     disc: getComputedStyle(li.querySelector('.ib-card'), '::before').content, tx: parseFloat(getComputedStyle(li).translate) || 0 })));
-  ok(ib.length === 5 && ib.every(b => /counter\(ib/.test(b.disc)), `${name}: banners + counter discs ${JSON.stringify(ib)}`);
+  ok(ib.length === 2 && ib.every(b => /counter\(ib/.test(b.disc)), `${name}: mission + vision banners with counter discs ${JSON.stringify(ib)}`);
+  // core values: Trust / Quality / Consistency (the manifesto lines) under their own heading inside About
+  const cv = await page.evaluate(() => { const h = document.getElementById('coreValuesTitle'), lines = [...document.querySelectorAll('#about .manifesto .mline')];
+    return { h: h?.closest('#about') ? h.textContent.trim() : null, n: lines.length, labelled: document.querySelector('#about .manifesto')?.getAttribute('aria-labelledby'), stray: !!document.querySelector('section.manifesto') }; });
+  ok(cv.h && cv.n === 3 && cv.labelled === 'coreValuesTitle' && !cv.stray, `${name}: core values = the three manifesto lines under their heading in About ${JSON.stringify(cv)}`);
   if (!c.mobile) ok(ib[0].tx * (c.lang === 'ar' ? -1 : 1) < 0 && ib[1].tx * (c.lang === 'ar' ? -1 : 1) > 0, `${name}: banner zig-zag direction ${ib.map(b => b.tx)}`);
   else ok(ib.every(b => b.tx === 0), `${name}: banners stack without zig-zag on phones ${ib.map(b => b.tx)}`);
-  // YPZQxeN — harbour water: WebGL (three.js loaded on demand) on wide screens with motion, a still panel under
-  // reduced motion, nothing on phones; its loop only runs while the panel is on screen (checked from the footer)
-  const wq = await page.evaluate(() => ({ three: performance.getEntriesByType('resource').some(r => /three-water/.test(r.name)),
-    shown: getComputedStyle(document.querySelector('[data-fx="water"]')).display !== 'none', gl: !!document.querySelector('.sea-gl'), loops: window.__tt.loops() }));
-  if (c.mobile) ok(!wq.three && !wq.shown && !wq.gl, `${name}: no water panel / three.js on phones ${JSON.stringify(wq)}`);
-  else if (c.reduced) ok(!wq.three && wq.shown && !wq.gl, `${name}: still water panel under reduced motion ${JSON.stringify(wq)}`);
-  else {
-    ok(!wq.loops.includes('water'), `${name}: water loop idle off-screen ${wq.loops}`);
-    await page.evaluate(() => document.querySelector('[data-fx="water"]').scrollIntoView({ block: 'center' }));
-    await page.waitForFunction(() => document.querySelector('.sea-gl') && window.__tt.loops().includes('water'), null, { polling: 500, timeout: 30000 }).catch(() => {});
-    const w = await page.evaluate(() => ({ gl: document.querySelector('[data-fx="water"]').classList.contains('is-gl'), loops: window.__tt.loops() }));
-    ok(w.gl && w.loops.includes('water'), `${name}: WebGL water runs in view ${JSON.stringify(w)}`);
-  }
+  // "How we trade" (and its WebGL water) was removed: no section, no three.js
+  ok(await page.evaluate(() => !document.querySelector('#trade, [data-fx="water"]') && !performance.getEntriesByType('resource').some(r => /three/.test(r.name))), `${name}: no How-we-trade section or three.js`);
   // raMZQNe — chunky squircle buttons: SVG layer behind the live label, the face sinks while pressed;
   // the floating WhatsApp squircle hides over the hero / contact / footer and shows in between
   const ch = await page.evaluate(() => { const q = document.querySelector('.hero [data-chunky]');
@@ -109,27 +102,36 @@ async function fxChecks(page, c, name) {
   ok(sq.every(s => Math.abs(s.w) < .6 && Math.abs(s.face) < 2.5 && Math.abs(s.mid) < 1), `${name}: squircle faces match their buttons ${JSON.stringify(sq)}`);
   // jEyVvqK — contact glass card: distortion filter wired, drags with the pointer and stays on its photo (desktop only)
   if (!c.mobile) {
-    const card = page.locator('[data-fx="glass"]'); await card.scrollIntoViewIfNeeded(); await page.waitForTimeout(300);
+    const card = page.locator('[data-fx="glass"]'); await card.scrollIntoViewIfNeeded(); await page.waitForTimeout(400);
+    const mid = await page.evaluate(() => { const e = document.querySelector('[data-fx="glass"]').getBoundingClientRect(), f = document.querySelector('.cc-photo img').getBoundingClientRect();
+      return { dx: +((e.left + e.right) / 2 - (f.left + f.right) / 2).toFixed(1), dy: +((e.top + e.bottom) / 2 - (f.top + f.bottom) / 2).toFixed(1), img: f.height > 300 }; });
+    ok(Math.abs(mid.dx) < 6 && Math.abs(mid.dy) < 6 && mid.img, `${name}: glass card starts centred on the photo ${JSON.stringify(mid)}`);
     const b0 = await card.boundingBox(), toward = c.lang === 'ar' ? 400 : -400; // drag it far past the photo's top/start corner
     await page.mouse.move(b0.x + 30, b0.y + 30); await page.mouse.down(); await page.mouse.move(b0.x + 30 + toward, b0.y - 900, { steps: 6 }); await page.mouse.up();
     const g = await page.evaluate(() => { const e = document.querySelector('[data-fx="glass"]'), f = e.parentElement;
       return { glass: e.classList.contains('is-glass'), filter: !!document.getElementById('tt-glass-distort'), x: e.offsetLeft, y: e.offsetTop, max: f.clientWidth - e.offsetWidth }; });
     ok(g.glass && g.filter && g.y === 0 && g.x === (c.lang === 'ar' ? g.max : 0), `${name}: glass card drags and stays inside the photo ${JSON.stringify(g)}`);
   } else ok(await page.evaluate(() => !document.querySelector('.gcard-defs')), `${name}: glass card script not loaded on phones`);
-  // RwKPapa — product flip cards: hover/focus turns the card on a fine pointer; touch shows front + back stacked
-  if (!c.mobile) {
-    await page.hover('.pcard[data-id="cashew"]'); await page.waitForTimeout(c.reduced ? 150 : 1500);
-    await page.waitForFunction(() => { const r = document.querySelector('.pcard[data-id="cashew"] .pquote').getBoundingClientRect();
-      return document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.closest('.pquote'); }, null, { timeout: 2000 }).catch(() => {});
-    const f = await page.evaluate(() => { const q = document.querySelector('.pcard[data-id="cashew"] .pquote'), r = q.getBoundingClientRect();
-      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
-      return { turned: getComputedStyle(q.closest('.pcover')).transform !== 'none', hit: !!hit?.closest('.pquote') }; });
-    ok(f.turned && f.hit, `${name}: hovered product card turns to its quote button ${JSON.stringify(f)}`);
-    await page.mouse.move(2, 2);
-  } else {
-    const f = await page.evaluate(() => { const b = document.querySelector('.pcard[data-id="cashew"] .pback'); return { pos: getComputedStyle(b).position, tf: getComputedStyle(b.closest('.pcover')).transform, h: b.offsetHeight }; });
-    ok(f.pos === 'static' && f.tf === 'none' && f.h > 80, `${name}: product card back is stacked on touch ${JSON.stringify(f)}`);
-  }
+  // RwKPapa — product flip cards: the actions appear only after the card is clicked / tapped / activated, never on
+  // hover; the hidden face is invisible + inert (nothing shows through mirrored); Escape turns it back
+  const sel = '.pcard[data-id="cashew"]';
+  await page.locator(sel).scrollIntoViewIfNeeded(); await page.waitForTimeout(300);
+  if (!c.mobile) { await page.hover(sel); await page.waitForTimeout(c.reduced ? 150 : 1000); }
+  const rest = await page.evaluate(s => { const c = document.querySelector(s), q = c.querySelector('.pquote'), r = q.getBoundingClientRect();
+    const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return { flipped: c.classList.contains('is-flipped'), back: getComputedStyle(c.querySelector('.pback')).visibility, inert: c.querySelector('.pback').inert, hitQuote: !!hit?.closest('.pquote'), expanded: c.querySelector('.pturn').getAttribute('aria-expanded') }; }, sel);
+  ok(!rest.flipped && rest.back === 'hidden' && rest.inert && !rest.hitQuote && rest.expanded === 'false', `${name}: product card shows only its photo until clicked${c.mobile ? '' : ' (hover does not turn it)'} ${JSON.stringify(rest)}`);
+  await page.click(sel + ' .pturn'); await page.waitForTimeout(c.reduced ? 150 : 1100);
+  const open = await page.evaluate(s => { const c = document.querySelector(s), q = c.querySelector('.pquote'), r = q.getBoundingClientRect();
+    const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return { flipped: c.classList.contains('is-flipped'), back: getComputedStyle(c.querySelector('.pback')).visibility, front: getComputedStyle(c.querySelector('.pfront')).visibility, hitQuote: !!hit?.closest('.pquote'), expanded: c.querySelector('.pturn').getAttribute('aria-expanded') }; }, sel);
+  ok(open.flipped && open.back === 'visible' && open.front === 'hidden' && open.hitQuote && open.expanded === 'true', `${name}: clicked card turns to its quote + spec buttons ${JSON.stringify(open)}`);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(c.reduced ? 150 : 1100);
+  ok(await page.evaluate(s => !document.querySelector(s).classList.contains('is-flipped') && document.activeElement === document.querySelector(s + ' .pturn'), sel), `${name}: Escape turns the card back and returns focus`);
+  await page.keyboard.press('Enter'); await page.waitForTimeout(c.reduced ? 150 : 1100);
+  ok(await page.evaluate(s => document.querySelector(s).classList.contains('is-flipped') && document.activeElement === document.querySelector(s + ' .pquote'), sel), `${name}: Enter on the card turns it and moves focus to its quote button`);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(c.reduced ? 150 : 1100);
+  if (!c.mobile) await page.mouse.move(2, 2);
 }
 
 // ---------------- matrix ----------------
@@ -150,16 +152,15 @@ for (const c of (QUICK ? combos.filter(c => !c.reduced && c.theme === 'light') :
   ok(!over.length, `${name}: horizontal overflow from ${over.join(', ')}`);
   const badImgs = await page.evaluate(() => [...document.images].filter(i => (i.getAttribute('src') || i.srcset) && i.getClientRects().length && (!i.complete || !i.naturalWidth)).map(i => i.currentSrc || i.src));
   ok(!badImgs.length, `${name}: images not loaded: ${badImgs.join(', ')}`);
-  // "At a glance": this language's infographic, loaded lazily, and its full-size link resolves
-  const ig = await page.evaluate(async () => {
-    const img = document.querySelector('.glance-card img'), a = img?.closest('a');
-    const full = a && await fetch(a.href).then(async r => { await r.arrayBuffer(); return r.status + ' ' + r.headers.get('content-type'); }, () => 'fetch failed');
-    return { src: img?.currentSrc, loaded: !!(img?.complete && img.naturalWidth), alt: img?.alt.length, lazy: img?.loading, href: a?.getAttribute('href'), full };
-  });
-  ok(new RegExp(`/infographic/${c.lang}-\\d+\\.webp\\?v=\\d+$`).test(ig.src) && ig.loaded && ig.alt > 60 && ig.lazy === 'lazy' && ig.href.startsWith(`/assets/img/infographic/${c.lang}-full.webp?v=`) && ig.full === '200 image/webp',
-    `${name}: infographic ${JSON.stringify(ig)}`);
+  // the client's revision notes: content that was removed must stay gone (both languages)
+  const gone = await page.evaluate(lang => { const txt = document.body.innerText;
+    const words = lang === 'ar' ? ['بورت هاركورت', 'الزنجبيل', 'بذور القطن', 'الولايات الشمالية', 'قيد الافتتاح', 'قريباً', 'المزارعون أولاً', 'شروط التعامل', 'لمحة سريعة']
+      : ['Port Harcourt', 'Ginger', 'Cotton seed', 'northern states', 'Opening', 'East Asia next', 'soon', 'Farmer First', 'Farmers first', 'How we trade', 'At a glance'];
+    return { found: words.filter(w => txt.toLowerCase().includes(w.toLowerCase())), glance: !!document.querySelector('#glance'), cards: document.querySelectorAll('.pcard').length,
+      nav: [...document.querySelectorAll('.links a')].map(a => a.getAttribute('href')).join(' ') }; }, c.lang);
+  ok(!gone.found.length && !gone.glance && gone.cards === 7 && gone.nav === '#about #products #operations #contact', `${name}: revision content check ${JSON.stringify(gone)}`);
   if (c.reduced) { await page.waitForTimeout(1500); const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.length, `${name}: loops running under reduced motion: ${loops}`); }
-  else { const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.some(l => ['globe', 'cube', 'morph', 'ambient', 'bubbles', 'water'].includes(l)), `${name}: off-screen loops still running at the footer: ${loops}`); }
+  else { const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.some(l => ['globe', 'cube', 'morph', 'ambient', 'bubbles'].includes(l)), `${name}: off-screen loops still running at the footer: ${loops}`); }
   const csp = await page.evaluate(() => window.__csp); ok(!csp.length, `${name}: CSP violations: ${csp.join(' | ')}`);
   ok(!(await page.evaluate(() => document.documentElement.outerHTML.includes('\u2014'))), `${name}: an em dash (\u2014) is on the page`);
   await fxChecks(page, c, name);
@@ -202,21 +203,24 @@ log('• structure');
   ok(s.h1 === 1 && s.skip === '#main', 'one h1 + skip link');
   // keyboard: first Tab lands on the skip link
   await page.keyboard.press('Tab'); ok(await page.evaluate(() => document.activeElement?.classList.contains('skip')), 'first Tab focuses the skip link');
+  // the quote form asks only for name, company, email, phone / WhatsApp and a message (client's revision notes)
+  const fields = await page.evaluate(() => [...document.querySelectorAll('#rfq input:not([type=hidden]), #rfq select, #rfq textarea')].filter(el => !el.closest('.hp')).map(el => el.name).join(' '));
+  ok(fields === 'name company email phone message', `quote form fields: ${fields}`);
   // spec dialog: open, Escape, focus return; quote prefill
-  // (the Spec-sheet button is on the flip card's back: hover the card first, as a mouse user would)
-  const btn = page.locator('[data-spec="sesame"]'); await btn.scrollIntoViewIfNeeded(); await page.hover('.pcard[data-id="sesame"]'); await page.waitForTimeout(1500); await btn.click();
+  // (the Spec-sheet button is on the flip card's back: click the card first, as a visitor would)
+  const btn = page.locator('[data-spec="sesame"]'); await page.locator('.pcard[data-id="sesame"]').scrollIntoViewIfNeeded(); await page.click('.pcard[data-id="sesame"] .pturn'); await page.waitForTimeout(1100); await btn.click();
   ok(await page.evaluate(() => document.getElementById('spec').open), 'spec dialog opens');
   ok(await page.evaluate(() => document.querySelectorAll('#specTable tr').length > 2), 'spec table rendered');
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   ok(await page.evaluate(() => !document.getElementById('spec').open && document.activeElement?.dataset.spec === 'sesame'), 'Escape closes the dialog and returns focus');
   await btn.click(); await page.click('#specQuote'); await page.waitForTimeout(1200);
-  ok(await page.evaluate(() => document.querySelector('#rfq [name=product]').value === 'sesame' && document.querySelector('#rfq [name=source]').value === 'spec:sesame'), 'spec "request quote" prefills the form');
+  ok(await page.evaluate(() => document.querySelector('#rfq [name=product]').value === 'sesame' && document.querySelector('#rfq [name=source]').value === 'spec:sesame' && /Sesame seeds/.test(document.getElementById('f-msg').value)), 'spec "request quote" records the product and starts the message');
   // form: invalid submit → status + aria-invalid
   await page.click('#rfq .submit'); await page.waitForTimeout(200);
-  ok(await page.evaluate(() => document.querySelectorAll('#rfq [aria-invalid=true]').length >= 3 && document.getElementById('formStatus').textContent.length > 5), 'empty submit flags required fields');
+  ok(await page.evaluate(() => document.querySelectorAll('#rfq [aria-invalid=true]').length === 2 && document.getElementById('formStatus').textContent.length > 5), 'empty submit flags required fields');
   ok(await page.evaluate(() => [...document.querySelectorAll('#rfq [aria-invalid=true]')].every(f => { const e = document.getElementById(f.getAttribute('aria-describedby')); return e && !e.hidden && e.textContent.length > 3; })), 'each invalid field has a visible, associated error message');
   // form: server error keeps input and shows the error
-  await page.fill('#f-name', 'Test Buyer'); await page.fill('#f-email', 'buyer@example.com'); await page.selectOption('#f-country', 'Saudi Arabia'); await page.check('#rfq [name=consent]');
+  await page.fill('#f-name', 'Test Buyer'); await page.fill('#f-email', 'buyer@example.com');
   srv.failNext = true; await page.click('#rfq .submit'); await page.waitForTimeout(500); srv.failNext = false;
   ok(await page.evaluate(() => document.getElementById('formStatus').classList.contains('err') && document.getElementById('f-name').value === 'Test Buyer' && !document.getElementById('rfq').hidden), 'server error shows message and keeps input');
   // form: success
@@ -224,9 +228,14 @@ log('• structure');
   ok(await page.evaluate(() => !document.getElementById('rfqDone').hidden && document.activeElement?.closest('#rfqDone') && getComputedStyle(document.getElementById('rfq')).display === 'none'), 'successful submit hides the form and focuses the thank-you state');
   await page.click('#rfqAgain'); await page.waitForTimeout(200);
   ok(await page.evaluate(() => !document.activeElement?.closest('.hp') && document.activeElement?.id === 'f-name'), '"Send another request" focuses the name field (never the honeypot)');
-  ok(srv.lastForm?.['form-name'] === 'rfq' && srv.lastForm?.email === 'buyer@example.com' && srv.lastForm?.product === 'sesame' && srv.lastForm?.lang === 'en', 'posted fields reach the server: ' + JSON.stringify(srv.lastForm));
-  await page.evaluate(() => document.querySelector('.pcard[data-id="ginger"] .pquote').click()); await page.waitForTimeout(300);
-  ok(await page.evaluate(() => document.querySelector('#rfq [name=product]').value === 'ginger' && document.querySelector('#rfq [name=source]').value === 'card:ginger'), 'card "Request a quote" prefills product + source');
+  ok(srv.lastForm?.['form-name'] === 'rfq' && srv.lastForm?.email === 'buyer@example.com' && srv.lastForm?.product === 'sesame' && /Sesame seeds/.test(srv.lastForm?.message) && srv.lastForm?.lang === 'en' && !('country' in srv.lastForm) && !('consent' in srv.lastForm), 'posted fields reach the server: ' + JSON.stringify(srv.lastForm));
+  await page.locator('.pcard[data-id="charcoal"]').scrollIntoViewIfNeeded(); await page.click('.pcard[data-id="charcoal"] .pturn'); await page.waitForTimeout(1100);
+  await page.click('.pcard[data-id="charcoal"] .pquote'); await page.waitForTimeout(400);
+  ok(await page.evaluate(() => document.querySelector('#rfq [name=product]').value === 'charcoal' && document.querySelector('#rfq [name=source]').value === 'card:charcoal' && /charcoal/i.test(document.getElementById('f-msg').value)), 'card "Request a quote" records product + source and starts the message');
+  // the wood-based division filter shows the charcoal card alone
+  await page.locator('.filter').scrollIntoViewIfNeeded(); await page.click('[data-filter="wood"]'); await page.waitForTimeout(1200);
+  const wood = await page.evaluate(() => ({ shown: [...document.querySelectorAll('.pcard')].filter(c => !c.hidden).map(c => c.dataset.id), counts: [...document.querySelectorAll('.filter .cnt')].map(b => b.textContent).join(',') }));
+  ok(wood.shown.join() === 'charcoal' && wood.counts === '7,2,4,1', `wood-based filter: ${JSON.stringify(wood)}`);
   ok(!errs.filter(e => !/500/.test(e)).length, 'structure run errors: ' + errs.join(' | '));
   await ctx.close();
 }
@@ -249,7 +258,8 @@ log('• structure');
   ok(await page.evaluate(() => document.getElementById('mnav').hidden && document.activeElement?.id === 'burger'), 'Escape closes the mobile menu and refocuses the burger');
   // spec sheet scrolls by touch on a short phone (Lenis must not swallow the gesture)
   await page.setViewportSize({ width: 390, height: 700 });
-  await page.locator('[data-spec="cashew"]').scrollIntoViewIfNeeded(); await page.click('[data-spec="cashew"]'); await page.waitForTimeout(500);
+  await page.locator('.pcard[data-id="cashew"]').scrollIntoViewIfNeeded(); await page.click('.pcard[data-id="cashew"] .pturn'); await page.waitForTimeout(1100);
+  await page.click('[data-spec="cashew"]'); await page.waitForTimeout(500);
   const cdp = await ctx.newCDPSession(page);
   const swipe = async () => { const pts = y => [{ x: 200, y }]; await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: pts(560) });
     for (let y = 540; y >= 240; y -= 30) await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: pts(y) });

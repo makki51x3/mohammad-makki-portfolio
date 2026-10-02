@@ -74,13 +74,13 @@ const pathOf = geom => polys(geom).map(p => p.map(r => clip(dpRing(r.map(P), 0.9
 const NEIGH = ['204', '562', '148', '120', '768', '288', '854', '140', '226']; // Benin, Niger, Chad, Cameroon, Togo, Ghana, Burkina Faso, CAR, Eq. Guinea
 const ng = c50f.find(f => f.id === '566');
 const neigh = NEIGH.map(id => c50f.find(f => f.id === id)).filter(Boolean).map(f => pathOf(f.geometry)).filter(Boolean);
-const HUBS = { kano: [8.52, 12.0], lagos: [3.37, 6.45], ph: [7.03, 4.82] };
+const HUBS = { kano: [8.52, 12.0], lagos: [3.37, 6.45] }; // Port Harcourt removed at the client's request
 const H = Object.fromEntries(Object.entries(HUBS).map(([k, v]) => [k, P(v).map(f1)]));
-// Inland routes: gentle arcs from Kano to each port, bent sideways (not road-shaped on purpose).
+// Inland route: a gentle arc from Kano to the port, bent sideways (not road-shaped on purpose).
 const arc = (a, b, bend) => { const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1];
   return `M${a[0]} ${a[1]}Q${f1(mx - dy * bend)} ${f1(my + dx * bend)} ${b[0]} ${b[1]}`; };
 // sea legs end above the 'to export markets' label
-const seaL = P([2.5, 4.1]).map(f1), seaP = P([6.4, 3.7]).map(f1);
+const seaL = P([2.5, 4.1]).map(f1);
 const kanoR = f1(1.8 * SC * 0.5 * (1 + K) / 2 * 2) / 2; // ~0.9° radius sourcing zone
 const svg = `<svg class="ngmap-svg" viewBox="0 0 ${VW} ${VH}" aria-hidden="true" focusable="false">
 <rect class="ng-sea" width="${VW}" height="${VH}"/>
@@ -89,13 +89,11 @@ const svg = `<svg class="ngmap-svg" viewBox="0 0 ${VW} ${VH}" aria-hidden="true"
 <path class="ng-outline" d="${pathOf(ng.geometry)}"/>
 <circle class="ng-zone" cx="${H.kano[0]}" cy="${H.kano[1]}" r="${kanoR}"/>
 <path class="ng-route" id="ngRouteLagos" d="${arc(H.kano, H.lagos, 0.12)}"/>
-<path class="ng-route" id="ngRoutePH" d="${arc(H.kano, H.ph, -0.1)}"/>
 <path class="ng-sea-route" id="ngSeaLagos" d="${arc(H.lagos, seaL, 0.1)}"/>
-<path class="ng-sea-route" id="ngSeaPH" d="${arc(H.ph, seaP, -0.1)}"/>
 </svg>`;
 writeFileSync(join(OUTD, 'nigeria.svg'), svg);
 const pct = Object.fromEntries(Object.entries(H).map(([k, [x, y]]) => [k, { x: f1(x / VW * 100) + '%', y: f1(y / VH * 100) + '%' }]));
-pct.seaLagos = { x: f1(seaL[0] / VW * 100) + '%', y: f1(seaL[1] / VH * 100) + '%' }; pct.seaPH = { x: f1(seaP[0] / VW * 100) + '%', y: f1(seaP[1] / VH * 100) + '%' };
+pct.seaLagos = { x: f1(seaL[0] / VW * 100) + '%', y: f1(seaL[1] / VH * 100) + '%' };
 writeFileSync(join(OUTD, 'hubs.json'), JSON.stringify({ viewBox: [VW, VH], hubs: pct }, null, 1));
 const idx = join(PUB, 'index.html');
 if (existsSync(idx)) {

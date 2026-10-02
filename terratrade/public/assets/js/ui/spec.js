@@ -28,8 +28,9 @@ export function spec() {
     $('#specTable', dlg).innerHTML = '<tbody>' + data.specs.map(([k, v]) => `<tr><th scope="row">${esc(t(k))}</th><td>${val(v)}</td></tr>`).join('') + '</tbody>';
     $('#specPack', dlg).innerHTML = `<b>${esc(t('spec.packLabel'))}:</b> ${esc(t(data.pack))}`;
     const months = t('months'), names = t('monthNames');
-    const inSeason = data.yearRound ? t('spec.yearRound') : data.months.map(m => names[m - 1]).join(html.lang === 'ar' ? '، ' : ', ');
-    $('#specSeason', dlg).innerHTML = `<span class="season-cap">${esc(t(data.yearRound ? 'spec.yearRound' : 'spec.season'))}</span>` +
+    const yr = data.yearRoundKey || 'spec.yearRound';
+    const inSeason = data.yearRound ? t(yr) : data.months.map(m => names[m - 1]).join(html.lang === 'ar' ? '، ' : ', ');
+    $('#specSeason', dlg).innerHTML = `<span class="season-cap">${esc(t(data.yearRound ? yr : 'spec.season'))}</span>` +
       months.map((m, i) => `<span class="${data.months.includes(i + 1) ? 'on' : ''}" aria-hidden="true">${esc(m)}</span>`).join('') +
       `<span class="sr-only">${esc(inSeason)}</span>`;
     $('#specQuote', dlg).textContent = t('spec.quote');
@@ -55,8 +56,6 @@ export function spec() {
   addEventListener('afterprint', () => document.body.classList.remove('printing'));
   $('#specPrint', dlg).addEventListener('click', () => print());
   document.addEventListener('click', e => { const b = e.target.closest('[data-spec]'); if (b) open(b.dataset.spec, b); });
-  // the whole card opens the sheet too (the button stays the keyboard target)
-  $$('.pcard').forEach(c => c.addEventListener('click', e => { if (!e.target.closest('button, a')) open(c.dataset.id, $('[data-spec]', c)); }));
   // a card's "Request a quote" prefills the form with that product (without JS it is a plain #contact link)
   $$('[data-quote]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); prefillQuote(a.dataset.quote, 'card'); }));
 }

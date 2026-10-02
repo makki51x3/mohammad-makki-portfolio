@@ -1,31 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://terratrade.global/</loc>
-    <lastmod>2026-09-30</lastmod>
-    <image:image><image:loc>https://terratrade.global/assets/img/infographic/en-full.webp</image:loc></image:image>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://terratrade.global/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://terratrade.global/ar/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://terratrade.global/"/>
   </url>
   <url>
     <loc>https://terratrade.global/ar/</loc>
-    <lastmod>2026-09-30</lastmod>
-    <image:image><image:loc>https://terratrade.global/assets/img/infographic/ar-full.webp</image:loc></image:image>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://terratrade.global/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://terratrade.global/ar/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://terratrade.global/"/>
   </url>
   <url>
     <loc>https://terratrade.global/privacy/</loc>
-    <lastmod>2026-09-29</lastmod>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://terratrade.global/privacy/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://terratrade.global/ar/privacy/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://terratrade.global/privacy/"/>
   </url>
   <url>
     <loc>https://terratrade.global/ar/privacy/</loc>
-    <lastmod>2026-09-29</lastmod>
+    <lastmod>2026-10-02</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://terratrade.global/privacy/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://terratrade.global/ar/privacy/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://terratrade.global/privacy/"/>

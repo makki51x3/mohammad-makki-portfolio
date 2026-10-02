@@ -3,12 +3,12 @@
 // https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd - MIT. Source: dev/pens/GgraMzd/.
 //
 // The pen moves an invisible "servo" point with CSS alone: four quadrant hover sensors aim it at a target
-// 12000px beyond the viewport, and nested 1800 / 220 / 24 / 2px distance bands swap the left/top transition
-// time (1.4s → 8s → 70s → 700s, then a 99999s rest once both axes are inside 2px). So the point rushes in from
-// afar, brakes in steps and creeps the last pixels, each axis on its own; its follower trails with a 70ms ease.
-// A full-viewport grid of hover sensors can't sit on top of a real page (it would swallow every click), so
-// pointer events feed the same controller here: per axis, speed = 12000px ÷ that band's transition time,
-// the rest rule is identical, and the follower uses the same 70ms constant. That servo drives the petals.
+// 12000px beyond the viewport, and nested distance bands swap the transition time so the point rushes in from
+// afar, brakes in steps and creeps the last pixels. A full-viewport grid of hover sensors can't sit on top of a
+// real page (it would swallow every click), so pointer events drive the cursor here. The pen's braking bands
+// made the bloom crawl over the last 24px (about 170 px/s) and the client found the cursor slow, so the bloom now
+// follows the pointer with a single short exponential ease (~28 ms time constant: it settles within ~0.2 s) and
+// leans into the movement; the hotspot dot is never eased at all.
 //
 // The system pointer is hidden while this cursor is active, so the click point must never drift:
 // - the dot is written straight from each pointer event (clientX/Y into a position:fixed layer), never eased;
@@ -19,10 +19,7 @@
 import { FINE, REDUCED, isPaused, html } from '../core/env.js';
 import { addLoop, removeLoop } from '../core/loop.js';
 
-const REACH = 12000;
-/** px/s for a distance on one axis: the pen's band → transition-time table */
-const speed = d => REACH / (d > 220 ? 1.4 : d > 24 ? 8 : d > 2 ? 70 : 700);
-const FOLLOW = .07 / 3; // ≈ a 70ms ease-out, as an exponential time constant (s)
+const FOLLOW = .028; // the bloom's ease toward the pointer, as an exponential time constant (s)
 const TEXT_FIELD = 'input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button]):not([type=range]), textarea, select, [contenteditable], iframe';
 const CLICKABLE = 'a, button, summary, label, [role=button], [data-spec], .pcard, .mk-btn, .gcard, .sea-gl, canvas';
 
@@ -41,7 +38,7 @@ export default function customCursor() {
   dot.className = 'tt-dot'; dot.setAttribute('aria-hidden', 'true');
   document.body.append(bloom, dot);
 
-  let tx = 0, ty = 0, px = 0, py = 0, lx = 0, ly = 0, tilt = 0, live = false, running = false, raf = 0;
+  let tx = 0, ty = 0, lx = 0, ly = 0, tilt = 0, live = false, running = false, raf = 0;
   const allowed = () => !REDUCED && !isPaused() && !html.classList.contains('dlgopen');
   const placeBloom = () => {
     bloom.style.translate = `${lx.toFixed(2)}px ${ly.toFixed(2)}px`;
@@ -60,17 +57,13 @@ export default function customCursor() {
     bloom.classList.toggle('bloom', !!t?.closest(CLICKABLE));
   };
   const step = (now, ms) => {
-    const dt = ms / 1000, dx = tx - px, dy = ty - py, ax = Math.abs(dx), ay = Math.abs(dy);
-    if (ax > 2 || ay > 2) { // the pen's rest state: both axes inside the finest band
-      px += Math.sign(dx) * Math.min(ax, speed(ax) * dt);
-      py += Math.sign(dy) * Math.min(ay, speed(ay) * dt);
-    } else { px = tx; py = ty; } // settle exactly on the pointer (the bloom is centred on the hotspot at rest)
-    const k = 1 - Math.exp(-dt / FOLLOW), vx = (px - lx) * k;
-    lx += vx; ly += (py - ly) * k;
-    tilt += (Math.max(-24, Math.min(24, vx * 1.6)) - tilt) * Math.min(1, dt * 10); // lean into the movement
+    const dt = Math.min(ms, 50) / 1000; // a long frame (tab switch, GC) must not fling the bloom
+    const k = 1 - Math.exp(-dt / FOLLOW), vx = (tx - lx) * k;
+    lx += vx; ly += (ty - ly) * k;
+    tilt += (Math.max(-24, Math.min(24, vx * 1.6)) - tilt) * Math.min(1, dt * 14); // lean into the movement
     placeBloom();
-    if (px === tx && py === ty && Math.abs(px - lx) < .05 && Math.abs(py - ly) < .05 && Math.abs(tilt) < .05) {
-      lx = px; ly = py; tilt = 0; placeBloom(); removeLoop('cursor'); running = false;
+    if (Math.abs(tx - lx) < .1 && Math.abs(ty - ly) < .1 && Math.abs(tilt) < .1) { // settled exactly on the hotspot
+      lx = tx; ly = ty; tilt = 0; placeBloom(); removeLoop('cursor'); running = false;
     }
   };
 
@@ -79,7 +72,7 @@ export default function customCursor() {
     tx = e.clientX; ty = e.clientY;
     dot.style.translate = `${tx}px ${ty}px`; // the hotspot: exact, every event, no easing
     if (!allowed()) { if (live) release(); return; }
-    if (!live) { live = true; px = lx = tx; py = ly = ty; tilt = 0; placeBloom(); html.classList.add('tt-cursor-on'); }
+    if (!live) { live = true; lx = tx; ly = ty; tilt = 0; placeBloom(); html.classList.add('tt-cursor-on'); }
     state(e.target);
     if (!running) { running = true; addLoop('cursor', step, { early: true }); }
   }, { passive: true });

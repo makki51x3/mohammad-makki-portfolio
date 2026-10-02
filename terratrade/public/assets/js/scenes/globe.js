@@ -1,6 +1,6 @@
 // Markets globe - the portfolio's 2D-canvas dot globe (tglobe) extended with animated great-circle
 // trade routes from Nigeria. Routes, regions and labels are read from the HTML market list, so the
-// Arabic page needs no extra data. Active routes = solid amber; opening routes = dashed green.
+// Arabic page needs no extra data. TerraTrade exports to both regions: Middle East routes amber, Asia routes green.
 // Portfolio fixes: no touch-action:none (vertical swipes scroll the page), loop only runs on screen,
 // colours are cached per theme instead of getComputedStyle every frame, HTML tooltips (translatable).
 import { DOTS, TAGS } from '../geo/globe-data.js';
@@ -24,8 +24,8 @@ function arc(A, B, n = 72) {
 }
 
 const PALETTE = {
-  light: { dot: '1,61,39', dotA: .5, ng: '#1E9A3A', active: '#F29900', activeDot: '#E08A00', opening: '#1F8F3A', sphere0: 'rgba(233,255,229,.9)', sphere1: 'rgba(190,230,200,.55)', rim: 'rgba(1,61,39,.18)', tagActive: '#F5A21B', tagOpen: '#7BC96B' },
-  dark: { dot: '170,230,160', dotA: .55, ng: '#6FDB5E', active: '#FFB938', activeDot: '#FFB938', opening: '#7ED957', sphere0: 'rgba(20,70,45,.55)', sphere1: 'rgba(3,20,12,.75)', rim: 'rgba(160,230,150,.22)', tagActive: '#FFB938', tagOpen: '#9BE88C' },
+  light: { dot: '1,61,39', dotA: .5, ng: '#1E9A3A', active: '#F29900', activeDot: '#E08A00', asia: '#1F8F3A', sphere0: 'rgba(233,255,229,.9)', sphere1: 'rgba(190,230,200,.55)', rim: 'rgba(1,61,39,.18)', tagActive: '#F5A21B', tagAsia: '#7BC96B' },
+  dark: { dot: '170,230,160', dotA: .55, ng: '#6FDB5E', active: '#FFB938', activeDot: '#FFB938', asia: '#7ED957', sphere0: 'rgba(20,70,45,.55)', sphere1: 'rgba(3,20,12,.75)', rim: 'rgba(160,230,150,.22)', tagActive: '#FFB938', tagAsia: '#9BE88C' },
 };
 
 export default function globe() {
@@ -41,10 +41,9 @@ export default function globe() {
   const originEl = $('[data-origin]');
   const O = V(+originEl.dataset.lat, +originEl.dataset.lon);
   const REGION_OF = { SA: 'me', AE: 'me', QA: 'me', LB: 'me', SY: 'me', JP: 'asia', KR: 'asia', CN: 'asia' };
-  const STATUS_OF = { SA: 'active', AE: 'active', QA: 'active', LB: 'active', SY: 'active', JP: 'opening', KR: 'opening', CN: 'opening' };
   const markets = $$('[data-market]').map((li, k) => {
     const p = V(+li.dataset.lat, +li.dataset.lon);
-    return { li, id: li.dataset.market, region: li.dataset.region, status: li.dataset.status, name: li.querySelector('[data-i18n]')?.textContent.trim() || li.textContent.trim(), p, pts: arc(O, p), phase: k * .17 };
+    return { li, id: li.dataset.market, region: li.dataset.region, name: li.querySelector('[data-i18n]')?.textContent.trim() || li.textContent.trim(), p, pts: arc(O, p), phase: k * .17 };
   });
 
   // ---- view state ----
@@ -90,7 +89,7 @@ export default function globe() {
       const inRegion = region === 'all' || !REGION_OF[d.tag] || REGION_OF[d.tag] === region;
       let col = `rgba(${C.dot},${(.12 + depth * C.dotA) * (inRegion ? 1 : .5)})`, r = Math.max(.6, 1.15 * D * (q[2] * .45 + .7));
       if (d.tag === 'NG') { col = C.ng; r *= 1.35; }
-      else if (d.tag && inRegion) { col = STATUS_OF[d.tag] === 'active' ? C.tagActive : C.tagOpen; r *= 1.3; }
+      else if (d.tag && inRegion) { col = REGION_OF[d.tag] === 'asia' ? C.tagAsia : C.tagActive; r *= 1.3; }
       ctx.beginPath(); ctx.arc(px, py, r, 0, 6.2832); ctx.fillStyle = col; ctx.fill();
     }
     // routes
@@ -98,17 +97,16 @@ export default function globe() {
     for (const m of markets) {
       const on = region === 'all' || m.region === region, hi = focus === m || hover === m;
       const alpha = on ? (hi ? 1 : .9) : .12;
-      const col = m.status === 'active' ? C.active : C.opening;
+      const asia = m.region === 'asia', col = asia ? C.asia : C.active;
       const Q = m.pts.map(P);
       ctx.lineWidth = (hi ? 3 : 2) * D; ctx.lineCap = 'round';
-      ctx.setLineDash(m.status === 'opening' ? [4 * D, 6 * D] : []);
       ctx.strokeStyle = col; ctx.globalAlpha = alpha * .35;
       ctx.beginPath(); let pen = false;
       for (const q of Q) { if (!visible(q)) { pen = false; continue; } const [x, y] = scr(q); if (!pen) { ctx.moveTo(x, y); pen = true; } else ctx.lineTo(x, y); }
-      ctx.stroke(); ctx.setLineDash([]);
+      ctx.stroke();
       // comet
       if (on) {
-        const head = REDUCED ? 1 : ((secs / (m.status === 'active' ? 3.4 : 4.6) + m.phase) % 1.3);
+        const head = REDUCED ? 1 : ((secs / (asia ? 4.6 : 3.4) + m.phase) % 1.3);
         const tail = REDUCED ? 0 : Math.max(0, head - .3), end = Math.min(1, head);
         if (end > tail) {
           const i0 = Math.floor(tail * (Q.length - 1)), i1 = Math.floor(end * (Q.length - 1));
@@ -127,7 +125,7 @@ export default function globe() {
       ctx.globalAlpha = 1;
       // destination marker
       const qd = P(m.p);
-      if (qd[2] >= 0) { const [x, y] = scr(qd); ctx.globalAlpha = on ? 1 : .35; ctx.beginPath(); ctx.arc(x, y, (hi ? 5 : 3.8) * D, 0, 6.2832); ctx.fillStyle = m.status === 'active' ? C.activeDot : C.opening; ctx.fill(); ctx.globalAlpha = 1; m.sx = x / D; m.sy = y / D; m.vis = true; } else m.vis = false;
+      if (qd[2] >= 0) { const [x, y] = scr(qd); ctx.globalAlpha = on ? 1 : .35; ctx.beginPath(); ctx.arc(x, y, (hi ? 5 : 3.8) * D, 0, 6.2832); ctx.fillStyle = asia ? C.asia : C.activeDot; ctx.fill(); ctx.globalAlpha = 1; m.sx = x / D; m.sy = y / D; m.vis = true; } else m.vis = false;
     }
     // origin
     const qo = P(O);
@@ -150,7 +148,7 @@ export default function globe() {
   }
   function showTip(m) {
     if (!m) { tip.hidden = true; tip._m = null; return; }
-    tip.textContent = m.origin ? t('markets.tipOrigin') : `${m.name} · ${t(m.status === 'active' ? 'markets.tipActive' : 'markets.tipOpening')}`;
+    tip.textContent = m.origin ? t('markets.tipOrigin') : `${m.name} · ${t('markets.tipExport')}`;
     tip._m = m; tip.hidden = false; placeTip(m);
   }
   // the origin behaves like a marker for hover/tap tooltips

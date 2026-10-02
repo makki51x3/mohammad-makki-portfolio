@@ -6,7 +6,7 @@
 // blurred 2, displacement scale 85 on R/G) applied over a 3px backdrop blur, the 28px-radius glass with its
 // hairline rim and inner highlight, the avatar ring, stats row and pill button, the lift on hover and the
 // scale-up while dragging. Changed: it's TerraTrade's card (mark, domain, facts, WhatsApp) sitting on the
-// contact photo, dragging uses pointer events with capture and is kept inside the photo, the zoom buttons
+// contact photo (starting centred on it), dragging uses pointer events with capture and is kept inside the photo, the zoom buttons
 // are gone, and the filter is only referenced once this script has added it (no dangling url(#…)).
 import { $ } from '../core/env.js';
 
@@ -28,7 +28,7 @@ export default function glassCard() {
   const place = (x, y) => {
     const s = stage.getBoundingClientRect();
     x = clamp(x, 0, s.width - card.offsetWidth); y = clamp(y, 0, s.height - card.offsetHeight);
-    Object.assign(card.style, { insetInlineEnd: 'auto', insetBlockEnd: 'auto', left: x + 'px', top: y + 'px' });
+    Object.assign(card.style, { translate: 'none', left: x + 'px', top: y + 'px' }); // from now on the drag positions it
   };
   card.addEventListener('pointerdown', e => {
     if (e.button !== 0 || e.target.closest('a, button')) return;
@@ -44,6 +44,6 @@ export default function glassCard() {
   });
   const end = e => { if (drag && e.pointerId === drag.id) { drag = null; card.classList.remove('dragging'); } };
   card.addEventListener('pointerup', end); card.addEventListener('pointercancel', end);
-  // keep it inside the photo when the layout changes
+  // keep it inside the photo when the layout changes (until it's dragged, CSS keeps it centred)
   new ResizeObserver(() => { if (card.style.left) place(card.offsetLeft, card.offsetTop); }).observe(stage);
 }
