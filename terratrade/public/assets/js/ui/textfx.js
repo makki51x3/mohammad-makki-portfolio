@@ -1,5 +1,5 @@
 // Text effects ported from the portfolio: typed/scrambled eyebrows, split-letter gradient headline,
-// gooey morph word, character-roll heading, scroll-lit paragraph, counters, marquee.
+// rotating word, character-roll heading, scroll-lit paragraph, counters, marquee.
 // Every effect reads its text from the DOM (so the generated Arabic page just works) and has an
 // Arabic-safe mode: words, never letters (splitting Arabic letters breaks their joining).
 // Screen readers always get the final text: animated copies are aria-hidden.
@@ -38,7 +38,8 @@ export function typed() {
   els.forEach(el => io.observe(el));
 }
 
-/* split-letter flowing gradient on the accent line of the H1 (the full sentence stays in aria-label) */
+/* split-letter gradient on the accent line of the H1 (the full sentence stays in aria-label). The gradient used to
+   flow continuously; it is now held still, swept once across the line (--p = each letter's place, 0 → 1) */
 export function heroLetters() {
   const el = $('#heroAccent'); if (!el) return;
   const txt = el.textContent.trim();
@@ -47,9 +48,12 @@ export function heroLetters() {
   el.innerHTML = isAR()
     ? txt.split(/\s+/).map(w => `<span class="ltr">${esc(w)}</span>`).join(' ')
     : txt.split(' ').map(w => `<span class="nowrap">${[...w].map(ch => `<span class="ltr">${esc(ch)}</span>`).join('')}</span>`).join(' ');
+  const ltrs = el.querySelectorAll('.ltr'), n = Math.max(1, ltrs.length - 1);
+  ltrs.forEach((l, i) => l.style.setProperty('--p', (i / n).toFixed(3)));
 }
 
-/* gooey morph word (portfolio morph, driven by the loop registry instead of a 40ms setInterval) */
+/* rotating word (portfolio morph): a plain crossfade every 2.6 s, timed on the loop registry. The portfolio's gooey
+   threshold filter and per-frame blur were dropped for speed: they re-filtered the line on every frame */
 export function morph() {
   const box = $('#morphbox'); if (!box) return;
   let words; try { words = JSON.parse(box.dataset.words || '[]'); } catch (e) { words = []; }
@@ -58,18 +62,13 @@ export function morph() {
   const sr = document.createElement('span'); sr.className = 'sr-only'; sr.textContent = words.join(', '); box.before(sr);
   box.setAttribute('aria-hidden', 'true');
   box.innerHTML = words.map(w => `<span class="mword">${esc(w)}</span>`).join('');
-  const spans = [...box.children]; let i = 0, frac = 0;
-  spans[0].style.opacity = 1;
+  const spans = [...box.children]; let i = 0, t = 0;
+  spans[0].classList.add('on');
   // size the box to the longest word so the line doesn't jump
   box.style.minWidth = Math.max(...spans.map(s => s.getBoundingClientRect().width)) + 'px';
-  // the fade blur is capped at 6px: a wider halo made Chrome count a morphing word as the Largest Contentful Paint
-  // (it grew the word's painted box past the real content), which pushed LCP to ~5s on phones
   addLoop('morph', (_, dt) => {
-    frac += dt / 1000; if (frac >= 2.6) { frac = 0; i = (i + 1) % spans.length; }
-    const cur = spans[i], nxt = spans[(i + 1) % spans.length], f = Math.min(1, Math.max(0, frac - 1.6));
-    for (const s of spans) if (s !== cur && s !== nxt) s.style.opacity = 0;
-    cur.style.opacity = Math.max(0, 1 - f * 1.6); cur.style.filter = `blur(${Math.min(6, 8 / Math.max(.0001, 1 - f) - 8)}px)`;
-    nxt.style.opacity = Math.max(0, f * 1.4 - .1); nxt.style.filter = `blur(${Math.min(6, 8 / Math.max(.0001, f) - 8)}px)`;
+    t += dt; if (t < 2600) return; t = 0;
+    spans[i].classList.remove('on'); i = (i + 1) % spans.length; spans[i].classList.add('on');
   }, { el: box });
 }
 

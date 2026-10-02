@@ -13,8 +13,8 @@ import { spec } from './ui/spec.js';
 import { rfq, copyMail } from './ui/rfq.js';
 
 // A failed dictionary load falls back to the English runtime strings instead of stopping the page.
-// hold the hero's SMIL bubbles still until the page has loaded (fx/bubbles-QwdoddG.js starts them): content first
-document.getElementById('hbScene')?.pauseAnimations?.();
+// hold the hero's orbiting text still until the page has loaded (fx/bubbles-QwdoddG.js starts it): content first
+document.getElementById('hbOrbit')?.pauseAnimations?.();
 await loadDict().catch(e => console.error('[i18n]', e));
 
 run([reveal, smooth, nav, progress, sections, theme, heroLetters, typed, morph, counters, marquee,
@@ -32,7 +32,6 @@ const afterLoad = fn => (document.readyState === 'complete' ? whenIdle(fn) : add
 afterLoad(() => scene('#operations', () => import('./scenes/nigeria-map.js')));
 lazy('#process', () => import('./scenes/process-cube.js'));
 lazy('#markets', () => import('./scenes/globe.js'));
-lazy('#top', () => import('./scenes/ambient.js'), '0px');
 lazy('.site-foot', () => import('./scenes/flora.js'), '400px 0px');
 // CodePen adaptations (slot registry) - see assets/js/fx/
 import('./fx/registry.js').then(m => m.default()).catch(e => console.error('[fx]', e));

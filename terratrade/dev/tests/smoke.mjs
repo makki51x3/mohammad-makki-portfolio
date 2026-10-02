@@ -40,16 +40,18 @@ async function scrollThrough(page) {
 
 // ---------------- CodePen effects (one block per adapted pen) ----------------
 async function fxChecks(page, c, name) {
-  // QwdoddG — hero bubbles: the SMIL scene is frozen off-screen (we are at the footer) and under reduced motion,
-  // runs at the top otherwise; the orbiting text fits one lap of its path; all three photos decode (sharp: no ripple filter)
-  const hb = await page.evaluate(async () => { const svg = document.getElementById('hbScene'), t = svg.querySelector('.hb-orbit-t');
-    const imgs = await Promise.all([...svg.querySelectorAll('image')].map(i => new Promise(r => { const im = new Image(); im.onload = () => r(im.naturalWidth > 0); im.onerror = () => r(false); im.src = i.href.baseVal; })));
-    return { pausedOff: svg.animationsPaused(), fit: +(t.getComputedTextLength() / svg.querySelector('#hbMainPath').getTotalLength()).toFixed(3), imgs }; });
-  ok(hb.pausedOff && hb.fit > .75 && hb.fit <= 1 && hb.imgs.length === 3 && hb.imgs.every(Boolean), `${name}: hero bubbles paused off-screen, orbit text fits, photos load ${JSON.stringify(hb)}`);
+  // QwdoddG — hero bubbles: the bubble layers are still (no SMIL at all); only the orbiting text animates, frozen
+  // off-screen (we are at the footer) and under reduced motion, running at the top otherwise; the orbiting text fits
+  // one lap of its path; all three photos decode (sharp: no ripple filter)
+  const hb = await page.evaluate(async () => { const fig = document.querySelector('[data-fx="bubbles"]'), svg = document.getElementById('hbOrbit'), t = svg.querySelector('.hb-orbit-t');
+    const imgs = await Promise.all([...fig.querySelectorAll('image')].map(i => new Promise(r => { const im = new Image(); im.onload = () => r(im.naturalWidth > 0); im.onerror = () => r(false); im.src = i.href.baseVal; })));
+    const stillLayers = ['hbScene', 'hbSec', 'hbDrop'].every(id => !document.getElementById(id).querySelector('animate, animateTransform'));
+    return { pausedOff: svg.animationsPaused(), stillLayers, fit: +(t.getComputedTextLength() / document.getElementById('hbMainPath').getTotalLength()).toFixed(3), imgs }; });
+  ok(hb.pausedOff && hb.stillLayers && hb.fit > .75 && hb.fit <= 1 && hb.imgs.length === 3 && hb.imgs.every(Boolean), `${name}: hero bubbles still, orbit paused off-screen, orbit text fits, photos load ${JSON.stringify(hb)}`);
   await page.evaluate(() => document.querySelector('[data-fx="bubbles"]').scrollIntoView({ block: 'center' })); await page.waitForTimeout(600);
-  const hbRun = await page.evaluate(() => !document.getElementById('hbScene').animationsPaused());
+  const hbRun = await page.evaluate(() => !document.getElementById('hbOrbit').animationsPaused());
   ok(c.reduced ? !hbRun : hbRun, `${name}: hero bubbles animate only when motion is allowed (running=${hbRun})`);
-  // GgraMzd — custom cursor (the pen's servo motion): fine pointers only. The system pointer is hidden while it is
+  // GgraMzd — custom cursor (short ease trailing the pointer): fine pointers only. The system pointer is hidden while it is
   // active, so the hotspot dot must sit exactly on the pointer after any sequence of moves; a resize hands control
   // back to the system pointer (no stale position) until the next move, which re-snaps; text fields keep the I-beam.
   if (!c.mobile) {
@@ -160,7 +162,7 @@ for (const c of (QUICK ? combos.filter(c => !c.reduced && c.theme === 'light') :
       nav: [...document.querySelectorAll('.links a')].map(a => a.getAttribute('href')).join(' ') }; }, c.lang);
   ok(!gone.found.length && !gone.glance && gone.cards === 7 && gone.nav === '#about #products #operations #contact', `${name}: revision content check ${JSON.stringify(gone)}`);
   if (c.reduced) { await page.waitForTimeout(1500); const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.length, `${name}: loops running under reduced motion: ${loops}`); }
-  else { const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.some(l => ['globe', 'cube', 'morph', 'ambient', 'bubbles'].includes(l)), `${name}: off-screen loops still running at the footer: ${loops}`); }
+  else { const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.some(l => ['globe', 'cube', 'morph', 'bubbles'].includes(l)), `${name}: off-screen loops still running at the footer: ${loops}`); }
   const csp = await page.evaluate(() => window.__csp); ok(!csp.length, `${name}: CSP violations: ${csp.join(' | ')}`);
   ok(!(await page.evaluate(() => document.documentElement.outerHTML.includes('\u2014'))), `${name}: an em dash (\u2014) is on the page`);
   await fxChecks(page, c, name);

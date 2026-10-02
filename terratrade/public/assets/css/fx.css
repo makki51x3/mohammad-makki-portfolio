@@ -239,8 +239,8 @@
   /* ==========================================================================================
      S1 · Custom cursor. Motion from "Pure CSS cursor tracking" by Andrew Fisher (Andrew-Fisher-the-decoder)
      https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd - MIT. Source: dev/pens/GgraMzd/.
-     .tt-dot is the hotspot (exact, never eased); .tt-cursor is the logo's petals trailing it with the pen's servo
-     motion (assets/js/fx/cursor-GgraMzd.js): folded around the dot at rest, turning slowly, leaning into the
+     .tt-dot is the hotspot (exact, never eased); .tt-cursor is the logo's petals trailing it with a short ease
+     (assets/js/fx/cursor-GgraMzd.js; the pen's slow braking "servo" was replaced): folded around the dot at rest, turning slowly, leaning into the
      movement, opening into a ring over anything clickable and squeezing on press. The system pointer is hidden
      only while html.tt-cursor-on is set (a mouse is moving over the page, motion allowed, no dialog open).
      ========================================================================================== */
@@ -388,9 +388,10 @@
      S3 · Hero - liquid-glass bubbles with text orbiting the main bubble
      "[SVG] [CSS] Marquee Glass Bubble" by Fernando Cohen (designfenix)
      https://codepen.io/designfenix/pen/QwdoddG - MIT. Source: dev/pens/QwdoddG/.
-     Kept: the SVG scene (morphing clip paths, milky / iridescent sheens, speculars, glass edge stroke + drop-shadow stack, the textPath marquee), the six blurred
+     Kept: the SVG scene (bubble clip paths, milky / iridescent sheens, speculars, glass edge stroke + drop-shadow stack, the textPath marquee), the six blurred
      back-light glows and their geometry, and the right-hand placement bleeding off the edge.
-     Changed: the displacement "ripple" filters are removed (client request: faces stay sharp), TerraTrade
+     Changed: the displacement "ripple" filters are removed (client request: faces stay sharp); for speed the bubble
+     shapes and their float are held still (only the text orbits) and the scene is split into layers, TerraTrade
      photos (farmer / sesame / hibiscus), the commodity list on the path (EN/AR),
      pink iridescence → mint and harvest tints, glows re-lit for the mint daylight and night themes,
      site fonts, and a full-width scene under the copy on narrow screens instead of an off-canvas one.
@@ -401,7 +402,10 @@
     width: clamp(420px, 42vw, 640px); aspect-ratio: 1100 / 850; isolation: isolate; pointer-events: none;
   }
   html.dark [data-fx="bubbles"] { --glow-a: 84, 186, 71; --glow-b: 255, 166, 18; --glow-c: 111, 219, 94; }
-  .hb-scene { position: relative; z-index: 1; display: block; width: 100%; height: 100%; overflow: visible; }
+  .hb-scene { position: relative; z-index: 1; display: block; width: 100%; height: 100%; overflow: visible; will-change: transform; }
+  /* the scene is split into stacked layers (photo bubble · orbiting text · sesame · hibiscus) so the browser keeps the
+     still, filtered photo bubbles as cached images and only redraws the moving text; the parallax moves whole layers */
+  .hb-layer { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; will-change: transform; }
   .hb-light { position: absolute; z-index: -1; inset: -14% -16% -17% -15%; pointer-events: none; }
   .hb-glow { position: absolute; display: block; border-radius: 50%; transform: translateZ(0); }
   .hb-glow--ambient { left: 17%; top: -1%; width: 78%; height: 82%; filter: blur(70px); transform: scale(1.13);
@@ -422,7 +426,7 @@
   .hb-warm { mix-blend-mode: soft-light; }
   .hb-edge {
     fill: rgba(255, 255, 255, .02); stroke: url(#hbStroke); stroke-width: 4; vector-effect: non-scaling-stroke;
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, .98)) drop-shadow(0 0 9px rgba(236, 255, 232, .45)); /* was 4 layers: cheaper per morph frame */
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, .98)) drop-shadow(0 0 9px rgba(236, 255, 232, .45)); /* was 4 layers */
   }
   .hb-edge--main {
     stroke-width: 4.7;
@@ -438,7 +442,6 @@
   [dir="rtl"] .hb-orbit-t { font-size: 28px; letter-spacing: 0; word-spacing: 12px; text-transform: none; text-anchor: end; }
   [data-fx="bubbles"] .hero-chip.c1 { top: 17%; inset-inline-start: -2%; }
   [data-fx="bubbles"] .hero-chip.c2 { bottom: 9%; inset-inline-end: 4%; }
-  html.paused [data-fx="bubbles"] .hero-chip { animation-play-state: paused; }
 
   @media (max-width: 960px) {
     [data-fx="bubbles"] { width: min(100%, 620px); margin: 26px auto 0; justify-self: center; }

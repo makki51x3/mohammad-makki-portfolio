@@ -1,5 +1,5 @@
 // Motion layer ported from the portfolio: Lenis smooth scroll on the GSAP ticker, reveal-on-scroll,
-// hero melt + photo parallax, scroll-velocity skew on the product grid, tilt + cursor glow cards,
+// hero melt + photo parallax, tilt + cursor glow cards,
 // magnetic buttons, contact spotlight, manifesto (core values) fallback.
 import { $, $$, html, REDUCED, TOUCH, FINE, hasGSAP } from '../core/env.js';
 
@@ -37,18 +37,10 @@ export function reveal() {
 
 export function depth() {
   if (!hasGSAP() || REDUCED) return;
-  // hero melts away as you scroll past it (portfolio "giana" melt) - keyed to the hero's bottom edge, so on phones,
-  // where the bubble scene sits under the copy, it only starts once that scene is on its way out too
-  gsap.to('#heroInner', { opacity: 0, filter: 'blur(8px)', y: -60, ease: 'none', scrollTrigger: { trigger: '#top', start: 'bottom 55%', end: 'bottom 5%', scrub: true } });
-  // scroll-velocity skew on the product grid
-  const grid = $('#pgrid');
-  if (grid) {
-    const set = gsap.quickSetter(grid, 'skewY', 'deg'); const proxy = { skew: 0 };
-    ScrollTrigger.create({ onUpdate(self) {
-      const v = gsap.utils.clamp(-4, 4, self.getVelocity() / -420);
-      if (Math.abs(v) > Math.abs(proxy.skew)) { proxy.skew = v; gsap.to(proxy, { skew: 0, duration: .7, ease: 'power3', overwrite: true, onUpdate: () => set(proxy.skew) }); }
-    } });
-  }
+  // hero fades and lifts away as you scroll past it (the portfolio "giana" melt, without its blur, which re-filtered
+  // the whole hero on every scroll frame) - keyed to the hero's bottom edge, so on phones, where the bubble scene
+  // sits under the copy, it only starts once that scene is on its way out too
+  gsap.to('#heroInner', { opacity: 0, y: -60, ease: 'none', scrollTrigger: { trigger: '#top', start: 'bottom 55%', end: 'bottom 5%', scrub: true } });
 }
 
 export function tilt() {

@@ -9,7 +9,7 @@ The design remixes the [portfolio](../_publish/index.html) design language (glas
 | Section | Built from |
 |---|---|
 | **Menu** | About us · Products · Operations · Contact us (header, mobile menu and footer), plus the language link, theme switch and "Request a quote" |
-| **Hero** | Split-letter gradient headline, gooey rotating commodity word, fact counters (est. 2023, 2 hubs, 7 commodities, 8 export markets), a green chunky "Request a quote" ✦, and a liquid-glass bubble scene (farmer / sesame / hibiscus) with the commodity list orbiting the main bubble ✦ |
+| **Hero** | Split-letter gradient headline, rotating commodity word, fact counters (est. 2023, 2 hubs, 7 commodities, 8 export markets), a green chunky "Request a quote" ✦, and a liquid-glass bubble scene (farmer / sesame / hibiscus) with the commodity list orbiting the main bubble ✦ |
 | **About us** | Scroll-lit paragraph, facts, mission and vision as zig-zag infographic banners ✦, then **Core values**: the Trust · Quality · Consistency scroll-fill lines |
 | **Products** | 7 commodities in 3 divisions (food-grade crops, animal feed, wood-based products), with a filter and character-roll heading. Each card is a 3D flip card ✦: clicking (or tapping, or Enter) turns the photo over to "Request a quote" and "Spec sheet". The spec-sheet dialog shows indicative specs, harvest months and packaging, prints, and has "request a quote for this product" |
 | **Operations** | Pinned Nigeria map story: outline draws, "Sourcing zone · Kano", the Lagos hub, cargo moving to the port, then out to export markets |
@@ -18,7 +18,7 @@ The design remixes the [portfolio](../_publish/index.html) design language (glas
 | **Markets** | The portfolio's dot globe, extended with animated great-circle export routes: Middle East (KSA, UAE, Qatar, Lebanon, Syria) in amber and Asia (Japan, South Korea, China) in green |
 | **Partners** | Partner logo grid |
 | **Contact us** | Quote form (Netlify Forms, AJAX with no-JS fallback) asking only for name, company, email, phone / WhatsApp and a message, with a chunky squircle submit ✦; WhatsApp, copy-email, and a draggable liquid-glass business card ✦ that starts centred on a high-resolution photo |
-| **Site-wide** | Petal cursor ✦ (fine pointers), floating WhatsApp squircle ✦, light/dark themes. Motion follows the OS reduced-motion setting (the footer pause switch was removed at the client's request); the footer keeps only the privacy notice |
+| **Site-wide** | Petal cursor ✦ (fine pointers), floating WhatsApp squircle ✦, light/dark themes. Built for smooth scrolling on mid-range laptops: the background glow, headline gradient and bubble shapes are still, cards have no live blur, and only small composited motion runs continuously. Motion follows the OS reduced-motion setting (the footer pause switch was removed at the client's request); the footer keeps only the privacy notice |
 
 ✦ = adapted from a CodePen (see [CodePen effects](#codepen-effects)).
 
@@ -32,7 +32,7 @@ terratrade/
     ar/…               GENERATED Arabic pages (do not edit by hand)
     thanks/ privacy/ 404.html  _headers _redirects robots.txt sitemap.xml llms.txt site.webmanifest
     assets/css/        fonts.css (generated) · base.css (tokens, themes, RTL) · site.css · pages.css · fx.css (CodePen adaptations)
-    assets/js/         main.js · core/ (env, loop registry, i18n, theme) · ui/ · scenes/ (globe, nigeria-map, process-cube, ambient)
+    assets/js/         main.js · core/ (env, loop registry, i18n, theme) · ui/ · scenes/ (globe, nigeria-map, process-cube, flora)
                        fx/ (CodePen adaptations + registry.js) · i18n/en.js (runtime strings) · i18n/ar.js (all Arabic)
                        data.js (spec values) · geo/ (generated) · vendor/ (GSAP, Lenis)
     assets/img/        brand/ (logo SVGs, sprite, app icons) · products/ · photos/ · partners/ · icons.svg · og-en.jpg · og-ar.jpg
@@ -97,12 +97,12 @@ Each pen is kept as supplied in `dev/pens/<id>/`, adapted to the brand, fonts, i
 
 | Pen | Where | Notes |
 |---|---|---|
-| [designfenix/QwdoddG](https://codepen.io/designfenix/pen/QwdoddG) — Marquee Glass Bubble | Hero visual | The pen's SVG scene (generated from its markup) with TerraTrade photos. The ripple/displacement filters are removed so faces stay sharp. The orbit text is translatable (EN/AR). SMIL is frozen off-screen and under reduced motion. Pointer parallax on fine pointers. |
+| [designfenix/QwdoddG](https://codepen.io/designfenix/pen/QwdoddG) — Marquee Glass Bubble | Hero visual | The pen's SVG scene (generated from its markup) with TerraTrade photos. The ripple/displacement filters are removed so faces stay sharp. For speed the bubble shapes are held still and the scene is split into stacked layers, so only the orbiting text redraws. The orbit text is translatable (EN/AR) and frozen off-screen and under reduced motion. Pointer parallax on fine pointers moves whole layers (no repaint). |
 | [designfenix/RwKPapa](https://codepen.io/designfenix/pen/RwKPapa) — 3D perspective cards | Product cards | Turns over only when clicked, tapped or activated from the keyboard (never on hover), mirrored in Arabic; the hidden face is invisible and inert, so nothing shows through. Escape, a "back to the photo" button or a click elsewhere turns it back. The quote link records the product and starts the message (`source=card:<id>`). |
 | [thebabydino/NLWdwz](https://codepen.io/thebabydino/pen/NLWdwz) — infographic banners | About: mission, vision | Brand gradients with contrast-checked ink. Zig-zag on wide screens, stacked on phones. |
 | [Andrew-Fisher/raMZQNe](https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe) — Chunky 3D Buttons | Hero quote, form submit, floating WhatsApp | The SVG squircle is an aria-hidden layer behind the real button, so the label stays live text. The floating button hides over the hero, contact and footer. |
 | [Abdughafur-Khujzoda/jEyVvqK](https://codepen.io/Abdughafur-Khujzoda/pen/jEyVvqK) — liquid-glass card | Contact photo | Starts centred on the photo, draggable (kept inside it). Only on screens ≥ 961px, where the photo shows. |
-| [Andrew-Fisher/GgraMzd](https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd) — pure-CSS cursor tracking | Site cursor | The pen's speed bands drive a JS servo (a CSS hover grid would block clicks). The visual is a small seed made of the logo's petals that opens into a ring over clickable things (the blurred lens was too heavy). Fine pointers only. |
+| [Andrew-Fisher/GgraMzd](https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd) — pure-CSS cursor tracking | Site cursor | Pointer events drive the motion (the pen's CSS hover grid would block clicks): the seed follows the pointer with a short exponential ease (about 30 ms) and tilts with its speed, then stops its loop once settled. The visual is a small seed made of the logo's petals that opens into a ring over clickable things (the blurred lens was too heavy). Fine pointers only. |
 
 ## Credits
 

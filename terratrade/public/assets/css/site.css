@@ -16,7 +16,6 @@
   .b3 { --gc: var(--c3); transform: translate(46%, -18%); opacity: .5; }
   .b4 { --gc: var(--c4); transform: translate(30%, 34%); opacity: .45; }
   .b5 { --gc: var(--c5); width: 90vmax; height: 90vmax; top: calc(50% - 45vmax); left: calc(50% - 45vmax); transform: translate(-14%, 8%); opacity: .5; }
-  #ambient { position: absolute; inset: 0; width: 100%; height: 100%; }
   .grain { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: var(--grain-o);
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
   main, .site-foot { position: relative; z-index: 3; }
@@ -128,31 +127,30 @@
 /* ================= SECTIONS ================= */
 @layer sections {
   /* ---- HERO ---- */
-  .hero { position: relative; padding-top: calc(var(--nav-h) + 48px); padding-bottom: 40px; overflow: clip; }
+  .hero { position: relative; padding-top: calc(var(--nav-h) + 48px); padding-bottom: 40px; overflow-x: clip; } /* sideways only: the bubble glow fades out below the hero instead of stopping at a hard edge */
   .grid-overlay { position: absolute; inset: 0; pointer-events: none; opacity: .55;
     background-image: linear-gradient(color-mix(in srgb, var(--accent) 9%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--accent) 9%, transparent) 1px, transparent 1px);
     background-size: 56px 56px; -webkit-mask-image: radial-gradient(120% 80% at 50% 0%, #000 25%, transparent 75%); mask-image: radial-gradient(120% 80% at 50% 0%, #000 25%, transparent 75%); }
   .hero-inner { position: relative; z-index: 3; }
   .hero-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px; align-items: center; }
-  .hero h1 { font-size: clamp(38px, 5.4vw, 70px); font-weight: 700; letter-spacing: -.035em; line-height: 1.04; margin-top: 18px; }
+  .hero h1 { position: relative; z-index: 2; font-size: clamp(38px, 5.4vw, 70px); font-weight: 700; letter-spacing: -.035em; line-height: 1.04; margin-top: 18px; }
   .h1-line { display: block; }
-  /* hero accent: an all-green flow (no harvest amber in the headline) */
+  /* hero accent: an all-green gradient (no harvest amber in the headline) */
   .hero { --grad-hero: linear-gradient(100deg, var(--forest) 0%, #0A7A33 25%, #3E9E3A 50%, #0A7A33 75%, var(--forest) 100%); }
   html.dark .hero { --grad-hero: linear-gradient(100deg, #EEFAE9 0%, #9BE88C 25%, var(--sprout) 50%, #9BE88C 75%, #EEFAE9 100%); }
   .h1-accent { background: var(--grad-hero); background-size: 400% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: .06em; }
   .h1-accent.split { background: none; color: inherit; }
   .h1-accent .ltr { display: inline-block; background: var(--grad-hero);
-    background-size: 400% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: flow 10s linear infinite; transition: transform .35s var(--ease);
+    background-size: 300% 100%; background-position: calc(var(--p, 0) * 100%) 0; -webkit-background-clip: text; background-clip: text; color: transparent; transition: transform .35s var(--ease);
     padding-block: .14em .3em; margin-block: -.14em -.3em; } /* grow the text-clip box so descenders aren't sliced */
   [dir="rtl"] .h1-accent .ltr { padding-block: .3em .45em; margin-block: -.3em -.45em; }
   [dir="rtl"] .hero h1 { letter-spacing: 0; line-height: 1.38; font-size: clamp(32px, 4.8vw, 62px); }
   .h1-accent .ltr:hover { transform: translateY(-8px) rotate(-4deg); }
-  @keyframes flow { to { background-position: -400% 0; } }
   .role { display: flex; align-items: center; gap: .45em; flex-wrap: wrap; font-family: var(--disp); font-weight: 600; font-size: clamp(18px, 2.4vw, 26px); margin-top: 22px; }
-  .morphbox { position: relative; display: inline-block; min-width: 11ch; height: 1.6em; line-height: 1.6; filter: url(#threshold) blur(.35px); color: var(--accent); }
-  .morphbox .mword { position: absolute; inset-inline-start: 0; top: 0; white-space: nowrap; opacity: 0; }
+  .morphbox { position: relative; display: inline-block; min-width: 11ch; height: 1.6em; line-height: 1.6; color: var(--accent); }
+  .morphbox .mword { position: absolute; inset-inline-start: 0; top: 0; white-space: nowrap; opacity: 0; transform: translateY(.35em); transition: opacity .55s var(--ease), transform .55s var(--ease); }
+  .morphbox .mword.on { opacity: 1; transform: none; }
   .morphbox .mword.is-static, .no-js .morphbox .mword { position: static; opacity: 1; }
-  .no-js .morphbox, .reduced .morphbox { filter: none; }
   .lede { max-width: 600px; color: var(--muted); font-size: 16.5px; margin-top: 18px; }
   .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
   .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 34px 0 0; max-width: 700px; }
@@ -160,12 +158,11 @@
   .fact dd { margin: 0; font-family: var(--disp); font-weight: 700; font-size: clamp(22px, 2.6vw, 30px); line-height: 1.1; color: var(--txt); }
   .fact dt { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
   .hero-chip { position: absolute; z-index: 3; display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; padding: 7px 12px; border-radius: 999px;
-    background: var(--card-solid); border: 1px solid var(--card-bd); box-shadow: var(--shadow); white-space: nowrap; animation: floaty 6s ease-in-out infinite; }
+    background: var(--card-solid); border: 1px solid var(--card-bd); box-shadow: var(--shadow); white-space: nowrap; }
   .hero-chip b { color: var(--accent); }
   .hero-chip .i { width: 16px; height: 16px; color: var(--accent); }
   .hero-chip.c1 { top: 8%; inset-inline-start: -18%; }
-  .hero-chip.c2 { bottom: 10%; inset-inline-end: -12%; animation-delay: -3s; }
-  @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  .hero-chip.c2 { bottom: 10%; inset-inline-end: -12%; }
   .scroll-cue { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 3; display: none; flex-direction: column; align-items: center; gap: 6px;
     font-family: var(--mono); font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--muted); }
   .scroll-cue i { width: 1px; height: 30px; background: linear-gradient(var(--accent), transparent); animation: cue 1.8s ease-in-out infinite; }
