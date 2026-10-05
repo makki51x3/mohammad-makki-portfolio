@@ -53,7 +53,7 @@ export default {
   "hero.fact1": "سنة التأسيس في كانو",
   "hero.fact2": "مركزان استراتيجيان",
   "hero.factCap": "الطاقة السنوية",
-  "hero.capV": "5,000+ طن",
+  "hero.capU": "طن",
   "hero.fact3": "سلع للتصدير",
   "hero.fact4": "أسواق التصدير",
   "hero.chipOrigin": "كانو · لاغوس",

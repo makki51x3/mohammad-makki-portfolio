@@ -27,6 +27,7 @@
 
   /* ---- icons ---- */
   .i { width: 1.15em; height: 1.15em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  svg.i.i-wa { fill: currentColor; stroke: none; } /* the WhatsApp glyph is a filled shape, never an outline */
   svg.i:has(use) { fill: currentColor; stroke: none; }
 
   /* ---- type helpers ---- */
@@ -156,7 +157,11 @@
   .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 34px 0 0; max-width: 700px; }
   .fact { border: 1px solid var(--card-bd); border-radius: 14px; background: var(--card); padding: 12px 14px; display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 2px; }
   .fact dd { margin: 0; font-family: var(--disp); font-weight: 700; font-size: clamp(22px, 2.6vw, 30px); line-height: 1.1; color: var(--txt); }
-  .fact dd.cap { white-space: nowrap; font-size: clamp(18px, 1.9vw, 24px); line-height: 1.35; }
+  /* "5,000+ MT": the number scales to its box (container units), the unit is set small beside it and wraps under
+     it rather than ever spilling out of the box */
+  .fact { container-type: inline-size; }
+  .fact dd.cap { font-size: min(clamp(22px, 2.6vw, 30px), 21cqi); }
+  .fact dd.cap .unit { font-size: .55em; font-weight: 600; color: var(--muted); }
   .fact dt { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
   .hero-chip { position: absolute; z-index: 3; display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; padding: 7px 12px; border-radius: 999px;
     background: var(--card-solid); border: 1px solid var(--card-bd); box-shadow: var(--shadow); white-space: nowrap; }

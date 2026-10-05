@@ -321,7 +321,7 @@
     transition: opacity .35s ease, translate .45s var(--ease), visibility 0s;
   }
   .wa-float.is-chunky { background: none; box-shadow: none; }
-  .wa-float .i { width: 26px; height: 26px; stroke: currentColor; }
+  .wa-float .i { width: 26px; height: 26px; fill: currentColor; stroke: none; } /* filled WhatsApp glyph, no outline */
   .js .wa-float:not(.show) { opacity: 0; visibility: hidden; translate: 0 14px; transition: opacity .25s ease, translate .3s ease, visibility 0s .3s; }
   html.dlgopen .wa-float { visibility: hidden; }
   @media (max-width: 640px) { .wa-float { width: 48px; height: 48px; inset-block-end: 18px; inset-inline-end: 16px; } }
