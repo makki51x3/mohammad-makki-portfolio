@@ -341,7 +341,7 @@
   .cc-photo:has([data-fx="glass"]) img { aspect-ratio: 4 / 5; object-position: 38% 30%; }
   .gcard-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
   [data-fx="glass"] {
-    position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 2; /* starts centred on the photo */
+    position: absolute; left: 50%; top: 66%; translate: -50% -50%; z-index: 2; /* starts centred across the photo, low enough to leave the farmer's face clear */
     width: 256px; padding: 26px 18px 20px; border-radius: 28px; isolation: isolate;
     color: #fff; text-align: center; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
     box-shadow: 0 24px 96px rgba(1, 40, 25, .28), inset 0 1px 0 rgba(255, 255, 255, .5);
@@ -439,7 +439,7 @@
   }
   /* Arabic: no tracking (it breaks letter joining) - word spacing fills the loop instead; RTL text anchors at its
      end so it runs forward from the offset like the English does */
-  [dir="rtl"] .hb-orbit-t { font-size: 28px; letter-spacing: 0; word-spacing: 12px; text-transform: none; text-anchor: end; }
+  [dir="rtl"] .hb-orbit-t { font-size: 28px; letter-spacing: 0; word-spacing: 17px; text-transform: none; text-anchor: end; }
   [data-fx="bubbles"] .hero-chip.c1 { top: 17%; inset-inline-start: -2%; }
   [data-fx="bubbles"] .hero-chip.c2 { bottom: 9%; inset-inline-end: 4%; }
 
@@ -449,7 +449,7 @@
   @media (max-width: 640px) {
     [data-fx="bubbles"] { width: calc(100% + 32px); margin: 18px -16px 0; }
     .hb-orbit-t { font-size: 22px; letter-spacing: 2px; }
-    [dir="rtl"] .hb-orbit-t { font-size: 30px; word-spacing: 8px; }
+    [dir="rtl"] .hb-orbit-t { font-size: 30px; word-spacing: 12px; }
     [data-fx="bubbles"] .hero-chip { font-size: 10px; }
     [data-fx="bubbles"] .hero-chip.c1 { top: 4%; inset-inline-start: 18px; }
     [data-fx="bubbles"] .hero-chip.c2 { bottom: 2%; inset-inline-end: 18px; }

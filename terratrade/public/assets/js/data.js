@@ -25,11 +25,6 @@ export const PRODUCTS = {
     specs: [['spec.protein', '36 – 40%'], ['spec.oil', '18 – 20%'], ['spec.moisture', '≤ 13%'], ['spec.foreign', '≤ 2%']],
     pack: 'pack.bags',
   },
-  'soybean-meal': {
-    months: ALL, yearRound: true,
-    specs: [['spec.cprotein', '44 – 48%'], ['spec.moisture', '≤ 12.5%'], ['spec.cfibre', '≤ 7%']],
-    pack: 'pack.meal',
-  },
   'wheat-bran': {
     months: ALL, yearRound: true,
     specs: [['spec.form', { k: 'spec.v.branPellets' }], ['spec.cprotein', '14 – 17%'], ['spec.cfibre', '≤ 12%'], ['spec.moisture', '≤ 13%']],

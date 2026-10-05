@@ -4,18 +4,9 @@
 import { $, $$, html, REDUCED, TOUCH, FINE, hasGSAP } from '../core/env.js';
 
 export function smooth() {
-  if (!hasGSAP()) return;
-  gsap.registerPlugin(ScrollTrigger);
-  if (REDUCED || !window.Lenis) return;
-  // prevent: let native scrolling happen inside dialogs (Lenis would otherwise swallow wheel/touch there)
-  const lenis = new Lenis({ autoRaf: false, lerp: .11, wheelMultiplier: 1, touchMultiplier: 1.6, prevent: n => n.nodeName === 'DIALOG' || n.hasAttribute?.('data-lenis-prevent') });
-  window.__lenis = lenis;
-  // stop smooth scrolling while a modal is open (portfolio 'dlgopen' observer)
-  new MutationObserver(() => html.classList.contains('dlgopen') ? lenis.stop() : lenis.start())
-    .observe(html, { attributes: true, attributeFilter: ['class'] });
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add(t => lenis.raf(t * 1000));
-  gsap.ticker.lagSmoothing(0);
+  // Native scrolling on every device. Lenis' eased scrolling (lerp .11) made the page feel slow on desktop
+  // (the client: phones, which never used it, felt perfect); ScrollTrigger reads native scroll directly.
+  if (hasGSAP()) gsap.registerPlugin(ScrollTrigger);
 }
 
 export function reveal() {

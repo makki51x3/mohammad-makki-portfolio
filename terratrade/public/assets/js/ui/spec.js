@@ -30,7 +30,7 @@ export function spec() {
     const months = t('months'), names = t('monthNames');
     const yr = data.yearRoundKey || 'spec.yearRound';
     const inSeason = data.yearRound ? t(yr) : data.months.map(m => names[m - 1]).join(html.lang === 'ar' ? '، ' : ', ');
-    $('#specSeason', dlg).innerHTML = `<span class="season-cap">${esc(t(data.yearRound ? yr : 'spec.season'))}</span>` +
+    $('#specSeason', dlg).innerHTML = `<span class="season-cap">${esc(t(data.yearRound ? yr : 'spec.season'))}</span><span class="season-m" aria-hidden="true">${esc(t('spec.months'))}</span>` +
       months.map((m, i) => `<span class="${data.months.includes(i + 1) ? 'on' : ''}" aria-hidden="true">${esc(m)}</span>`).join('') +
       `<span class="sr-only">${esc(inSeason)}</span>`;
     $('#specQuote', dlg).textContent = t('spec.quote');

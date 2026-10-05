@@ -9,8 +9,8 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const OUT = join(here, '..', '..', 'public', 'assets', 'img');
 const COPY = {
-  en: { dir: 'ltr', k: 'Nigerian agri-commodity exports · Est. 2023', t1: 'Bridging Nigerian agriculture', t2: 'with global markets', chips: ['Sesame', 'Raw cashew', 'Hibiscus', 'Soybean', 'Feed ingredients', 'Charcoal'] },
-  ar: { dir: 'rtl', k: 'تصدير السلع الزراعية النيجيرية · تأسست 2023', t1: 'نربط الزراعة النيجيرية', t2: 'بالأسواق العالمية', chips: ['السمسم', 'الكاجو الخام', 'الكركديه', 'فول الصويا', 'مكونات الأعلاف', 'الفحم النباتي'] },
+  en: { dir: 'ltr', k: 'Nigerian agri-commodity exports · Est. 2023', t1: 'Bridging Nigerian agriculture', t2: 'with global markets', chips: ['Sesame', 'Raw cashew', 'Hibiscus', 'Soybean', 'Wheat bran', 'Charcoal'] },
+  ar: { dir: 'rtl', k: 'تصدير السلع الزراعية النيجيرية · تأسست 2023', t1: 'نربط الزراعة النيجيرية', t2: 'بالأسواق العالمية', chips: ['السمسم', 'الكاجو الخام', 'الكركديه', 'فول الصويا', 'نخالة القمح', 'الفحم النباتي'] },
 };
 const tpl = c => `<!doctype html><html lang="${c.dir === 'rtl' ? 'ar' : 'en'}" dir="${c.dir}"><head><link rel="stylesheet" href="/assets/css/fonts.css"><style>
 *{box-sizing:border-box;margin:0}body{width:1200px;height:630px;overflow:hidden;font-family:${c.dir === 'rtl' ? '"IBM Plex Sans Arabic"' : 'Sora'},sans-serif;color:#EEFAE9;

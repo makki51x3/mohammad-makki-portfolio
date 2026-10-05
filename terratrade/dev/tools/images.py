@@ -1,7 +1,8 @@
 """Builds the site's raster images from the client's originals in dev/src-assets/ (gitignored).
 
 Sources were extracted from the TerraTrade company-profile PDF; the charcoal, in-shell cashew and contact photos come
-from the client's October 2026 revision notes, upscaled 4x with Real-ESRGAN (see README, "Photos"). Output goes to
+from the client's October 2026 revision notes, upscaled 4x with Real-ESRGAN (see README, "Photos"); wheat bran, sesame,
+soybean and hibiscus are the photos from the client's final comments (October 2026). Output goes to
 public/assets/img/.
 Requires Pillow (pip install pillow). Run: python3 tools/images.py [name ...]  (names: only rebuild those, e.g. charcoal contact)
 """
@@ -14,8 +15,7 @@ OUT = HERE.parent.parent / 'public' / 'assets' / 'img'
 Q = 78
 
 PRODUCTS = {  # output name -> source file (PDF page/xref, or the upscaled revision photos)
-    'wheat-bran': 'p4_x43.png', 'soybean-meal': 'p4_x42.png',
-    'sesame': 'p5_x54.png', 'soybean': 'p5_x55.png', 'hibiscus': 'p5_x51.png',
+    'wheat-bran': 'wheat-bran.png', 'sesame': 'sesame.png', 'soybean': 'soybean.png', 'hibiscus': 'hibiscus.png',
     'cashew-raw': 'cashew-inshell.png', 'charcoal': 'charcoal.png',
 }
 PHOTOS = {'hero': 'p1_x8.png', 'farmer': 'p11_x142.png', 'contact': 'contact.png'}

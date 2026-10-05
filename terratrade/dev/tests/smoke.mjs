@@ -52,37 +52,18 @@ async function fxChecks(page, c, name) {
   await page.evaluate(() => document.querySelector('[data-fx="bubbles"]').scrollIntoView({ block: 'center' })); await page.waitForTimeout(600);
   const hbRun = await page.evaluate(() => !document.getElementById('hbOrbit').animationsPaused());
   ok(c.reduced ? !hbRun : hbRun, `${name}: hero bubbles animate only when motion is allowed (running=${hbRun})`);
-  // GgraMzd — custom cursor (short ease trailing the pointer): fine pointers only. The system pointer is hidden while it is
-  // active, so the hotspot dot must sit exactly on the pointer after any sequence of moves; a resize hands control
-  // back to the system pointer (no stale position) until the next move, which re-snaps; text fields keep the I-beam.
-  if (!c.mobile) {
-    const read = () => page.evaluate(() => { const d = document.querySelector('.tt-dot'), b = document.querySelector('.tt-cursor'); if (!d) return null;
-      const [x, y] = d.style.translate.split(' ').map(parseFloat), [bx, by] = b.style.translate.split(' ').map(parseFloat);
-      return { x, y, bx, by, on: document.documentElement.classList.contains('tt-cursor-on'), sys: getComputedStyle(document.body).cursor, shown: d.classList.contains('on') && getComputedStyle(d).display !== 'none', loops: window.__tt.loops() }; });
-    await page.mouse.move(400, 400); await page.mouse.move(700, 450, { steps: 5 }); await page.mouse.move(313, 377, { steps: 3 }); await page.waitForTimeout(800);
-    const l = await read();
-    if (c.reduced) ok(l && !l.on && !l.shown && l.sys !== 'none' && !l.loops.includes('cursor'), `${name}: system pointer kept under reduced motion ${JSON.stringify(l)}`);
-    else {
-      ok(l && l.on && l.shown && l.sys === 'none' && l.x === 313 && l.y === 377 && Math.abs(l.bx - 313) < .5 && Math.abs(l.by - 377) < .5 && !l.loops.includes('cursor'),
-        `${name}: custom cursor exact on the pointer, system pointer hidden, then idle ${JSON.stringify(l)}`);
-      const field = await page.evaluate(() => { const f = document.getElementById('f-name'); return getComputedStyle(f).cursor; });
-      ok(field === 'text', `${name}: text fields keep the I-beam (${field})`);
-      await page.setViewportSize({ width: 1400, height: 880 }); await page.waitForTimeout(250);
-      const r = await read();
-      await page.mouse.move(520, 260); await page.waitForTimeout(150);
-      const s2 = await read();
-      await page.setViewportSize({ width: 1440, height: 900 }); await page.waitForTimeout(250);
-      ok(!r.on && !r.shown && s2.on && s2.x === 520 && s2.y === 260, `${name}: resize hands back the system pointer, next move re-snaps exactly ${JSON.stringify({ r, s2 })}`);
-    }
-  } else ok(await page.evaluate(() => !document.querySelector('.tt-cursor, .tt-dot') && !document.documentElement.classList.contains('tt-cursor-on')), `${name}: no custom cursor on touch`);
+  // the custom cursor (GgraMzd) was retired for speed at the client's request: the system pointer everywhere
+  ok(await page.evaluate(() => !document.querySelector('.tt-cursor, .tt-dot') && !document.documentElement.classList.contains('tt-cursor-on') && getComputedStyle(document.body).cursor !== 'none'), `${name}: system pointer, no custom cursor`);
+  // eased (Lenis) scrolling was retired too: native scroll on every device
+  ok(await page.evaluate(() => !window.Lenis && !window.__lenis && !document.documentElement.classList.contains('lenis')), `${name}: native scrolling (no Lenis)`);
   // NLWdwz — about banners: mission + vision with counter discs; zig-zag on wide screens only, mirrored in Arabic
   const ib = await page.evaluate(() => [...document.querySelectorAll('[data-fx="banners"] .ib')].map(li => ({
     disc: getComputedStyle(li.querySelector('.ib-card'), '::before').content, tx: parseFloat(getComputedStyle(li).translate) || 0 })));
   ok(ib.length === 2 && ib.every(b => /counter\(ib/.test(b.disc)), `${name}: mission + vision banners with counter discs ${JSON.stringify(ib)}`);
-  // core values: Trust / Quality / Consistency (the manifesto lines) under their own heading inside About
-  const cv = await page.evaluate(() => { const h = document.getElementById('coreValuesTitle'), lines = [...document.querySelectorAll('#about .manifesto .mline')];
-    return { h: h?.closest('#about') ? h.textContent.trim() : null, n: lines.length, labelled: document.querySelector('#about .manifesto')?.getAttribute('aria-labelledby'), stray: !!document.querySelector('section.manifesto') }; });
-  ok(cv.h && cv.n === 3 && cv.labelled === 'coreValuesTitle' && !cv.stray, `${name}: core values = the three manifesto lines under their heading in About ${JSON.stringify(cv)}`);
+  // final comments: Core values removed; Why TerraTrade follows About directly with its 3 cards (Farmers first back)
+  const why = await page.evaluate(() => ({ core: !!document.querySelector('#coreValuesTitle, #about .manifesto'), next: document.getElementById('about').nextElementSibling?.id,
+    cards: document.querySelectorAll('#why .scard').length }));
+  ok(!why.core && why.next === 'why' && why.cards === 3, `${name}: no core values; Why (3 cards) right after About ${JSON.stringify(why)}`);
   if (!c.mobile) ok(ib[0].tx * (c.lang === 'ar' ? -1 : 1) < 0 && ib[1].tx * (c.lang === 'ar' ? -1 : 1) > 0, `${name}: banner zig-zag direction ${ib.map(b => b.tx)}`);
   else ok(ib.every(b => b.tx === 0), `${name}: banners stack without zig-zag on phones ${ib.map(b => b.tx)}`);
   // "How we trade" (and its WebGL water) was removed: no section, no three.js
@@ -107,8 +88,8 @@ async function fxChecks(page, c, name) {
   if (!c.mobile) {
     const card = page.locator('[data-fx="glass"]'); await card.scrollIntoViewIfNeeded(); await page.waitForTimeout(400);
     const mid = await page.evaluate(() => { const e = document.querySelector('[data-fx="glass"]').getBoundingClientRect(), f = document.querySelector('.cc-photo img').getBoundingClientRect();
-      return { dx: +((e.left + e.right) / 2 - (f.left + f.right) / 2).toFixed(1), dy: +((e.top + e.bottom) / 2 - (f.top + f.bottom) / 2).toFixed(1), img: f.height > 300 }; });
-    ok(Math.abs(mid.dx) < 6 && Math.abs(mid.dy) < 6 && mid.img, `${name}: glass card starts centred on the photo ${JSON.stringify(mid)}`);
+      return { dx: +((e.left + e.right) / 2 - (f.left + f.right) / 2).toFixed(1), dy: +((e.top + e.bottom) / 2 - (f.top + f.bottom) / 2).toFixed(1), inside: e.top >= f.top && e.bottom <= f.bottom + 1, img: f.height > 300 }; });
+    ok(Math.abs(mid.dx) < 6 && mid.dy > 0 && mid.inside && mid.img, `${name}: glass card starts centred across the photo, below the face, inside it ${JSON.stringify(mid)}`);
     const b0 = await card.boundingBox(), toward = c.lang === 'ar' ? 400 : -400; // drag it far past the photo's top/start corner
     await page.mouse.move(b0.x + 30, b0.y + 30); await page.mouse.down(); await page.mouse.move(b0.x + 30 + toward, b0.y - 900, { steps: 6 }); await page.mouse.up();
     const g = await page.evaluate(() => { const e = document.querySelector('[data-fx="glass"]'), f = e.parentElement;
@@ -157,11 +138,11 @@ for (const c of (QUICK ? combos.filter(c => !c.reduced && c.theme === 'light') :
   ok(!badImgs.length, `${name}: images not loaded: ${badImgs.join(', ')}`);
   // the client's revision notes: content that was removed must stay gone (both languages)
   const gone = await page.evaluate(lang => { const txt = document.body.innerText;
-    const words = lang === 'ar' ? ['بورت هاركورت', 'الزنجبيل', 'بذور القطن', 'الولايات الشمالية', 'قيد الافتتاح', 'قريباً', 'المزارعون أولاً', 'شروط التعامل', 'لمحة سريعة']
-      : ['Port Harcourt', 'Ginger', 'Cotton seed', 'northern states', 'Opening', 'East Asia next', 'soon', 'Farmer First', 'Farmers first', 'How we trade', 'At a glance'];
+    const words = lang === 'ar' ? ['كُسب فول الصويا', 'بورت هاركورت', 'الزنجبيل', 'بذور القطن', 'الولايات الشمالية', 'قيد الافتتاح', 'قريباً', 'شروط التعامل', 'لمحة سريعة']
+      : ['Port Harcourt', 'Ginger', 'Cotton seed', 'northern states', 'Opening', 'East Asia next', 'soon', 'Soybean meal', 'How we trade', 'At a glance'];
     return { found: words.filter(w => txt.toLowerCase().includes(w.toLowerCase())), glance: !!document.querySelector('#glance'), cards: document.querySelectorAll('.pcard').length,
       nav: [...document.querySelectorAll('.links a')].map(a => a.getAttribute('href')).join(' ') }; }, c.lang);
-  ok(!gone.found.length && !gone.glance && gone.cards === 7 && gone.nav === '#about #products #operations #contact', `${name}: revision content check ${JSON.stringify(gone)}`);
+  ok(!gone.found.length && !gone.glance && gone.cards === 6 && gone.nav === '#about #products #operations #contact', `${name}: revision content check ${JSON.stringify(gone)}`);
   if (c.reduced) { await page.waitForTimeout(1500); const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.length, `${name}: loops running under reduced motion: ${loops}`); }
   else { const loops = await page.evaluate(() => window.__tt?.loops() || []); ok(!loops.some(l => ['globe', 'cube', 'morph', 'bubbles'].includes(l)), `${name}: off-screen loops still running at the footer: ${loops}`); }
   const csp = await page.evaluate(() => window.__csp); ok(!csp.length, `${name}: CSP violations: ${csp.join(' | ')}`);
@@ -206,9 +187,9 @@ log('• structure');
   ok(s.h1 === 1 && s.skip === '#main', 'one h1 + skip link');
   // keyboard: first Tab lands on the skip link
   await page.keyboard.press('Tab'); ok(await page.evaluate(() => document.activeElement?.classList.contains('skip')), 'first Tab focuses the skip link');
-  // the quote form asks only for name, company, email, phone / WhatsApp and a message (client's revision notes)
+  // the quote form asks only for name, company, email and a message (client's final comments)
   const fields = await page.evaluate(() => [...document.querySelectorAll('#rfq input:not([type=hidden]), #rfq select, #rfq textarea')].filter(el => !el.closest('.hp')).map(el => el.name).join(' '));
-  ok(fields === 'name company email phone message', `quote form fields: ${fields}`);
+  ok(fields === 'name company email message', `quote form fields: ${fields}`);
   // spec dialog: open, Escape, focus return; quote prefill
   // (the Spec-sheet button is on the flip card's back: click the card first, as a visitor would)
   const btn = page.locator('[data-spec="sesame"]'); await page.locator('.pcard[data-id="sesame"]').scrollIntoViewIfNeeded(); await page.click('.pcard[data-id="sesame"] .pturn'); await page.waitForTimeout(1100); await btn.click();
@@ -238,7 +219,7 @@ log('• structure');
   // the wood-based division filter shows the charcoal card alone
   await page.locator('.filter').scrollIntoViewIfNeeded(); await page.click('[data-filter="wood"]'); await page.waitForTimeout(1200);
   const wood = await page.evaluate(() => ({ shown: [...document.querySelectorAll('.pcard')].filter(c => !c.hidden).map(c => c.dataset.id), counts: [...document.querySelectorAll('.filter .cnt')].map(b => b.textContent).join(',') }));
-  ok(wood.shown.join() === 'charcoal' && wood.counts === '7,2,4,1', `wood-based filter: ${JSON.stringify(wood)}`);
+  ok(wood.shown.join() === 'charcoal' && wood.counts === '6,1,4,1', `wood-based filter: ${JSON.stringify(wood)}`);
   ok(!errs.filter(e => !/500/.test(e)).length, 'structure run errors: ' + errs.join(' | '));
   await ctx.close();
 }

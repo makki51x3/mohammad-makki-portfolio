@@ -8,6 +8,7 @@ export default {
   'toast.copyFail': 'Copy failed. Select the address instead',
   'spec.cap': 'Indicative specification',
   'spec.season': 'Typical harvest window',
+  'spec.months': 'Months',
   'spec.yearRound': 'Available year-round (milled product)',
   'spec.yearRoundMade': 'Produced year-round',
   'spec.quote': 'Request a quote for this product',
