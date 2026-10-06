@@ -77,7 +77,12 @@ Each tool regenerates one kind of asset:
 1. **Create the site.** The Netlify project **`terratrade-global`** already exists (https://app.netlify.com/projects/terratrade-global), with Forms enabled. Link it to this repository under *Project configuration → Build & deploy → Link repository*, or add a new site from this repository. Set **Base directory** to `terratrade` and leave the build command empty; `terratrade/netlify.toml` sets `publish = "public"`. It is a separate site from the portfolio; the portfolio's edge "gate" and analytics functions don't apply here.
 2. **Turn on forms.** Go to **Forms** and enable form detection, then trigger **Deploys → Trigger deploy → Deploy site**. The `rfq` form is detected from the static HTML. The `ignore` rule in `netlify.toml` never skips a same-commit redeploy.
 3. **Set up notifications.** Go to Forms → Notifications and add email notifications to **info@terratrade.global**.
-4. **Connect the domain.** Add `terratrade.global` under Domain management. If the domain already has email, only add the web records (A/ALIAS for the apex, CNAME for `www`) and leave the MX/SPF/DKIM records untouched. Then switch the site's public address to the domain: `cd dev && npm run origin -- https://terratrade.global`, commit and push. Until that switch, every absolute URL (canonical, hreflang, link-preview image, sitemap, JSON-LD) uses `https://terratrade-global.netlify.app`: link previews in WhatsApp and elsewhere only show the image when it is on the host that actually serves the site (today terratrade.global points somewhere else).
+4. **Connect the domain** (`terratrade-global.net`, registered at GoDaddy; the site's URLs already use it).
+   In Netlify: *Domain management → Add a domain* → `terratrade-global.net`, and make it the **primary domain**
+   (Netlify then redirects `www.` and the `.netlify.app` address to it and issues the HTTPS certificate). At GoDaddy
+   (*My Products → Domain → Manage DNS*): delete the parked `A @` record (and any "WebsiteBuilder" record), then add
+   `A  @  75.2.60.5` and `CNAME  www  terratrade-global.netlify.app`. Leave MX/TXT records alone. To move to another
+   domain later: `cd dev && npm run origin -- https://new.domain`, commit and push.
 
 ## Content to confirm with TerraTrade before launch
 
