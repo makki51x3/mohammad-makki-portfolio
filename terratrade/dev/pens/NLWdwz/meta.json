@@ -1,0 +1,12 @@
+{
+  "id": "NLWdwz",
+  "title": "Responsive infographic banners with CSS variables",
+  "author": "Ana Tudor",
+  "url": "https://codepen.io/thebabydino/pen/NLWdwz",
+  "license": "MIT (CodePen public pen default)",
+  "files": [
+    "index.pug",
+    "style.scss"
+  ],
+  "note": "Source pasted by the site owner in chat (codepen.io is unreachable from the build container). Removed before saving: author promo popups, portfolio/credit links. Everything else is verbatim."
+}

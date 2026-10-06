@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://terratrade-global.net/sitemap.xml
+# LLM-friendly summary: https://terratrade-global.net/llms.txt

@@ -1,0 +1,13 @@
+{
+  "id": "QwdoddG",
+  "title": "[SVG] [CSS] Marquee Glass Boubble",
+  "author": "Fernando Cohen",
+  "url": "https://codepen.io/designfenix/pen/QwdoddG",
+  "license": "MIT (CodePen public pen default)",
+  "files": [
+    "index.html",
+    "style.css",
+    "script.js"
+  ],
+  "note": "Source pasted by the site owner in chat (codepen.io is unreachable from the build container). Removed before saving: author promo popups, portfolio/credit links. Everything else is verbatim."
+}

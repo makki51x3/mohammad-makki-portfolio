@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://terratrade-global.net/</loc>
+    <lastmod>2026-10-02</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://terratrade-global.net/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://terratrade-global.net/ar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://terratrade-global.net/"/>
+  </url>
+  <url>
+    <loc>https://terratrade-global.net/ar/</loc>
+    <lastmod>2026-10-02</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://terratrade-global.net/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://terratrade-global.net/ar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://terratrade-global.net/"/>
+  </url>
+  <url>
+    <loc>https://terratrade-global.net/privacy/</loc>
+    <lastmod>2026-10-02</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://terratrade-global.net/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://terratrade-global.net/ar/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://terratrade-global.net/privacy/"/>
+  </url>
+  <url>
+    <loc>https://terratrade-global.net/ar/privacy/</loc>
+    <lastmod>2026-10-02</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://terratrade-global.net/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://terratrade-global.net/ar/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://terratrade-global.net/privacy/"/>
+  </url>
+</urlset>

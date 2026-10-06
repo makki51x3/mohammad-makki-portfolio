@@ -1,0 +1,458 @@
+/* TerraTrade - CodePen effect adaptations (layer "fx"). Each block is scoped under [data-fx="…"],
+   credited to its original author (see also /credits.txt), and its raw source is kept in dev/pens/<id>/. */
+@layer fx {
+  /* ==========================================================================================
+     S8 · About - mission & vision as zig-zag infographic banners (the core values follow as the manifesto lines)
+     Adapted from "Responsive infographic banners with CSS variables" by Ana Tudor (thebabydino)
+     https://codepen.io/thebabydino/pen/NLWdwz - MIT. Source: dev/pens/NLWdwz/.
+     Kept from the pen: the 10em-tall banner (widened to 36em), the 6.5×-scaled neumorphic counter disc
+     (1.25×h/6.5 across, sunk .38em above the banner and hanging half out of its end), the
+     2fr/3fr title/text rows with `grid-auto-flow: column dense`, the ±16% zig-zag driven by
+     --i/--s, and the skewed, blurred ground shadow.
+     Changed: brand gradients with per-banner ink chosen for contrast, the icon comes from the
+     TerraTrade sprite instead of an emoji, logical properties + a --dir flip for Arabic, the shadow
+     is a z-index:-1 layer rather than a 3D translateZ (so the reveal fade can't flatten it on top),
+     and explicit breakpoints replace the pen's var(--narr, …) invalid-value trick.
+     ========================================================================================== */
+  [data-fx="banners"] {
+    --wide: 1; --dir: 1;
+    display: flex; flex-direction: column; align-items: center;
+    margin: 0; padding: 2.5em 0 0; list-style: none; counter-reset: ib;
+    font-size: clamp(15px, 1.3vw, 18px);
+  }
+  [dir="rtl"] [data-fx="banners"] { --dir: -1; }
+  [data-fx="banners"] .ib {
+    --i: 0; --j: calc(1 - var(--i)); --s: calc(2 * var(--i) - 1);
+    position: relative; width: 36em; max-width: 100%;
+    margin-bottom: calc(1em + (1 - var(--wide)) * 2.5em);
+    translate: calc(var(--dir) * var(--s) * var(--wide) * 16%) 0;
+    counter-increment: ib;
+  }
+  [data-fx="banners"] .ib:nth-child(2n) { --i: 1; }
+  [data-fx="banners"] .ib-card {
+    position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 2fr 3fr; grid-auto-flow: column dense;
+    min-height: 10em; border-radius: 1em;
+    background: linear-gradient(90deg, var(--c0), var(--c1), var(--c0));
+    color: var(--ink);
+  }
+  [data-fx="banners"] .ib:nth-child(2n) .ib-card { grid-template-columns: auto minmax(0, 1fr); }
+  /* the counter disc */
+  [data-fx="banners"] .ib-card::before {
+    content: counter(ib, decimal-leading-zero);
+    display: flex; align-items: center; justify-content: center;
+    grid-column: calc(2 - var(--i)); grid-row: 1 / 3;
+    width: 1.923em; height: 1.923em; box-sizing: border-box;
+    margin-block-start: -.385em;
+    margin-inline-end: calc(var(--wide) * var(--j) * -.808em);
+    margin-inline-start: calc(var(--wide) * var(--i) * -.808em);
+    border: solid 2px transparent; border-radius: 50%;
+    box-shadow: calc(var(--dir) * var(--s) * 2rem) 1rem 2rem -1rem rgba(1, 30, 18, .18);
+    background: linear-gradient(var(--disc-0), var(--disc-1)) content-box, linear-gradient(var(--disc-b0), var(--disc-b1)) border-box;
+    color: var(--num);
+    font: 400 6.5em/1 "Lexend", var(--disp); letter-spacing: -.04em;
+  }
+  /* soft ground shadow (the pen's scaled / rotated / skewed blur) */
+  [data-fx="banners"] .ib-card::after {
+    --t: calc(var(--dir) * var(--s));
+    content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+    transform-origin: 50% 100%;
+    transform: scale(.75) translate(calc(var(--t) * 12.5%), 0) rotate(calc(var(--t) * 7.5deg)) skewX(calc(var(--t) * 20deg));
+    opacity: .45; background: rgba(1, 26, 16, .875); filter: blur(29px);
+  }
+  [data-fx="banners"] :is(h4, p) { margin: 0 2rem .5rem; }
+  [data-fx="banners"] h4 {
+    align-self: end; display: flex; align-items: center; gap: .45em; padding-top: .25em;
+    font: 600 1.6em/1.45 var(--disp); color: inherit;
+  }
+  [data-fx="banners"] .ib-ico { flex: none; width: 1.15em; height: 1.15em; fill: currentColor; opacity: .92; }
+  [data-fx="banners"] p { padding-bottom: .6em; font-size: .95em; line-height: 1.5; color: var(--ink-2); }
+  [dir="rtl"] [data-fx="banners"] p { line-height: 1.8; }
+
+  /* palette: forest → leaf; ink picked per banner for ≥4.5:1 */
+  [data-fx="banners"] {
+    --disc-0: #F8FCF6; --disc-1: #DCE7D7; --disc-b0: #CEDCC9; --disc-b1: #F5FAF3;
+  }
+  html.dark [data-fx="banners"] {
+    --disc-0: #173024; --disc-1: #0B1A12; --disc-b0: #0A170F; --disc-b1: #24402F;
+  }
+  [data-fx="banners"] .ib-mission   { --c0: #013D27; --c1: #0A7A33; --ink: #fff; --ink-2: rgba(255, 255, 255, .92); --num: #013D27; }
+  [data-fx="banners"] .ib-vision    { --c0: #075F28; --c1: #178036; --ink: #fff; --ink-2: rgba(255, 255, 255, .92); --num: #075F28; }
+  html.dark [data-fx="banners"] .ib-mission   { --num: #6FDB5E; }
+  html.dark [data-fx="banners"] .ib-vision    { --num: #9BE88C; }
+
+  /* narrower screens: the pen's --wide:0 - banners stack centred, the disc stays inside the banner */
+  @media (max-width: 900px) {
+    [data-fx="banners"] { --wide: 0; }
+  }
+  /* phones: the pen's --narr - a plain card with a smaller disc riding its top corner */
+  @media (max-width: 560px) {
+    [data-fx="banners"] { padding-top: 1.4em; font-size: 15px; }
+    [data-fx="banners"] .ib { width: 100%; margin-bottom: 1.6em; }
+    [data-fx="banners"] .ib-card, [data-fx="banners"] .ib:nth-child(2n) .ib-card { display: block; min-height: 0; padding: 1.1em 0 .7em; }
+    [data-fx="banners"] .ib-card::before {
+      position: absolute; inset-block-start: -.5em; inset-inline-end: .35em; margin: 0;
+      width: 1.55em; height: 1.55em; font-size: 2.6em; box-shadow: 0 .4rem .9rem -.4rem rgba(1, 30, 18, .35);
+    }
+    [data-fx="banners"] :is(h4, p) { margin-inline: 1.25rem; }
+    [data-fx="banners"] h4 { padding-inline-end: 3.4em; font-size: 1.4em; margin-bottom: .35rem; }
+    [data-fx="banners"] .ib-card::after { transform: scale(.85) translateY(4%); opacity: .3; filter: blur(18px); }
+  }
+  @media (forced-colors: active) {
+    [data-fx="banners"] .ib-card { border: 1px solid CanvasText; }
+    [data-fx="banners"] .ib-card::before { border-color: CanvasText; }
+  }
+
+  /* ==========================================================================================
+     S5 · Products - 3D perspective flip cards
+     Adapted from "3D Perspective cards with depth [CSS]" by Fernando Cohen (designfenix)
+     https://codepen.io/designfenix/pen/RwKPapa - MIT. Source: dev/pens/RwKPapa/.
+     Kept from the pen: the 1200px perspective, the cover that swings rotateY(-180deg) while
+     its inset frame (translateZ 30px), title (100px) and corner tag (60px) float forward in depth,
+     the dark back face whose outlined button pops 60px toward you, and the photo darkening as it turns.
+     Changed: TerraTrade product photos (<img>, not background-image), Lexend instead of Oswald, the
+     division label where the pen had a price (no prices are published), a "Spec sheet" action under
+     the quote button, backface-visibility plus a half-way visibility swap instead of z-order tricks, the
+     card turns on click / tap / keyboard (a full-cover button with aria-expanded) instead of on hover, so
+     the actions appear only once asked for, a "back to the photo" control, the flip mirrors in Arabic,
+     and a 0.8s symmetric turn instead of 2.3s. Without JS the back stays stacked under the photo.
+     ========================================================================================== */
+  [data-fx="flip"] {
+    --flip-t: .8s; --flip-ease: cubic-bezier(.65, 0, .35, 1); /* symmetric, so the faces swap exactly half-way */
+    --back-bg: linear-gradient(160deg, #06291A, #021A10 70%);
+    --frame: rgba(233, 255, 229, .55);
+  }
+  [data-fx="flip"] .pflip { position: relative; }
+  [data-fx="flip"] .pfront {
+    position: relative; aspect-ratio: 4 / 3; overflow: hidden; border-radius: var(--r) var(--r) 0 0;
+    background: var(--forest); color: #fff; isolation: isolate;
+  }
+  [data-fx="flip"] .pfront > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  /* the pen's darkening veil (rgba(0,0,0,.4)), graded so the title always reads */
+  [data-fx="flip"] .pfront::after {
+    content: ''; position: absolute; inset: 0; z-index: -1; transition: background-color 1.3s ease, opacity 1.3s ease;
+    background: linear-gradient(to top, rgba(1, 22, 13, .8), rgba(1, 22, 13, .08) 55%, rgba(1, 22, 13, .34));
+  }
+  [data-fx="flip"] .pframe {
+    position: absolute; inset: 16px; border: 4px solid var(--frame); box-shadow: 0 0 12px rgba(0, 0, 0, .3);
+    pointer-events: none; transition: transform var(--flip-t) var(--flip-ease);
+  }
+  [data-fx="flip"] .ptop {
+    position: absolute; inset-block-start: 30px; inset-inline: 30px; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    transition: transform var(--flip-t) var(--flip-ease);
+  }
+  [data-fx="flip"] .ptop .idx { color: rgba(255, 255, 255, .8); text-shadow: 0 1px 8px rgba(0, 0, 0, .5); }
+  /* where the pen shows the price (Oswald 200, 2em): the division, set light and large */
+  [data-fx="flip"] .ptop .tag { font: 300 16px/1.2 var(--disp); letter-spacing: .01em; text-transform: none; color: #fff; text-shadow: 0 1px 10px rgba(0, 0, 0, .45); }
+  [data-fx="flip"] .pfront h3 {
+    position: absolute; inset-inline: 30px; inset-block-end: 28px;
+    font: 600 clamp(22px, 2.1vw, 30px)/1.08 var(--disp); letter-spacing: -.01em; color: #fff; text-wrap: balance;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, .35); transition: transform var(--flip-t) var(--flip-ease);
+  }
+  [dir="rtl"] [data-fx="flip"] .pfront h3 { line-height: 1.45; }
+  [data-fx="flip"] .pback {
+    display: flex; flex-direction: column; gap: 10px; padding: 20px 22px 22px;
+    border-radius: 0 0 var(--r) var(--r); background: var(--back-bg); color: #EEFAE9;
+  }
+  [data-fx="flip"] .pback-name { display: none; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #9BE88C; }
+  [data-fx="flip"] .pback .blurb { margin: 0; color: rgba(238, 250, 233, .86); font-size: 14px; flex: 0 1 auto; }
+  [data-fx="flip"] .pacts { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: auto; padding-top: 6px; }
+  /* the pen's outlined "Add to cart" button */
+  [data-fx="flip"] .pquote {
+    display: inline-flex; justify-content: center; min-width: 78%; padding: 12px 26px; border: 1px solid #EEFAE9;
+    font: 300 17px/1.2 var(--disp); letter-spacing: .02em; color: #EEFAE9; background: transparent;
+    transition: transform var(--flip-t) var(--flip-ease), background-color .5s ease, color .5s ease;
+  }
+  [data-fx="flip"] .pquote:hover, [data-fx="flip"] .pquote:focus-visible { background: #EEFAE9; color: #021A10; }
+  [data-fx="flip"] .pback .open {
+    align-self: center; border: 0; padding: 6px 8px; color: #9BE88C; background: none; font-weight: 500;
+    transition: transform var(--flip-t) var(--flip-ease), color .2s;
+  }
+  [data-fx="flip"] .pback .open:hover { color: #fff; background: none; }
+  [data-fx="flip"] :is(.pquote, .open):focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+  html.dark [data-fx="flip"] .pback { box-shadow: inset 0 0 0 1px rgba(233, 255, 229, .13); }
+  @media (max-width: 460px) { [data-fx="flip"] .pfront { aspect-ratio: 16 / 11; } }
+
+  /* the flip itself: the card turns when it is clicked, tapped or activated from the keyboard (ui/products.js adds
+     .flip-ready and toggles .is-flipped); without JS the back sits under the photo with its buttons */
+  [data-fx="flip"] :is(.pturn, .punturn) { display: none; }
+  [data-fx="flip"].flip-ready .pflip { perspective: 1200px; aspect-ratio: 3 / 4; }
+  [data-fx="flip"].flip-ready .pcover {
+    position: absolute; inset: 0; transform-style: preserve-3d;
+    transition: transform var(--flip-t) var(--flip-ease);
+  }
+  [data-fx="flip"].flip-ready :is(.pfront, .pback) { position: absolute; inset: 0; border-radius: var(--r); backface-visibility: hidden; transform-style: preserve-3d; }
+  [data-fx="flip"].flip-ready .pfront { aspect-ratio: auto; overflow: visible; isolation: auto; box-shadow: var(--shadow); }
+  /* every layer hides its own back, so nothing pokes through mid-turn */
+  [data-fx="flip"].flip-ready :is(.pfront > *, .pfront::after, .pback > *, .pacts > *) { backface-visibility: hidden; }
+  [data-fx="flip"].flip-ready .pfront > img, [data-fx="flip"].flip-ready .pfront::after { border-radius: inherit; }
+  [data-fx="flip"].flip-ready .pfront > img { z-index: 0; } /* inside a 3D context the -2/-1 stack would sort behind the face */
+  [data-fx="flip"].flip-ready .pfront::after { z-index: 0; }
+  [data-fx="flip"].flip-ready :is(.pframe, .ptop, .pfront h3) { z-index: 1; }
+  [data-fx="flip"].flip-ready .pback { transform: rotateY(180deg); justify-content: center; padding: 30px 28px; text-align: center; }
+  [dir="rtl"] [data-fx="flip"].flip-ready .pback { transform: rotateY(-180deg); }
+  [data-fx="flip"].flip-ready .pback .blurb { font-size: 14.5px; }
+  [data-fx="flip"].flip-ready .pback-name { display: block; }
+  [data-fx="flip"].flip-ready .pacts { margin-top: 12px; }
+  /* only the side turned toward you exists: each face's visibility switches when the card is edge-on (half-way
+     through the symmetric turn). Some GPUs ignore backface-visibility on the floated 3D layers, which let the
+     back's buttons show through the photo, mirrored. */
+  [data-fx="flip"].flip-ready :is(.pfront, .pback) { transition: visibility 0s linear calc(var(--flip-t) / 2); }
+  [data-fx="flip"].flip-ready .pback,
+  [data-fx="flip"].flip-ready .pcard.is-flipped .pfront { visibility: hidden; pointer-events: none; }
+  [data-fx="flip"].flip-ready .pcard.is-flipped .pback { visibility: visible; pointer-events: auto; }
+
+  /* the whole photo is the button that turns the card; the back has a small "back to the photo" control */
+  [data-fx="flip"].flip-ready .pturn {
+    display: block; position: absolute; inset: 0; z-index: 2; margin: 0; padding: 0; border: 0; border-radius: inherit;
+    background: none; cursor: pointer;
+  }
+  [data-fx="flip"].flip-ready .pturn:focus-visible { outline: 3px solid var(--amber); outline-offset: -8px; }
+  [data-fx="flip"].flip-ready .punturn {
+    display: grid; place-items: center; position: absolute; inset-block-start: 12px; inset-inline-end: 12px; width: 36px; height: 36px;
+    padding: 0; border: 1px solid rgba(238, 250, 233, .35); border-radius: 50%; background: rgba(238, 250, 233, .06); color: #EEFAE9; cursor: pointer;
+    transition: background-color .2s, border-color .2s;
+  }
+  [data-fx="flip"].flip-ready .punturn:hover { background: rgba(238, 250, 233, .16); border-color: rgba(238, 250, 233, .7); }
+  [data-fx="flip"].flip-ready .punturn:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  [data-fx="flip"] .punturn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  [dir="rtl"] [data-fx="flip"] .punturn svg { transform: scaleX(-1); }
+
+  [data-fx="flip"].flip-ready .pcard.is-flipped .pcover { transform: rotateY(-180deg); }
+  [dir="rtl"] [data-fx="flip"].flip-ready .pcard.is-flipped .pcover { transform: rotateY(180deg); }
+  [data-fx="flip"].flip-ready .pcard.is-flipped .pframe { transform: translateZ(30px); }
+  [data-fx="flip"].flip-ready .pcard.is-flipped .pfront h3 { transform: translateZ(100px); }
+  [data-fx="flip"].flip-ready .pcard.is-flipped .ptop { transform: translateZ(60px); }
+  [data-fx="flip"].flip-ready .pcard.is-flipped .pfront::after { background-color: #000; opacity: .9; }
+  [data-fx="flip"].flip-ready .pcard.is-flipped :is(.pquote, .pback .open) { transform: translateZ(60px); }
+  /* a hint that the photo turns: the frame lifts a little under a mouse */
+  @media (hover: hover) and (pointer: fine) {
+    [data-fx="flip"].flip-ready .pcard:not(.is-flipped) .pfront:hover .pframe { transform: translateZ(14px) scale(.985); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-fx="flip"].flip-ready :is(.pcover, .pfront, .pback, .pframe, .ptop, .pfront h3, .pquote, .pback .open) { transition: none; }
+  }
+  @media (forced-colors: active) {
+    [data-fx="flip"] .pback { border: 1px solid CanvasText; }
+  }
+
+  /* ==========================================================================================
+     S1 · Custom cursor. Motion from "Pure CSS cursor tracking" by Andrew Fisher (Andrew-Fisher-the-decoder)
+     https://codepen.io/Andrew-Fisher-the-decoder/pen/GgraMzd - MIT. Source: dev/pens/GgraMzd/.
+     .tt-dot is the hotspot (exact, never eased); .tt-cursor is the logo's petals trailing it with a short ease
+     (assets/js/fx/cursor-GgraMzd.js; the pen's slow braking "servo" was replaced): folded around the dot at rest, turning slowly, leaning into the
+     movement, opening into a ring over anything clickable and squeezing on press. The system pointer is hidden
+     only while html.tt-cursor-on is set (a mouse is moving over the page, motion allowed, no dialog open).
+     ========================================================================================== */
+  html.tt-cursor-on, html.tt-cursor-on * { cursor: none !important; }
+  html.tt-cursor-on :is(input:not([type=checkbox], [type=radio], [type=submit], [type=button], [type=range]), textarea, [contenteditable]) { cursor: text !important; }
+  html.tt-cursor-on :is(select, iframe) { cursor: default !important; }
+  .tt-cursor, .tt-dot { position: fixed; left: 0; top: 0; pointer-events: none; opacity: 0; transition: opacity .2s ease; }
+  .tt-cursor.on, .tt-dot.on { opacity: 1; }
+  .tt-cursor {
+    --tc-a: var(--amber); --tc-g: #2F9A3C; --tc-line: rgba(255, 255, 255, .85);
+    z-index: 170; width: 34px; height: 34px; margin: -17px 0 0 -17px;
+  }
+  html.dark .tt-cursor { --tc-g: #7ED957; --tc-line: rgba(4, 21, 14, .7); }
+  .tt-cursor svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 1px 1.5px rgba(1, 30, 18, .28)); }
+  .tc-tilt { transform: rotate(var(--tilt, 0deg)); transform-box: view-box; transform-origin: 0 0; }
+  .tc-bloom { transform-box: view-box; transform-origin: 0 0; animation: tc-turn 16s linear infinite; }
+  .tc-p {
+    stroke: var(--tc-line); stroke-width: .7; transform-box: view-box; transform-origin: 0 0;
+    transform: rotate(var(--r)) translateY(-2px) scale(.5);
+    transition: transform .42s cubic-bezier(.34, 1.56, .64, 1); transition-delay: calc(var(--i) * 18ms);
+  }
+  .tc-a { fill: var(--tc-a); }
+  .tc-g { fill: var(--tc-g); }
+  /* over something clickable the petals open into a ring (hollow centre: the label under the pointer stays readable) */
+  .tt-cursor.bloom .tc-p { transform: rotate(calc(var(--r) + 14deg)) translateY(-7px) scale(.7); }
+  .tt-cursor.press .tc-p { transform: rotate(calc(var(--r) + 30deg)) translateY(-4px) scale(.56); transition-duration: .14s; transition-delay: 0s; }
+  .tt-dot {
+    z-index: 171; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%;
+    background: var(--amber); box-shadow: 0 0 0 1.5px #fff, 0 1px 3px rgba(1, 30, 18, .45);
+    transition: opacity .2s ease, scale .2s ease;
+  }
+  html.dark .tt-dot { box-shadow: 0 0 0 1.5px #04150E, 0 0 6px rgba(255, 166, 18, .45); }
+  .tt-cursor.press + .tt-dot { scale: .7; }
+  @keyframes tc-turn { to { transform: rotate(360deg); } }
+  html.paused :is(.tt-cursor, .tt-dot), html.reduced :is(.tt-cursor, .tt-dot), html.dlgopen :is(.tt-cursor, .tt-dot) { display: none; }
+  @media (forced-colors: active), print { .tt-cursor, .tt-dot { display: none; } html.tt-cursor-on, html.tt-cursor-on * { cursor: auto !important; } }
+
+  /* ==========================================================================================
+     S12 · Chunky squircle buttons - "Chunky 3D Buttons" by Andrew Fisher (Andrew-Fisher-the-decoder)
+     https://codepen.io/Andrew-Fisher-the-decoder/pen/raMZQNe - MIT. Source: dev/pens/raMZQNe/.
+     The pen's colour recipe, per button pair (face --sq-hb, depth --sq-hd), mixed exactly as it does:
+     footprint 60% black + a drop shadow at 35% black; base 80% black with a 50%-black rim (floating: the
+     face tint, 70% white); extrusion slices 65% → 90% → 65% white; face stroke 70% white. Geometry +
+     press: assets/js/fx/chunky-raMZQNe.js. Only styled once the script has added its layer (.is-chunky),
+     so without JS these stay the site's regular buttons.
+     ========================================================================================== */
+  [data-chunky="green"], [data-chunky="float"] { --sq-hb: #0A7A33; --sq-hd: #0B6A2E; --sq-ink: #fff; }
+  .is-chunky {
+    position: relative; isolation: isolate; color: var(--sq-ink);
+    border: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none;
+    border-radius: 16px; font-weight: 800; letter-spacing: .02em;
+  }
+  .btn.is-chunky, .btn.is-chunky:hover { background: none; border: 0; box-shadow: none; color: var(--sq-ink); }
+  /* the layer is deliberately wider than its button (the extrusion hangs 5 units past each side): lift the reset's
+     svg { max-width: 100% } cap, which squeezed the face narrower than the button and off-centre from its label */
+  .is-chunky > .sq { position: absolute; z-index: -1; overflow: visible; pointer-events: none; max-width: none; }
+  /* the live label rides the face; its backing matches the face so contrast tools read the real pair */
+  .is-chunky > :not(.sq) { translate: 0 var(--sq-dy, 0px); }
+  .is-chunky > span { background: var(--sq-hb); border-radius: 6px; box-shadow: 0 0 0 3px var(--sq-hb); }
+  .is-chunky:focus-visible { outline: 2px solid var(--txt); outline-offset: 6px; }
+  .sq-face { fill: var(--sq-hb); stroke: color-mix(in srgb, var(--sq-hb) 70%, white); stroke-width: 1.5; }
+  .sq-base { fill: color-mix(in srgb, var(--sq-hd) 80%, black); stroke: color-mix(in srgb, var(--sq-hd) 50%, black); stroke-width: 1; }
+  .sq-shadow { fill: color-mix(in srgb, var(--sq-hd) 60%, black); }
+  .sq-drop { flood-color: color-mix(in srgb, var(--sq-hd) 35%, black); flood-opacity: .3; }
+  .sq-e { stop-color: color-mix(in srgb, var(--sq-hd) 65%, white); }
+  .sq-m { stop-color: color-mix(in srgb, var(--sq-hd) 90%, white); }
+  /* floating WhatsApp: a solid green body (no pale side band), a crisp rim and a soft, short shadow */
+  [data-chunky="float"] .sq-e { stop-color: color-mix(in srgb, var(--sq-hd) 72%, black); }
+  [data-chunky="float"] .sq-m { stop-color: var(--sq-hd); }
+  [data-chunky="float"] .sq-drop { flood-color: #01160d; flood-opacity: .28; }
+  html.dark [data-chunky="float"] .sq-face { stroke: color-mix(in srgb, var(--sq-hb) 55%, white); }
+
+  /* the floating WhatsApp squircle (the pen's floating square-icon variant) */
+  .wa-float {
+    position: fixed; inset-block-end: 26px; inset-inline-end: 22px; z-index: 160;
+    display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px;
+    color: #fff; background: #0A7A33; box-shadow: var(--shadow);
+    transition: opacity .35s ease, translate .45s var(--ease), visibility 0s;
+  }
+  .wa-float.is-chunky { background: none; box-shadow: none; }
+  .wa-float .i { width: 26px; height: 26px; fill: currentColor; stroke: none; } /* filled WhatsApp glyph, no outline */
+  .js .wa-float:not(.show) { opacity: 0; visibility: hidden; translate: 0 14px; transition: opacity .25s ease, translate .3s ease, visibility 0s .3s; }
+  html.dlgopen .wa-float { visibility: hidden; }
+  @media (max-width: 640px) { .wa-float { width: 48px; height: 48px; inset-block-end: 18px; inset-inline-end: 16px; } }
+  @media print { .wa-float { display: none; } }
+  @media (forced-colors: active) { .is-chunky > .sq { display: none; } .is-chunky { border: 1px solid ButtonText; } }
+
+  /* ==========================================================================================
+     Contact · liquid-glass business card - Abdughafur Khujzoda (Abdughafur-Khujzoda)
+     https://codepen.io/Abdughafur-Khujzoda/pen/jEyVvqK - MIT. Source: dev/pens/jEyVvqK/.
+     Kept: 28px glass with a 1px white rim + 135° inner sheen (::before), the backdrop blur(3px) layer
+     distorted by the SVG turbulence filter (::after, filter defs added by assets/js/fx/glass-jEyVvqK.js),
+     inset highlight, avatar ring, stats row with a top rule, pill button, hover lift, scale while dragging.
+     Changed: brand-green shadows and a faint forest tint behind the text for legibility on a photo,
+     site fonts, a taller photo so the card has room to roam, and it starts centred on the photo.
+     ========================================================================================== */
+  .cc-photo { position: relative; }
+  .cc-photo:has([data-fx="glass"]) img { aspect-ratio: 4 / 5; object-position: 38% 30%; }
+  .gcard-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+  [data-fx="glass"] {
+    position: absolute; left: 50%; top: 66%; translate: -50% -50%; z-index: 2; /* starts centred across the photo, low enough to leave the farmer's face clear */
+    width: 256px; padding: 26px 18px 20px; border-radius: 28px; isolation: isolate;
+    color: #fff; text-align: center; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
+    box-shadow: 0 24px 96px rgba(1, 40, 25, .28), inset 0 1px 0 rgba(255, 255, 255, .5);
+    transition: transform 300ms cubic-bezier(.4, 0, .2, 1), box-shadow 300ms cubic-bezier(.4, 0, .2, 1);
+  }
+  [data-fx="glass"]::before {
+    content: ''; position: absolute; inset: 0; z-index: 0; border-radius: inherit; pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, .22);
+    background-color: rgba(1, 30, 18, .22);
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, .08), transparent 50%);
+  }
+  [data-fx="glass"]::after {
+    content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  }
+  [data-fx="glass"].is-glass::after { filter: url(#tt-glass-distort); }
+  [data-fx="glass"]:not(.dragging):hover { transform: translateY(-4px); }
+  [data-fx="glass"].dragging {
+    cursor: grabbing; transition: none; transform: scale(1.03) translateY(-4px);
+    box-shadow: 0 32px 120px rgba(1, 40, 25, .45), inset 0 1px 0 rgba(255, 255, 255, .6);
+  }
+  .gcard-in { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+  .gcard-av { width: 70px; height: 70px; padding: 3px; border-radius: 50%; background: rgba(255, 255, 255, .3); box-shadow: 0 4px 12px rgba(0, 0, 0, .2); margin-bottom: 10px; }
+  .gcard-av img { width: 100%; height: 100%; border-radius: 50%; pointer-events: none; }
+  .gcard-name { font: 700 1.12rem/1.3 var(--disp); letter-spacing: .02em; text-shadow: 0 2px 4px rgba(0, 0, 0, .3); }
+  .gcard-handle { margin: 2px 0 12px; font: .78rem/1.4 var(--mono); color: rgba(255, 255, 255, .82); }
+  .gcard-stats { display: flex; justify-content: center; gap: 12px; width: 100%; margin: 0 0 16px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, .18); }
+  .gcard-stats > div { display: flex; flex-direction: column-reverse; align-items: center; }
+  .gcard-stats dd { font: 700 .98rem/1.3 var(--disp); text-shadow: 0 1px 2px rgba(0, 0, 0, .25); }
+  .gcard-stats dt { margin-top: 2px; font: 600 .6rem/1.3 var(--body); text-transform: uppercase; letter-spacing: .04em; color: rgba(255, 255, 255, .8); }
+  [dir="rtl"] .gcard-stats dt { text-transform: none; letter-spacing: 0; font-size: .72rem; }
+  .gcard-btn {
+    display: inline-flex; align-items: center; gap: 7px; padding: 8px 20px; border-radius: 9px;
+    border: 1px solid rgba(255, 255, 255, .32); background: rgba(1, 40, 25, .6); color: #fff; font-size: .82rem; font-weight: 600;
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); transition: background .2s ease, transform .2s ease;
+  }
+  .gcard-btn:hover { background: rgba(1, 40, 25, .85); transform: scale(1.02); }
+  .gcard-btn .i { width: 15px; height: 15px; }
+  .gcard-btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { [data-fx="glass"] { transition: none; } }
+  @media (forced-colors: active) { [data-fx="glass"] { border: 1px solid CanvasText; } }
+
+  /* ==========================================================================================
+     S3 · Hero - liquid-glass bubbles with text orbiting the main bubble
+     "[SVG] [CSS] Marquee Glass Bubble" by Fernando Cohen (designfenix)
+     https://codepen.io/designfenix/pen/QwdoddG - MIT. Source: dev/pens/QwdoddG/.
+     Kept: the SVG scene (bubble clip paths, milky / iridescent sheens, speculars, glass edge stroke + drop-shadow stack, the textPath marquee), the six blurred
+     back-light glows and their geometry, and the right-hand placement bleeding off the edge.
+     Changed: the displacement "ripple" filters are removed (client request: faces stay sharp); for speed the bubble
+     shapes and their float are held still (only the text orbits) and the scene is split into layers, TerraTrade
+     photos (farmer / sesame / hibiscus), the commodity list on the path (EN/AR),
+     pink iridescence → mint and harvest tints, glows re-lit for the mint daylight and night themes,
+     site fonts, and a full-width scene under the copy on narrow screens instead of an off-canvas one.
+     ========================================================================================== */
+  [data-fx="bubbles"] {
+    --glow-a: 255, 255, 247; --glow-b: 255, 249, 228; --glow-c: 238, 255, 226;
+    position: relative; z-index: 1; margin: -40px 0 -30px; margin-inline-end: calc(-1 * clamp(0px, 7vw, 120px));
+    width: clamp(420px, 42vw, 640px); aspect-ratio: 1100 / 850; isolation: isolate; pointer-events: none;
+  }
+  html.dark [data-fx="bubbles"] { --glow-a: 84, 186, 71; --glow-b: 255, 166, 18; --glow-c: 111, 219, 94; }
+  .hb-scene { position: relative; z-index: 1; display: block; width: 100%; height: 100%; overflow: visible; will-change: transform; }
+  /* the scene is split into stacked layers (photo bubble · orbiting text · sesame · hibiscus) so the browser keeps the
+     still, filtered photo bubbles as cached images and only redraws the moving text; the parallax moves whole layers */
+  .hb-layer { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; will-change: transform; }
+  .hb-light { position: absolute; z-index: -1; inset: -14% -16% -17% -15%; pointer-events: none; }
+  .hb-glow { position: absolute; display: block; border-radius: 50%; transform: translateZ(0); }
+  .hb-glow--ambient { left: 17%; top: -1%; width: 78%; height: 82%; filter: blur(70px); transform: scale(1.13);
+    background: radial-gradient(ellipse at 58% 44%, rgba(var(--glow-a), .52), rgba(var(--glow-b), .34) 24%, rgba(var(--glow-c), .18) 44%, rgba(var(--glow-c), .08) 60%, transparent 80%); }
+  .hb-glow--core { left: 33%; top: 4%; width: 54%; height: 58%; filter: blur(42px); transform: scale(1.18);
+    background: radial-gradient(ellipse at 51% 42%, rgba(var(--glow-a), .98), rgba(var(--glow-a), .88) 15%, rgba(var(--glow-b), .6) 34%, rgba(var(--glow-c), .3) 54%, rgba(var(--glow-c), .1) 70%, transparent 84%); }
+  .hb-glow--sun { left: 45%; top: 5%; width: 31%; height: 34%; filter: blur(28px); transform: scale(1.14);
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 1), rgba(var(--glow-a), .92) 18%, rgba(var(--glow-b), .56) 44%, rgba(var(--glow-c), .18) 66%, transparent 84%); }
+  .hb-glow--bottom { left: 38%; top: 55%; width: 47%; height: 31%; filter: blur(54px); transform: scale(1.18);
+    background: radial-gradient(ellipse at 52% 34%, rgba(var(--glow-b), .3), rgba(var(--glow-b), .16) 34%, rgba(var(--glow-c), .08) 58%, transparent 80%); }
+  .hb-glow--secondary { left: 12%; top: 50%; width: 38%; height: 40%; filter: blur(38px); transform: scale(1.08);
+    background: radial-gradient(circle, rgba(var(--glow-a), .26), rgba(var(--glow-c), .12) 48%, transparent 76%); }
+  .hb-glow--drop { left: 59%; top: 70%; width: 24%; height: 23%; filter: blur(32px); transform: scale(1.16);
+    background: radial-gradient(circle, rgba(var(--glow-a), .24), rgba(var(--glow-c), .1) 50%, transparent 76%); }
+  /* at night the white hot-spots would read as fog: the same lights, dimmed and tinted */
+  html.dark .hb-glow { opacity: .42; }
+  html.dark .hb-glow--sun { opacity: .22; }
+  .hb-warm { mix-blend-mode: soft-light; }
+  .hb-edge {
+    fill: rgba(255, 255, 255, .02); stroke: url(#hbStroke); stroke-width: 4; vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, .98)) drop-shadow(0 0 9px rgba(236, 255, 232, .45)); /* was 4 layers */
+  }
+  .hb-edge--main {
+    stroke-width: 4.7;
+    filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 11px rgba(236, 255, 232, .5));
+  }
+  .hb-orbit { pointer-events: none; }
+  .hb-orbit-t {
+    fill: var(--txt); font-family: var(--body); font-size: 18px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase;
+    paint-order: stroke fill; stroke: color-mix(in srgb, var(--bg) 40%, transparent); stroke-width: .6px;
+  }
+  /* Arabic: no tracking (it breaks letter joining) - word spacing fills the loop instead; RTL text anchors at its
+     end so it runs forward from the offset like the English does */
+  [dir="rtl"] .hb-orbit-t { font-size: 28px; letter-spacing: 0; word-spacing: 17px; text-transform: none; text-anchor: end; }
+  [data-fx="bubbles"] .hero-chip.c1 { top: 17%; inset-inline-start: -2%; }
+  [data-fx="bubbles"] .hero-chip.c2 { bottom: 9%; inset-inline-end: 4%; }
+
+  @media (max-width: 960px) {
+    [data-fx="bubbles"] { width: min(100%, 620px); margin: 26px auto 0; justify-self: center; }
+  }
+  @media (max-width: 640px) {
+    [data-fx="bubbles"] { width: calc(100% + 32px); margin: 18px -16px 0; }
+    .hb-orbit-t { font-size: 22px; letter-spacing: 2px; }
+    [dir="rtl"] .hb-orbit-t { font-size: 30px; word-spacing: 12px; }
+    [data-fx="bubbles"] .hero-chip { font-size: 10px; }
+    [data-fx="bubbles"] .hero-chip.c1 { top: 4%; inset-inline-start: 18px; }
+    [data-fx="bubbles"] .hero-chip.c2 { bottom: 2%; inset-inline-end: 18px; }
+  }
+  @media (forced-colors: active) { .hb-light { display: none; } }
+}

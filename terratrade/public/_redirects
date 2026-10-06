@@ -1,0 +1,4 @@
+# ?lang=ar deep link → the Arabic page (forced: '/' itself exists as index.html)
+/  lang=ar  /ar/  302!
+# Arabic 404s get the Arabic not-found page (existing /ar/ files are still served first)
+/ar/*  /ar/404.html  404
